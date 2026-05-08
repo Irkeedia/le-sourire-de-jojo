@@ -1,10 +1,24 @@
 ---
+import { PACK_IDS, PACK_LABELS, type PackId } from "@/lib/packs";
+
+interface Props {
+  initialPack?: string;
+  defaultSubject?: string;
+}
+
+const { initialPack = "", defaultSubject = "" } = Astro.props;
+
+const safePack = PACK_IDS.includes(initialPack as PackId) ? initialPack : "";
+const subjectValue =
+  defaultSubject ||
+  (safePack ? `Demande — ${PACK_LABELS[safePack as PackId]}` : "");
 ---
 
 <form
   id="contact-form"
   class="space-y-4 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm"
   novalidate
+  data-initial-pack={safePack}
 >
   <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
@@ -50,6 +64,28 @@
     <p class="mt-1 hidden text-sm text-red-800" data-error-for="phone"></p>
   </div>
 
+  <div class="max-w-xl">
+    <label for="cf-pack" class="block text-sm font-medium text-marine">Formule / pack (facultatif)</label>
+    <select
+      id="cf-pack"
+      name="pack"
+      class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+    >
+      <option value="">Je ne sais pas encore / à discuter</option>
+      {
+        PACK_IDS.map((id) => (
+          <option value={id} selected={safePack === id}>
+            {PACK_LABELS[id]}
+          </option>
+        ))
+      }
+    </select>
+    <p class="mt-1 hidden text-sm text-red-800" data-error-for="pack"></p>
+    <p class="mt-1 text-xs text-marine/65">
+      Retrouvez le détail des formules sur la page <a href="/offres" class="font-medium underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Offres &amp; forfaits</a>.
+    </p>
+  </div>
+
   <div>
     <label for="cf-subject" class="block text-sm font-medium text-marine">Sujet *</label>
     <input
@@ -58,6 +94,7 @@
       type="text"
       required
       maxlength="200"
+      value={subjectValue}
       class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
     />
     <p class="mt-1 hidden text-sm text-red-800" data-error-for="subject"></p>
@@ -72,6 +109,7 @@
       rows="6"
       maxlength="8000"
       class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+      placeholder="Précisez vos disponibilités, la zone, et ce que vous recherchez."
     ></textarea>
     <p class="mt-1 hidden text-sm text-red-800" data-error-for="message"></p>
   </div>
@@ -110,6 +148,11 @@
     }
   }
 
+  if (form && form.dataset.initialPack) {
+    const sel = document.getElementById("cf-pack") as HTMLSelectElement | null;
+    if (sel) sel.value = form.dataset.initialPack;
+  }
+
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!form || !status) return;
@@ -119,6 +162,7 @@
       name: String(fd.get("name") ?? ""),
       email: String(fd.get("email") ?? ""),
       phone: String(fd.get("phone") ?? ""),
+      pack: String(fd.get("pack") ?? ""),
       subject: String(fd.get("subject") ?? ""),
       message: String(fd.get("message") ?? ""),
       website: String(fd.get("website") ?? ""),
@@ -140,6 +184,8 @@
       }
       status.textContent = "Message envoyé. Nous vous répondons très vite.";
       form.reset();
+      const sel = document.getElementById("cf-pack") as HTMLSelectElement | null;
+      if (sel) sel.value = "";
     } catch {
       status.textContent = "Erreur réseau. Réessayez dans un instant.";
     }

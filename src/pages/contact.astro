@@ -3,10 +3,15 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import CostSimulator from "@/components/CostSimulator.astro";
 import ContactForm from "@/components/ContactForm.astro";
 import SealBadge from "@/components/SealBadge.astro";
+import { PACK_IDS, PACK_LABELS, type PackId } from "@/lib/packs";
 
 const title = "Contact & informations légales — Le Sourire de Jojo";
 const description =
   "Crédit d'impôt 50 % SAP, simulateur de coût, formulaire de contact sécurisé — Montauban, Corbarieu, Tarn-et-Garonne.";
+
+const packParam = Astro.url.searchParams.get("pack") ?? "";
+const safePack = PACK_IDS.includes(packParam as PackId) ? packParam : "";
+const defaultSubject = safePack ? `Demande — ${PACK_LABELS[safePack as PackId]}` : "";
 ---
 
 <BaseLayout
@@ -38,14 +43,14 @@ const description =
       <CostSimulator />
     </div>
 
-    <section class="mt-12" aria-labelledby="form-title">
+    <section class="mt-12 scroll-mt-28" id="formulaire" aria-labelledby="form-title">
       <h2 id="form-title" class="font-display text-3xl text-marine">Nous écrire</h2>
       <p class="mt-4 max-w-3xl text-marine/85">
-        Une question sur les créneaux, la zone d’intervention ou le carnet de sourires ? Écrivez-nous — réponse
+        Une question sur les créneaux, la zone, une formule ou le carnet de sourires ? Écrivez-nous — réponse
         personnalisée dès que possible.
       </p>
       <div class="mt-8 max-w-2xl">
-        <ContactForm />
+        <ContactForm initialPack={safePack} defaultSubject={defaultSubject} />
       </div>
     </section>
 

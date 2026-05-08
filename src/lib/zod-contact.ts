@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PACK_IDS } from "@/lib/packs";
 
 export const contactSchema = z.object({
   name: z.string().trim().min(2, "Le nom est requis.").max(120),
@@ -11,6 +12,7 @@ export const contactSchema = z.object({
     .or(z.literal("")),
   subject: z.string().trim().min(2, "Le sujet est requis.").max(200),
   message: z.string().trim().min(10, "Message trop court.").max(8000),
+  pack: z.union([z.literal(""), z.enum(PACK_IDS)]).optional(),
   website: z.string().optional(),
 });
 

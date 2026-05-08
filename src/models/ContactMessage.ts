@@ -7,6 +7,7 @@ const ContactMessageSchema = new mongoose.Schema(
     phone: { type: String },
     subject: { type: String, required: true },
     message: { type: String, required: true },
+    pack: { type: String },
     createdAt: { type: Date, default: Date.now },
   },
   { collection: "contact_messages" },

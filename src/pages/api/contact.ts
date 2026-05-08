@@ -3,6 +3,7 @@ import { contactSchema } from "@/lib/zod-contact";
 import { connectDb } from "@/lib/db";
 import { ContactMessage } from "@/models/ContactMessage";
 import { sendContactNotification } from "@/lib/mail";
+import { packLabel } from "@/lib/packs";
 
 export const prerender = false;
 
@@ -67,6 +68,7 @@ export const POST: APIRoute = async ({ request }) => {
           `Nom : ${store.name}`,
           `E-mail : ${store.email}`,
           store.phone ? `Téléphone : ${store.phone}` : null,
+          store.pack ? `Formule / pack : ${packLabel(store.pack)}` : null,
           "",
           store.message,
         ]

@@ -39,6 +39,8 @@ Copier `env.example` vers `.env` et renseigner les variables (voir [docs/ENVIRON
 ## Structure utile
 
 - `src/pages/` — routes et pages
+- `src/pages/offres.astro` — forfaits (mensuel, packs, liens vers contact avec `?pack=`)
+- `src/lib/packs.ts` — identifiants et libellés des formules
 - `src/pages/api/contact.ts` — endpoint formulaire
 - `src/middleware.ts` — en-têtes de sécurité et rate limiting
 - `public/` — fichiers statiques

@@ -2,11 +2,17 @@
 import TextSizeToggle from "./TextSizeToggle.astro";
 
 const links = [
-  { href: "/", label: "Accueil", shortLabel: "Accueil" },
-  { href: "/a-propos", label: "À propos", shortLabel: "À propos" },
-  { href: "/services", label: "Nos services", shortLabel: "Services" },
-  { href: "/carnet", label: "Le carnet de sourires", shortLabel: "Carnet" },
-  { href: "/contact", label: "Contact & infos légales", shortLabel: "Contact" },
+  { href: "/", label: "Accueil", shortLabel: "Accueil", desktopLabel: "Accueil" },
+  { href: "/a-propos", label: "À propos", shortLabel: "À propos", desktopLabel: "À propos" },
+  { href: "/services", label: "Nos services", shortLabel: "Services", desktopLabel: "Services" },
+  { href: "/offres", label: "Offres & forfaits", shortLabel: "Offres", desktopLabel: "Offres" },
+  { href: "/carnet", label: "Le carnet de sourires", shortLabel: "Carnet", desktopLabel: "Carnet" },
+  {
+    href: "/contact",
+    label: "Contact & infos légales",
+    shortLabel: "Contact",
+    desktopLabel: "Contact",
+  },
 ];
 
 const pathname = Astro.url.pathname;
@@ -26,9 +32,14 @@ function isActive(href: string): boolean {
 
 <!-- Barre supérieure uniquement (sans panneau fixed à l'intérieur → évite les bugs iOS / backdrop-blur) -->
 <header
-  class="sticky top-0 z-50 border-b border-marine/10 bg-ivoire/90 pt-[env(safe-area-inset-top)] shadow-[0_12px_40px_rgba(29,53,87,0.08)] backdrop-blur-xl"
+  class="sticky top-0 z-50 border-b border-marine/10 bg-gradient-to-b from-ivoire/98 via-white/55 to-sauge/15 pt-[env(safe-area-inset-top)] shadow-[0_8px_30px_rgba(29,53,87,0.07)] backdrop-blur-xl"
 >
-  <div class="relative mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-5 lg:py-4">
+  <div
+    class="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-marine/20 to-transparent"
+    aria-hidden="true"
+  >
+  </div>
+  <div class="relative mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-5 lg:gap-6 lg:py-3.5">
     <a
       href="/"
       class="group flex min-w-0 flex-1 items-center gap-3 py-1 lg:flex-none"
@@ -53,25 +64,29 @@ function isActive(href: string): boolean {
       </span>
     </a>
 
-    <div class="hidden items-center gap-2 lg:flex lg:gap-1 xl:gap-2">
-      <nav aria-label="Navigation principale" class="flex items-center">
-        <ul class="flex flex-wrap items-center justify-end gap-0.5 xl:gap-1">
+    <div class="hidden min-w-0 flex-1 items-center justify-end gap-3 lg:flex xl:gap-4">
+      <nav aria-label="Navigation principale" class="min-w-0">
+        <ul
+          class="flex flex-nowrap items-center justify-end gap-0.5 rounded-2xl border border-marine/10 bg-white/45 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] backdrop-blur-sm"
+        >
           {
             links.map((l) => {
               const active = isActive(l.href);
+              const shown = l.desktopLabel ?? l.label;
               return (
                 <li>
                   <a
                     href={l.href}
+                    title={l.label}
                     class:list={[
-                      "whitespace-nowrap rounded-full border px-3 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine xl:px-4",
+                      "block whitespace-nowrap rounded-xl px-3 py-2 text-[0.8125rem] font-semibold leading-tight tracking-tight ring-1 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine xl:px-3.5",
                       active
-                        ? "border-marine bg-marine text-ivoire shadow-sm"
-                        : "border-transparent bg-white/35 text-marine/90 hover:border-marine/15 hover:bg-white/80 hover:text-marine",
+                        ? "bg-marine text-ivoire shadow-md ring-marine/40"
+                        : "text-marine/88 ring-transparent hover:bg-sauge/35 hover:text-marine hover:ring-marine/10",
                     ]}
                     aria-current={active ? "page" : undefined}
                   >
-                    {l.label}
+                    {shown}
                   </a>
                 </li>
               );
@@ -79,7 +94,10 @@ function isActive(href: string): boolean {
           }
         </ul>
       </nav>
-      <div class="ml-2 flex items-center border-l border-marine/15 pl-4 xl:ml-4 xl:pl-5">
+      <div
+        class="flex shrink-0 items-center gap-2 rounded-2xl border border-marine/10 bg-white/50 px-2 py-1.5 shadow-sm backdrop-blur-sm"
+        title="Taille du texte"
+      >
         <TextSizeToggle variant="default" />
       </div>
     </div>
@@ -242,7 +260,7 @@ function isActive(href: string): boolean {
           var sy = window.scrollY || window.pageYOffset || 0;
           document.body.dataset.scrollLock = String(sy);
           document.body.style.position = "fixed";
-          document.body.style.top = "-" + scrollLockY + "px";
+          document.body.style.top = "-" + sy + "px";
           document.body.style.left = "0";
           document.body.style.right = "0";
           document.body.style.width = "100%";

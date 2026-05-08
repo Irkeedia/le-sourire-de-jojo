@@ -1,0 +1,225 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { PackId } from "@/lib/packs";
+
+const title = "Offres & forfaits — Le Sourire de Jojo";
+const description =
+  "Tarifs indicatifs (SAP), forfait mensuel, packs découverte et ponctuel — Montauban, Tarn-et-Garonne. Devis personnalisé.";
+
+/** Tarif horaire brut indicatif (base commune aux calculs ci-dessous). À ajuster selon votre convention réelle. */
+const TARIF_HORAIRE_BRUT = "28";
+
+const packs: {
+  id: PackId;
+  name: string;
+  tagline: string;
+  bullets: string[];
+  highlight?: boolean;
+  tarifs: {
+    resume: string;
+    brut: string;
+    netIndicatif: string;
+    detail?: string;
+  };
+}[] = [
+  {
+    id: "mensuel",
+    name: "Forfait mensuel",
+    tagline: "Des créneaux réguliers pour ancrer le lien dans le temps.",
+    highlight: true,
+    bullets: [
+      "Planning prévisible (fréquence à définir ensemble).",
+      "Continuité du carnet de sourires et des préférences.",
+      "Idéal pour seniors, convalescence longue ou soutien familial durable.",
+    ],
+    tarifs: {
+      resume: "Exemple : 8 h / mois",
+      brut: `${8 * Number(TARIF_HORAIRE_BRUT)} € / mois brut`,
+      netIndicatif: `env. ${(8 * Number(TARIF_HORAIRE_BRUT)) / 2} € / mois net après crédit d’impôt (simulation 50 %)`,
+      detail: `Base : ${TARIF_HORAIRE_BRUT} € brut / heure — volume mensuel ajustable avec vous.`,
+    },
+  },
+  {
+    id: "decouverte",
+    name: "Pack découverte",
+    tagline: "Accroche douce avant un engagement plus long.",
+    bullets: [
+      "Une ou plusieurs séances pour faire connaissance.",
+      "Repérage des envies, du rythme et du cadre à domicile.",
+      "Sans engagement sur la suite : vous décidez après échange.",
+    ],
+    tarifs: {
+      resume: "Forfait fixe indicatif : 3 h",
+      brut: `${3 * Number(TARIF_HORAIRE_BRUT)} € brut`,
+      netIndicatif: `env. ${(3 * Number(TARIF_HORAIRE_BRUT)) / 2} € net après crédit (simulation 50 %)`,
+      detail: "Soit 3 séances d’1 h ou 2 séances d’1 h 30 — à calendrier selon disponibilités.",
+    },
+  },
+  {
+    id: "ponctuel",
+    name: "Accompagnement ponctuel",
+    tagline: "À la demande, selon vos besoins du moment.",
+    bullets: [
+      "Sortie, lecture, démarche, moment de jeu — ponctuel.",
+      "Utile en complément des aidants ou après une période chargée.",
+    ],
+    tarifs: {
+      resume: "À l’heure",
+      brut: `${TARIF_HORAIRE_BRUT} € brut / heure`,
+      netIndicatif: `env. ${Number(TARIF_HORAIRE_BRUT) / 2} € net / h après crédit (simulation 50 %)`,
+      detail: "Facturation au quart d’heure près après le 1er heure pleine (indicatif — précisé au devis).",
+    },
+  },
+  {
+    id: "famille",
+    name: "Pack famille & aidants",
+    tagline: "Pour coordonner et soulager sans remplacer le lien familial.",
+    bullets: [
+      "Temps de répit pour les aidants avec compte-rendu bienveillant dans le carnet.",
+      "Échanges possibles sur les priorités de la semaine.",
+    ],
+    tarifs: {
+      resume: "Même base horaire + forfait suivi",
+      brut: `${TARIF_HORAIRE_BRUT} € brut / heure + forfait dossier 15 € brut / mois`,
+      netIndicatif: `net mensuel : à titre indicatif, diviser par deux les montants SAP éligibles (simulateur contact).`,
+      detail: "Le forfait dossier couvre la mise à jour du carnet partagé et la coordination courte avec la famille (indicatif).",
+    },
+  },
+  {
+    id: "sur_mesure",
+    name: "Sur-mesure",
+    tagline: "Parcours adapté à votre situation.",
+    bullets: [
+      "Après un échange, nous montons une proposition personnalisée (rythme, durée, activités).",
+      "Pour situations atypiques ou besoins multiples à composer.",
+    ],
+    tarifs: {
+      resume: "Devis après entretien",
+      brut: "Selon prestations",
+      netIndicatif: "Selon éligibilité SAP et plafonds",
+      detail: `Référence interne : nous nous alignons sur la même grille horaire indicatif ${TARIF_HORAIRE_BRUT} € brut / h sauf accord contraire écrit.`,
+    },
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Offres & forfaits" }]}
+>
+  <article class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Offres &amp; forfaits</h1>
+    <p class="mt-6 max-w-3xl text-lg leading-relaxed text-marine/90">
+      Les montants ci-dessous sont <strong class="text-marine">indicatifs</strong> : ils servent de base transparente pour
+      discuter avec vous (durée réelle, zone, contraintes). Un <strong class="text-marine">devis fermé</strong> vous est
+      communiqué après échange.
+    </p>
+
+    <section
+      id="grille-tarifaire"
+      class="mt-10 rounded-2xl border border-marine/15 bg-white/80 p-6 shadow-sm md:p-8"
+      aria-labelledby="grille-title"
+    >
+      <h2 id="grille-title" class="font-display text-2xl text-marine md:text-3xl">Grille tarifaire indicative</h2>
+      <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-xl bg-sauge/15 px-4 py-3">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-marine/65">Tarif horaire brut (référence)</dt>
+          <dd class="mt-1 font-display text-3xl text-marine">{TARIF_HORAIRE_BRUT}&nbsp;€ / h</dd>
+          <dd class="mt-1 text-sm text-marine/75">Hors majorations éventuelles (week-end, urgence) précisées au devis.</dd>
+        </div>
+        <div class="rounded-xl bg-ivoire px-4 py-3 ring-1 ring-marine/10">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-marine/65">Net après crédit d’impôt (ordre de grandeur)</dt>
+          <dd class="mt-1 text-sm leading-relaxed text-marine/90">
+            En cas d’éligibilité SAP à 50&nbsp;% : <strong class="text-marine">diviser par deux</strong> les montants
+            bruts éligibles (plafonds et règles fiscales en vigueur — voir simulateur).
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <div
+      class="mt-8 rounded-2xl border border-aquarelle-jaune/40 bg-aquarelle-jaune/15 px-5 py-4 text-sm leading-relaxed text-marine/90"
+      role="note"
+    >
+      <strong class="text-marine">Crédit d’impôt 50&nbsp;% (SAP)</strong> : les montants bruts éligibles peuvent réduire
+      fortement le coût net pour le foyer — voir le <a href="/contact#credit-impot" class="font-medium underline decoration-marine/40 underline-offset-2 hover:text-aquarelle-bleu">simulateur sur la page contact</a>.
+    </div>
+
+    <p class="mt-4 text-xs leading-relaxed text-marine/65">
+      Informations non contractuelles. Tarifs indicatifs susceptibles d’évolution ; seul un écrit de consultation ou devis
+      fait foi.
+    </p>
+
+    <ul class="mt-14 grid gap-8 lg:grid-cols-2">
+      {
+        packs.map((p) => (
+          <li
+            class:list={[
+              "jojo-paper flex flex-col rounded-3xl p-8 shadow-md",
+              p.highlight && "ring-2 ring-marine/20 lg:col-span-2 lg:flex-row lg:items-stretch lg:gap-10",
+            ]}
+          >
+            <div class:list={["relative z-[1] flex-1", p.highlight && "lg:max-w-xl"]}>
+              {p.highlight && (
+                <p class="mb-3 inline-block rounded-full bg-marine px-3 py-1 text-xs font-bold uppercase tracking-wide text-ivoire">
+                  Le plus demandé
+                </p>
+              )}
+              <h2 class="font-display text-3xl text-marine">{p.name}</h2>
+              <p class="mt-3 text-marine/85">{p.tagline}</p>
+              <ul class="mt-6 space-y-3 text-marine/90">
+                {p.bullets.map((b) => (
+                  <li class="flex gap-2">
+                    <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-vieux" aria-hidden="true" />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+              <div class="mt-8 rounded-2xl border border-marine/12 bg-white/75 p-5 shadow-inner">
+                <p class="text-xs font-semibold uppercase tracking-wide text-marine/55">Tarifs affichés (indicatifs)</p>
+                <p class="mt-2 font-medium text-marine">{p.tarifs.resume}</p>
+                <p class="mt-2 font-display text-2xl text-marine">{p.tarifs.brut}</p>
+                <p class="mt-2 text-sm font-medium text-aquarelle-bleu">{p.tarifs.netIndicatif}</p>
+                {p.tarifs.detail && <p class="mt-3 border-t border-marine/10 pt-3 text-xs leading-relaxed text-marine/75">{p.tarifs.detail}</p>}
+              </div>
+            </div>
+            <div class:list={["relative z-[1] mt-8 flex shrink-0 flex-col justify-end gap-3", p.highlight && "lg:mt-0 lg:w-72 lg:border-l lg:border-marine/10 lg:pl-10"]}>
+              <a
+                href={`/contact?pack=${p.id}#formulaire`}
+                class="inline-flex items-center justify-center rounded-full bg-marine px-6 py-3 text-center font-semibold text-ivoire shadow transition hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+              >
+                Demander un devis — {p.name}
+              </a>
+              <p class="text-center text-xs text-marine/65 lg:text-left">Vous serez redirigé vers le formulaire avec la formule présélectionnée.</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <section class="mt-16 rounded-2xl border border-marine/15 bg-sauge/20 p-8 md:p-10" aria-labelledby="compare-title">
+      <h2 id="compare-title" class="font-display text-2xl text-marine md:text-3xl">Comment choisir ?</h2>
+      <div class="mt-6 grid gap-6 md:grid-cols-3">
+        <div>
+          <h3 class="font-semibold text-marine">Besoin dans la durée</h3>
+          <p class="mt-2 text-sm text-marine/85">Isolement, régularité, continuité du carnet → privilégier le <strong>forfait mensuel</strong>.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-marine">Tester sans pression</h3>
+          <p class="mt-2 text-sm text-marine/85">Premier contact, hésitation → <strong>pack découverte</strong>.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-marine">Besoin ponctuel ou atypique</h3>
+          <p class="mt-2 text-sm text-marine/85">Une sortie, une démarche, un montage complexe → <strong>ponctuel</strong> ou <strong>sur-mesure</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+    <p class="mt-12 text-center">
+      <a href="/contact#formulaire" class="font-semibold text-aquarelle-bleu underline decoration-2 underline-offset-4 hover:text-marine">
+        Accéder au formulaire de contact
+      </a>
+    </p>
+  </article>
+</BaseLayout>
