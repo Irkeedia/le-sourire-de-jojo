@@ -9,18 +9,27 @@ const services = [
   {
     name: "Lecture & discussion",
     icon: "book",
+    image: "/images/personneagé.png",
+    imageAlt:
+      "Moment de lecture et d’échange avec une personne âgée, dans un cadre chaleureux et attentionné.",
     text:
       "Romans, poésie, articles du jour : des moments partagés qui ouvrent la parole. Exemples : pour un senior, relire ensemble une biographie de vie ; pour un jeune en convalescence, histoires courtes à voix haute ; pour une personne PMR, aide à trier le courrier et à comprendre les courriers importants.",
   },
   {
     name: "Sorties & promenades",
     icon: "walk",
+    image: "/images/balade.png",
+    imageAlt:
+      "Promenade ou sortie en plein air, à son rythme, pour prendre l’air et profiter du quartier.",
     text:
       "Air du quartier, marché, parc accessible : bouger à son rythme. Senior : sortie digestive et repères du voisinage. Enfant/ado : petites marches ludiques pour retrouver l’énergie. PMR : trajets planifiés avec pauses et accessibilité.",
   },
   {
     name: "Jeux & rires",
     icon: "game",
+    image: "/images/enfant.png",
+    imageAlt:
+      "Enfant souriant lors d’un jeu ou d’une activité ludique partagée à domicile.",
     text:
       "Jeux de société calmes, énigmes, dessins : le plaisir sans performance. Senior : cartes et mémoire douce. Jeune : aide aux devoirs ludique et défis courts. PMR : activités à la table adaptées à la mobilité.",
   },
@@ -55,7 +64,20 @@ const services = [
       {
         services.map((s) => (
           <li class="flex flex-col gap-6 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm md:flex-row md:items-start md:gap-10">
-            <div class="flex shrink-0 justify-center md:w-28">
+            <div class="flex shrink-0 justify-center md:w-44">
+              {"image" in s && s.image ? (
+                <figure class="w-full max-w-[280px] overflow-hidden rounded-2xl border border-marine/15 bg-marine/5 shadow-sm md:max-w-none">
+                  <img
+                    src={s.image}
+                    alt={s.imageAlt}
+                    width={400}
+                    height={300}
+                    loading="lazy"
+                    decoding="async"
+                    class="h-auto w-full object-cover aspect-[4/3]"
+                  />
+                </figure>
+              ) : (
               <span class="inline-flex h-20 w-20 items-center justify-center rounded-full border-2 border-marine text-marine">
                 {s.icon === "book" && (
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
@@ -90,6 +112,7 @@ const services = [
                   </svg>
                 )}
               </span>
+              )}
             </div>
             <div>
               <h2 class="font-display text-2xl text-marine md:text-3xl">{s.name}</h2>
