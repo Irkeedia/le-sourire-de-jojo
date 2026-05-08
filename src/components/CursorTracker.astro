@@ -1,0 +1,241 @@
+---
+---
+
+<div id="jojo-cursor-root" class="jojo-cursor-root" aria-hidden="true">
+  <!-- Curseur instantané : petit point -->
+  <div id="jojo-cursor-dot" class="jojo-cursor-dot"></div>
+
+  <!-- Tracker lent : tache douce + sourire minimal (trait seul, pas de visage) -->
+  <div id="jojo-cursor-trail" class="jojo-cursor-trail">
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="jojo-blob-core" cx="38%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#FBF8EB" stop-opacity="0.95" />
+          <stop offset="35%" stop-color="#E9C46A" stop-opacity="0.55" />
+          <stop offset="65%" stop-color="#C88D8D" stop-opacity="0.45" />
+          <stop offset="100%" stop-color="#8FA892" stop-opacity="0.15" />
+        </radialGradient>
+      </defs>
+      <ellipse cx="32" cy="32" rx="24" ry="23" fill="url(#jojo-blob-core)" />
+      <!-- Petites touches florales -->
+      <circle cx="46" cy="18" r="5" fill="#C88D8D" opacity="0.45" />
+      <circle cx="16" cy="40" r="4" fill="#457B9D" opacity="0.4" />
+      <circle cx="42" cy="46" r="4.5" fill="#E76F51" opacity="0.38" />
+      <circle cx="26" cy="14" r="3.5" fill="#A29BFE" opacity="0.35" />
+      <!-- Sourire : une seule courbe douce, sans yeux -->
+      <path
+        d="M21 37 Q32 46 43 37"
+        stroke="#1D3557"
+        stroke-width="2.25"
+        stroke-linecap="round"
+        opacity="0.42"
+      />
+      <path
+        d="M22 37.5 Q32 44.5 42 37.5"
+        stroke="#E76F51"
+        stroke-width="1.35"
+        stroke-linecap="round"
+        opacity="0.55"
+      />
+    </svg>
+  </div>
+</div>
+
+<style is:global>
+  .jojo-cursor-root {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483646;
+    pointer-events: none;
+    contain: layout style paint;
+  }
+
+  .jojo-cursor-dot,
+  .jojo-cursor-trail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    will-change: transform;
+    transform: translate3d(-100px, -100px, 0);
+    transition: opacity 0.25s ease;
+    opacity: 0;
+  }
+
+  .jojo-cursor-dot {
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    border-radius: 9999px;
+    background: var(--color-marine, #1d3557);
+    box-shadow:
+      0 0 0 2px rgb(245 243 231 / 0.95),
+      0 2px 8px rgb(29 53 87 / 0.35);
+    transition:
+      width 0.2s ease,
+      height 0.2s ease,
+      margin 0.2s ease,
+      opacity 0.25s ease,
+      background 0.2s ease;
+  }
+
+  .jojo-cursor-trail {
+    width: 48px;
+    height: 48px;
+    margin: -24px 0 0 -24px;
+    opacity: 0;
+    filter: blur(0.3px) drop-shadow(0 4px 12px rgb(143 168 146 / 0.25));
+    transition:
+      opacity 0.45s ease,
+      width 0.25s ease,
+      height 0.25s ease,
+      margin 0.25s ease;
+  }
+
+  .jojo-cursor-active .jojo-cursor-dot {
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    background: var(--color-marine, #1d3557);
+  }
+
+  .jojo-cursor-active .jojo-cursor-trail {
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
+  }
+
+  .jojo-cursor-ready .jojo-cursor-dot {
+    opacity: 1;
+  }
+
+  .jojo-cursor-ready .jojo-cursor-trail {
+    opacity: 0.38;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    html.jojo-cursor-on,
+    html.jojo-cursor-on body {
+      cursor: none;
+    }
+
+    html.jojo-cursor-on input,
+    html.jojo-cursor-on textarea,
+    html.jojo-cursor-on select,
+    html.jojo-cursor-on [contenteditable="true"] {
+      cursor: text;
+    }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .jojo-cursor-root {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .jojo-cursor-trail {
+      display: none;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    if (typeof window === "undefined") return;
+
+    var fineHover =
+      window.matchMedia &&
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (!fineHover) return;
+
+    var root = document.getElementById("jojo-cursor-root");
+    var dot = document.getElementById("jojo-cursor-dot");
+    var trail = document.getElementById("jojo-cursor-trail");
+    if (!root || !dot || !trail) return;
+
+    document.documentElement.classList.add("jojo-cursor-on");
+
+    var fx = window.innerWidth / 2;
+    var fy = window.innerHeight / 2;
+    var tx = fx;
+    var ty = fy;
+    var ready = false;
+
+    var prefersReduced =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var EASE = 0.055;
+
+    function setActive(on) {
+      root.classList.toggle("jojo-cursor-active", !!on);
+    }
+
+    function placeDot() {
+      dot.style.transform = "translate3d(" + fx + "px, " + fy + "px, 0)";
+    }
+
+    document.addEventListener(
+      "mousemove",
+      function (e) {
+        fx = e.clientX;
+        fy = e.clientY;
+        if (!ready) {
+          ready = true;
+          tx = fx;
+          ty = fy;
+          root.classList.add("jojo-cursor-ready");
+        }
+        placeDot();
+        if (prefersReduced) {
+          trail.style.transform = "translate3d(" + fx + "px, " + fy + "px, 0)";
+        }
+      },
+      { passive: true },
+    );
+
+    document.addEventListener("mouseleave", function () {
+      root.classList.remove("jojo-cursor-ready");
+    });
+
+    document.addEventListener("mouseenter", function () {
+      if (ready) root.classList.add("jojo-cursor-ready");
+    });
+
+    var INTERACTIVE_SELECTOR =
+      'a, button, [role="button"], input[type="submit"], input[type="button"], summary, label, select, [data-mobile-nav-link]';
+
+    document.addEventListener(
+      "mouseover",
+      function (e) {
+        var target = e.target;
+        if (target && typeof target.closest === "function" && target.closest(INTERACTIVE_SELECTOR)) {
+          setActive(true);
+        }
+      },
+      { passive: true },
+    );
+
+    document.addEventListener(
+      "mouseout",
+      function (e) {
+        var target = e.target;
+        if (target && typeof target.closest === "function" && target.closest(INTERACTIVE_SELECTOR)) {
+          setActive(false);
+        }
+      },
+      { passive: true },
+    );
+
+    if (prefersReduced) return;
+
+    function tick() {
+      tx += (fx - tx) * EASE;
+      ty += (fy - ty) * EASE;
+      trail.style.transform = "translate3d(" + tx + "px, " + ty + "px, 0)";
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+</script>
