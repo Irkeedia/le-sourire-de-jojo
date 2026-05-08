@@ -1,0 +1,103 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Nos services — Le Sourire de Jojo";
+const description =
+  "Lecture et discussion, sorties et promenades, jeux et rires, nature et cueillette, photos et souvenirs — exemples par public à Montauban et Tarn-et-Garonne.";
+
+const services = [
+  {
+    name: "Lecture & discussion",
+    icon: "book",
+    text:
+      "Romans, poésie, articles du jour : des moments partagés qui ouvrent la parole. Exemples : pour un senior, relire ensemble une biographie de vie ; pour un jeune en convalescence, histoires courtes à voix haute ; pour une personne PMR, aide à trier le courrier et à comprendre les courriers importants.",
+  },
+  {
+    name: "Sorties & promenades",
+    icon: "walk",
+    text:
+      "Air du quartier, marché, parc accessible : bouger à son rythme. Senior : sortie digestive et repères du voisinage. Enfant/ado : petites marches ludiques pour retrouver l’énergie. PMR : trajets planifiés avec pauses et accessibilité.",
+  },
+  {
+    name: "Jeux & rires",
+    icon: "game",
+    text:
+      "Jeux de société calmes, énigmes, dessins : le plaisir sans performance. Senior : cartes et mémoire douce. Jeune : aide aux devoirs ludique et défis courts. PMR : activités à la table adaptées à la mobilité.",
+  },
+  {
+    name: "Nature & cueillette",
+    icon: "leaf",
+    text:
+      "Herborisation douce, observation des saisons, cueillette responsable quand c’est possible. Pour tous : reconnecter aux sens — odeurs, couleurs, silence — en sécurité et selon les capacités du jour.",
+  },
+  {
+    name: "Photos & souvenirs",
+    icon: "camera",
+    text:
+      "Albums, tri de photos, récits capturés : consolider la mémoire familiale. Senior : rédiger des légendes pour les petits-enfants. Jeune : création d’un carnet visuel de la convalescence. PMR : organisation numérique simple et sauvegardes.",
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Nos services" }]}
+>
+  <div class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Nos services</h1>
+    <p class="mt-6 max-w-3xl text-lg text-marine/90">
+      Cinq manières d’être présent·e : fines lignes d’attention, bleu marine comme sur vos visuels — toujours en
+      lien avec votre réalité du moment.
+    </p>
+
+    <ul class="mt-14 space-y-12">
+      {
+        services.map((s) => (
+          <li class="flex flex-col gap-6 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm md:flex-row md:items-start md:gap-10">
+            <div class="flex shrink-0 justify-center md:w-28">
+              <span class="inline-flex h-20 w-20 items-center justify-center rounded-full border-2 border-marine text-marine">
+                {s.icon === "book" && (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+                    <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v16H6.5A2.5 2.5 0 0 1 4 17.5v-11Z" />
+                    <path d="M4 6.5A2.5 2.5 0 0 0 6.5 9H20" />
+                  </svg>
+                )}
+                {s.icon === "walk" && (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+                    <circle cx="12" cy="5" r="2" />
+                    <path d="M12 7v6l3 4M10 21l2-3 2 3" />
+                  </svg>
+                )}
+                {s.icon === "game" && (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+                    <rect x="3" y="8" width="18" height="10" rx="2" />
+                    <circle cx="8" cy="13" r="1" fill="currentColor" stroke="none" />
+                    <circle cx="16" cy="13" r="1" fill="currentColor" stroke="none" />
+                  </svg>
+                )}
+                {s.icon === "leaf" && (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+                    <path d="M12 21c6-5 8-12 8-18-6 0-13 2-18 8 6 1 13 4 18 10Z" />
+                    <path d="M12 21V11" />
+                  </svg>
+                )}
+                {s.icon === "camera" && (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+                    <rect x="3" y="7" width="18" height="13" rx="2" />
+                    <circle cx="12" cy="13.5" r="3.5" />
+                    <path d="M8 7l1.5-2h5L16 7" />
+                  </svg>
+                )}
+              </span>
+            </div>
+            <div>
+              <h2 class="font-display text-2xl text-marine md:text-3xl">{s.name}</h2>
+              <p class="mt-4 text-marine/90 leading-relaxed">{s.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

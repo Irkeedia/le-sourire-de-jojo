@@ -1,0 +1,88 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CostSimulator from "@/components/CostSimulator.astro";
+import ContactForm from "@/components/ContactForm.astro";
+import SealBadge from "@/components/SealBadge.astro";
+
+const title = "Contact & informations légales — Le Sourire de Jojo";
+const description =
+  "Crédit d'impôt 50 % SAP, simulateur de coût, formulaire de contact sécurisé — Montauban, Corbarieu, Tarn-et-Garonne.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Contact & légal" }]}
+>
+  <div class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Contact & informations légales</h1>
+
+    <section class="mt-12 scroll-mt-24 rounded-2xl border border-marine/15 bg-white/90 p-8 shadow-sm" id="credit-impot" aria-labelledby="ci-title">
+      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+        <div class="max-w-3xl">
+          <h2 id="ci-title" class="font-display text-3xl text-marine">Crédit d’impôt 50&nbsp;% (SAP)</h2>
+          <p class="mt-4 text-marine/90 leading-relaxed">
+            Les services à la personne agréés peuvent ouvrir droit à un crédit d’impôt de 50&nbsp;% sur les montants
+            admissibles, dans les limites fixées par la loi. Conservez vos justificatifs et renseignez-vous sur les
+            plafonds annuels et votre situation fiscale.
+          </p>
+          <p class="mt-4 text-sm text-marine/75">
+            Information générale : elle ne remplace pas un conseil comptable ou fiscal personnalisé.
+          </p>
+        </div>
+        <SealBadge />
+      </div>
+    </section>
+
+    <div class="mt-12">
+      <CostSimulator />
+    </div>
+
+    <section class="mt-12" aria-labelledby="form-title">
+      <h2 id="form-title" class="font-display text-3xl text-marine">Nous écrire</h2>
+      <p class="mt-4 max-w-3xl text-marine/85">
+        Une question sur les créneaux, la zone d’intervention ou le carnet de sourires ? Écrivez-nous — réponse
+        personnalisée dès que possible.
+      </p>
+      <div class="mt-8 max-w-2xl">
+        <ContactForm />
+      </div>
+    </section>
+
+    <section class="mt-20 scroll-mt-24 border-t border-marine/15 pt-16" id="mentions" aria-labelledby="mentions-title">
+      <h2 id="mentions-title" class="font-display text-3xl text-marine">Mentions légales & confidentialité</h2>
+      <div class="mt-8 max-w-3xl space-y-4 leading-relaxed text-marine/90">
+        <p>
+          <strong>Éditeur du site :</strong> Le Sourire de Jojo — [statut juridique et coordonnées complètes à
+          compléter].
+        </p>
+        <p>
+          <strong>Hébergement :</strong> [nom et adresse de l’hébergeur à compléter].
+        </p>
+        <p>
+          <strong>Données personnelles :</strong> les informations envoyées via le formulaire servent uniquement à
+          traiter votre demande. Vous pouvez exercer vos droits (accès, rectification, suppression, limitation,
+          opposition) en nous contactant à l’adresse indiquée sur vos échanges ou dans vos futurs documents
+          contractuels.
+        </p>
+        <p>
+          <strong>Cookies :</strong> ce site vise à limiter les traceurs au strict nécessaire ; les scripts tiers
+          seront listés ici si vous en ajoutez (cartes, statistiques, etc.).
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 rounded-2xl bg-sauge/20 p-6" aria-labelledby="gmb-title">
+      <h2 id="gmb-title" class="font-display text-2xl text-marine">Fiche Google Business Profile</h2>
+      <p class="mt-2 text-marine/85">
+        Créez ou reliez votre fiche « Google Business Profile » pour le référencement local (Montauban, Corbarieu,
+        Tarn-et-Garonne), puis indiquez l’URL publique ici :
+        <a
+          href="https://www.google.com/maps"
+          class="font-medium text-aquarelle-bleu underline decoration-2 underline-offset-2 hover:text-marine"
+          >Maps — à personnaliser</a
+        >.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

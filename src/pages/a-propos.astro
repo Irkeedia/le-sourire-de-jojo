@@ -1,0 +1,48 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "À propos — Le Sourire de Jojo";
+const description =
+  "L’histoire du Sourire de Jojo, une philosophie inspirée par Lanza del Vasto : tiens-toi droit et souris.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "À propos" }]}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
+    <h1 class="font-display text-4xl text-marine md:text-5xl">À propos</h1>
+
+    <section class="mt-12" aria-labelledby="histoire">
+      <h2 id="histoire" class="font-display text-3xl text-marine">Notre histoire</h2>
+      <div class="mt-6 space-y-4 text-marine/90 leading-relaxed">
+        <p>
+          Tout a commencé avec ma maman — et un livre tombé au bon moment, comme un signe. Une invitation à ralentir,
+          à écouter, à croire que les petits gestes comptent autant que les grands discours.
+        </p>
+        <p>
+          « Le Sourire de Jojo » porte ce souvenir : celui d’une présence attentive, d’un rire qui débloque une
+          journée, d’une main tendue sans jugement. Ce projet est né du désir d’offrir cette même douceur à votre
+          foyer, à votre rythme, dans le respect de votre histoire.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-l-4 border-rose-vieux pl-6" aria-labelledby="philosophie">
+      <h2 id="philosophie" class="font-display text-3xl text-marine">Philosophie</h2>
+      <blockquote class="mt-6">
+        <p class="font-display text-2xl italic text-marine md:text-3xl">
+          « Tiens-toi droit et souris. »
+        </p>
+        <footer class="mt-4 text-sm text-marine/75">
+          — Lanza del Vasto <span class="sr-only">(citation conforme au droit de courte citation)</span>
+        </footer>
+      </blockquote>
+      <p class="mt-6 text-marine/90 leading-relaxed">
+        Une phrase simple pour rappeler la dignité du corps et du cœur : tenir sa tête haute face à l’épreuve, et
+        laisser transparaître la vie par un sourire — même fragile, même infime.
+      </p>
+    </section>
+  </article>
+</BaseLayout>

@@ -1,0 +1,39 @@
+---
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<div
+  class:list={[
+    "inline-flex items-center gap-4 rounded-2xl border border-marine/20 bg-white/90 p-4 shadow-sm",
+    compact && "scale-90",
+  ]}
+>
+  <div
+    class="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-marine bg-ivoire"
+    role="img"
+    aria-label="Service à la personne agréé — crédit d’impôt 50 %"
+  >
+    <svg viewBox="0 0 64 64" class="h-12 w-12 text-marine" aria-hidden="true">
+      <circle cx="32" cy="34" r="22" fill="none" stroke="currentColor" stroke-width="2" />
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        d="M22 38c3 5 17 5 20 0M26 28h.01M38 28h.01"
+      />
+    </svg>
+    <span
+      class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-marine px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ivoire"
+    >
+      SAP 50%
+    </span>
+  </div>
+  <p class="max-w-xs text-sm leading-snug text-marine">
+    Service à la personne agréé — vous pouvez bénéficier du crédit d’impôt de 50&nbsp;% sur les montants
+    éligibles (conditions légales).
+  </p>
+</div>

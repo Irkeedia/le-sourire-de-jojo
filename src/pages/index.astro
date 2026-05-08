@@ -1,0 +1,434 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import FloralAccent from "@/components/FloralAccent.astro";
+
+const title = "Le Sourire de Jojo — Rayon de soleil à domicile";
+const description =
+  "Accompagnement bienveillant à Montauban, Corbarieu et dans le Tarn-et-Garonne : lecture, sorties, jeux, nature et souvenirs pour seniors, jeunes convalescents et PMR.";
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- Hero -->
+  <section class="relative overflow-hidden border-b border-marine/10 bg-gradient-to-br from-ivoire via-[#fbf8eb] to-sauge/25">
+    <FloralAccent position="top" />
+    <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 md:px-6 md:py-28 lg:grid-cols-[1.02fr_0.98fr]">
+      <div>
+        <p class="jojo-title-kicker">Montauban, Corbarieu &amp; Tarn-et-Garonne</p>
+        <p class="mt-4 font-display text-4xl leading-tight text-marine md:text-5xl lg:text-6xl">
+          Faire de chaque instant une danse
+        </p>
+        <div class="jojo-floral-divider mt-6 ml-0"></div>
+        <p class="mt-8 max-w-3xl text-lg leading-relaxed text-marine/90 md:text-xl">
+          Un accompagnement à domicile qui met l’accent sur le <strong class="font-semibold text-marine">lien social</strong>,
+          la <strong class="font-semibold text-marine">joie</strong> et la <strong class="font-semibold text-marine">dignité</strong> — là où la vie quotidienne a besoin d’une présence humaine, attentive et sans jugement.
+        </p>
+        <p class="mt-6 max-w-3xl text-base leading-relaxed text-marine/85 md:text-lg">
+          Nous ne remplaçons ni les soignants ni les aidants : nous ouvrons des créneaux de légèreté, de parole et de
+          projets possibles — pour les personnes âgées, les jeunes en convalescence, et les personnes à mobilité réduite
+          qui souhaitent rester acteur·rices de leur journée.
+        </p>
+        <div class="mt-12 flex flex-wrap gap-4">
+          <a
+            href="/services"
+            class="inline-flex items-center justify-center rounded-full bg-marine px-8 py-3.5 font-semibold text-ivoire shadow-lg transition hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+          >
+            Voir tous les services
+          </a>
+          <a
+            href="/contact"
+            class="inline-flex items-center justify-center rounded-full border-2 border-marine bg-white/80 px-8 py-3.5 font-semibold text-marine hover:bg-marine/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+          >
+            Prendre contact
+          </a>
+          <a
+            href="/a-propos"
+            class="inline-flex items-center justify-center rounded-full px-4 py-3.5 text-sm font-semibold text-aquarelle-bleu underline decoration-2 underline-offset-4 hover:text-marine"
+          >
+            Lire notre histoire
+          </a>
+        </div>
+      </div>
+
+      <div class="jojo-paper relative overflow-hidden rounded-[2rem] p-6 md:p-8">
+        <div class="relative rounded-[1.4rem] border border-marine/10 bg-ivoire/95 p-6 text-center shadow-xl">
+          <div class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_16%_30%,#C88D8D_0_0.45rem,transparent_0.5rem),radial-gradient(circle_at_26%_20%,#E9C46A_0_0.5rem,transparent_0.55rem),radial-gradient(circle_at_39%_26%,#457B9D_0_0.42rem,transparent_0.48rem),radial-gradient(circle_at_58%_18%,#A29BFE_0_0.42rem,transparent_0.48rem),radial-gradient(circle_at_76%_28%,#E76F51_0_0.5rem,transparent_0.55rem),radial-gradient(circle_at_88%_20%,#C88D8D_0_0.42rem,transparent_0.48rem)] opacity-75"></div>
+          <p class="relative mt-12 font-display text-5xl font-semibold leading-none text-marine md:text-6xl">
+            Le Sourire<br />de Jojo
+          </p>
+          <p class="relative mt-3 text-sm font-semibold text-marine/80 md:text-base">
+            Accompagnement de Vie Joyeux
+          </p>
+          <div class="jojo-floral-divider relative mt-5"></div>
+          <div class="relative mt-6 grid grid-cols-5 gap-2 text-[0.68rem] text-marine/80">
+            <span>Lecture</span>
+            <span>Sorties</span>
+            <span>Jeux</span>
+            <span>Nature</span>
+            <span>Souvenirs</span>
+          </div>
+          <div class="relative mx-auto mt-8 flex h-20 w-20 items-center justify-center rounded-full border border-marine/20 bg-sauge/25 text-marine">
+            <svg viewBox="0 0 64 64" class="h-14 w-14" fill="none" aria-hidden="true">
+              <path d="M18 36c6 9 22 9 28 0" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" />
+              <path d="M21 27c3-3 7-3 10 0M35 27c3-3 7-3 10 0" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+              <path d="M48 18c7-7 13-4 14 3-7 0-10 4-14-3Z" fill="#8FA892" />
+            </svg>
+          </div>
+          <p class="relative mt-5 text-sm font-semibold text-marine/80">
+            Montauban &amp; environs
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ce que nous proposons (aperçu des 5 axes) -->
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20" aria-labelledby="axes-title">
+    <h2 id="axes-title" class="font-display text-3xl text-marine md:text-4xl">Ce que nous proposons</h2>
+    <p class="mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
+      Cinq manières concrètes d’être à vos côtés — toujours adaptées à votre énergie du jour, à votre environnement et
+      à ce qui vous tient à cœur. Chaque axe peut se combiner avec les autres selon vos envies.
+    </p>
+    <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm">
+        <h3 class="font-display text-xl text-marine">Lecture &amp; discussion</h3>
+        <p class="mt-3 text-sm leading-relaxed text-marine/85">
+          Donner la parole aux histoires : livres, souvenirs, actualité lue à voix haute pour celles et ceux qui voient
+          mal ou se fatiguent vite.
+        </p>
+      </li>
+      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm">
+        <h3 class="font-display text-xl text-marine">Sorties &amp; promenades</h3>
+        <p class="mt-3 text-sm leading-relaxed text-marine/85">
+          Respirer dehors à son rythme : quartier, marché, parc — avec les pauses et le matériel dont vous avez besoin.
+        </p>
+      </li>
+      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm">
+        <h3 class="font-display text-xl text-marine">Jeux &amp; rires</h3>
+        <p class="mt-3 text-sm leading-relaxed text-marine/85">
+          Jeux calmes, énigmes, aide aux devoirs ludique : le plaisir sans pression de performance.
+        </p>
+      </li>
+      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm">
+        <h3 class="font-display text-xl text-marine">Nature &amp; cueillette</h3>
+        <p class="mt-3 text-sm leading-relaxed text-marine/85">
+          Éveiller les sens : saisons, plantes, couleurs — en respectant les capacités et la sécurité de chacun.
+        </p>
+      </li>
+      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm sm:col-span-2 lg:col-span-1">
+        <h3 class="font-display text-xl text-marine">Photos &amp; souvenirs</h3>
+        <p class="mt-3 text-sm leading-relaxed text-marine/85">
+          Donner une suite aux images : albums, légendes, récits pour les proches et pour vous-même.
+        </p>
+      </li>
+    </ul>
+    <p class="mt-10">
+      <a
+        href="/services"
+        class="inline-flex items-center font-semibold text-aquarelle-bleu underline decoration-2 underline-offset-4 hover:text-marine"
+      >
+        Détails, exemples par âge et modalités →
+      </a>
+    </p>
+  </section>
+
+  <!-- Pour qui (allongé) -->
+  <section class="border-y border-marine/10 bg-sauge/15" aria-labelledby="cibles-title">
+    <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
+      <h2 id="cibles-title" class="font-display text-3xl text-marine md:text-4xl">Pour qui ?</h2>
+      <p class="mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
+        Trois chemins, une même exigence : <strong class="text-marine">écouter avant d’agir</strong>, respecter le silence
+        comme la parole, et construire la confiance pas à pas. Voici comment nous adaptons notre présence.
+      </p>
+      <div class="mt-14 grid gap-10 lg:grid-cols-3">
+        <article class="flex flex-col rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm">
+          <h3 class="font-display text-2xl text-marine">Seniors</h3>
+          <p class="mt-4 leading-relaxed text-marine/85">
+            Rompre la solitude sans forcer la conversation : présence pacifique, activités possibles même quand le corps
+            ralentit.
+          </p>
+          <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Lecture partagée, récit de vie, mémoire familiale à l’oral ou par écrit.</span>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Sorties courtes et sécurisées pour garder le contact avec le quartier.</span>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Photos et albums pour que les petits moments restent visibles pour les proches.</span>
+            </li>
+          </ul>
+        </article>
+        <article class="flex flex-col rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm">
+          <h3 class="font-display text-2xl text-marine">Enfants &amp; adolescents convalescents</h3>
+          <p class="mt-4 leading-relaxed text-marine/85">
+            Après une maladie ou une intervention, le quotidien peut sembler gris : nous réinjectons du jeu, du sens et
+            des objectifs atteignables, sans nier la fatigue.
+          </p>
+          <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Jeux coopératifs, créativité légère, devoirs aidés avec des pauses.</span>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Marches progressives et projets « une étape à la fois ».</span>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Carnet de sourires : tracer les progrès et les bonnes journées.</span>
+            </li>
+          </ul>
+        </article>
+        <article class="flex flex-col rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm">
+          <h3 class="font-display text-2xl text-marine">Personnes à mobilité réduite (PMR)</h3>
+          <p class="mt-4 leading-relaxed text-marine/85">
+            L’autonomie ne se mesure pas à la vitesse : nous planifions avec vous les trajets, les temps de repos et les
+            aides matérielles pour que chaque sortie reste un succès.
+          </p>
+          <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Accompagnement aux démarches (courrier, rendez-vous) avec pédagogie.</span>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Nature accessible : chemins adaptés, observation, pas de sur-sollicitation.</span>
+            </li>
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>Respect absolu de votre rythme et de vos « non » pour aujourd’hui.</span>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Notre façon de travailler -->
+  <section class="relative mx-auto max-w-6xl overflow-hidden px-4 py-16 md:px-6 md:py-20" aria-labelledby="methode-title">
+    <FloralAccent position="top" />
+    <h2 id="methode-title" class="relative font-display text-3xl text-marine md:text-4xl">Notre façon de travailler</h2>
+    <p class="relative mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
+      La qualité d’un accompagnement se joue dans les détails : ton de voix, ponctualité, discrétion. Voici ce que vous
+      pouvez attendre concrètement.
+    </p>
+    <ol class="relative mt-12 grid gap-8 md:grid-cols-2">
+      <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8">
+        <span class="font-display text-4xl text-aquarelle-bleu/80">1</span>
+        <h3 class="mt-2 font-display text-xl text-marine">Écoute et cadrage</h3>
+        <p class="mt-3 text-marine/85 leading-relaxed">
+          Premier échange pour comprendre vos attentes, vos contraintes médicales déclarées, vos envies — sans promesse
+          irréaliste. Nous adaptons la durée et le type d’activités à votre forme du moment.
+        </p>
+      </li>
+      <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8">
+        <span class="font-display text-4xl text-aquarelle-bleu/80">2</span>
+        <h3 class="mt-2 font-display text-xl text-marine">Rythme respecté</h3>
+        <p class="mt-3 text-marine/85 leading-relaxed">
+          Pas de « coaching » culpabilisant : si la séance devient un moment de silence partagé ou une sieste
+          conversationnelle, c’est aussi du lien. Nous privilégions la présence à l’occupation forcée.
+        </p>
+      </li>
+      <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8">
+        <span class="font-display text-4xl text-aquarelle-bleu/80">3</span>
+        <h3 class="mt-2 font-display text-xl text-marine">Carnet &amp; continuité</h3>
+        <p class="mt-3 text-marine/85 leading-relaxed">
+          Le carnet de sourires relie les séances : préférences, inside jokes, objectifs atteints — pour que la prochaine
+          personne aidante (famille, professionnel·le) comprenne vite ce qui compte pour vous.
+        </p>
+      </li>
+      <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8">
+        <span class="font-display text-4xl text-aquarelle-bleu/80">4</span>
+        <h3 class="mt-2 font-display text-xl text-marine">Confidentialité</h3>
+        <p class="mt-3 text-marine/85 leading-relaxed">
+          Ce qui se dit à la maison reste traité avec discrétion. Les données transmises via le site le sont dans le cadre
+          du RGPD — pas de prospection commerciale intrusive.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Concept rayon de soleil (allongé) -->
+  <section class="border-y border-marine/10 bg-rose-vieux/15" aria-labelledby="concept-title">
+    <div class="relative mx-auto max-w-6xl overflow-hidden px-4 py-16 md:px-6 md:py-20">
+      <FloralAccent position="bottom" />
+      <h2 id="concept-title" class="relative font-display text-3xl text-marine md:text-4xl">Rayon de soleil à domicile</h2>
+      <div class="relative mt-10 grid gap-10 lg:grid-cols-3 lg:gap-12">
+        <div class="lg:col-span-2 space-y-5 text-lg leading-relaxed text-marine/90">
+          <p>
+            Le Sourire de Jojo, ce n’est <strong class="text-marine">pas un substitut aux soins</strong> ni une aide
+            médicale : c’est une présence chaleureuse qui fait entrer la vie — conversations, rires, air du temps,
+            petites victoires du quotidien qu’on partage avec quelqu’un qui a le temps.
+          </p>
+          <p>
+            Nous croyons que la joie et le lien social sont des ressources précieuses pour se sentir reconnu·e et en
+            confiance, à tout âge. Ce « rayon de soleil », ce sont des créneaux où la pression baisse : pas besoin de
+            « bien aller » pour mériter une visite — il suffit d’être là.
+          </p>
+          <p>
+            Pour les familles, cela peut aussi dire : <em class="not-italic text-marine/95">souffler un peu</em>, en
+            sachant qu’un interlocuteur attentif est passé, qu’un mot doux ou une sortie a été possible cette semaine.
+          </p>
+        </div>
+        <aside class="rounded-2xl border border-marine/20 bg-white/90 p-8 shadow-sm">
+          <h3 class="font-display text-xl text-marine">Ce qui nous différencie</h3>
+          <ul class="mt-6 space-y-4 text-sm leading-relaxed text-marine/85">
+            <li><strong class="text-marine">Présence</strong> avant performance — pas de liste de tâches à cocher à tout prix.</li>
+            <li><strong class="text-marine">Lien social</strong> au centre — pas seulement « faire les courses ».</li>
+            <li><strong class="text-marine">Mémoire et joie</strong> — photos, carnet, histoires qui restent.</li>
+          </ul>
+        </aside>
+      </div>
+      <p class="relative mt-12">
+        <a href="/a-propos" class="font-semibold text-aquarelle-bleu underline decoration-2 underline-offset-4 hover:text-marine">
+          Découvrir notre histoire et notre philosophie →
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Le carnet -->
+  <section class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20" aria-labelledby="carnet-home-title">
+    <div class="rounded-3xl border border-marine/15 bg-gradient-to-br from-white to-sauge/20 p-8 md:p-12">
+      <h2 id="carnet-home-title" class="font-display text-3xl text-marine md:text-4xl">Le carnet de sourires</h2>
+      <p class="mt-6 max-w-3xl text-lg leading-relaxed text-marine/85">
+        Un objet simple qui joue un grand rôle : il relie les séances, garde la trace des préférences et des moments forts,
+        et permet aux proches de « voir » ce qui s’est passé quand ils ne peuvent pas être là chaque jour.
+      </p>
+      <p class="mt-4 max-w-3xl leading-relaxed text-marine/85">
+        Pages écrites, photos collées, petits dessins ou citations : le carnet devient une mémoire partagée, tangible et
+        bienveillante — pas un dossier médical, mais une histoire à plusieurs voix.
+      </p>
+      <p class="mt-10">
+        <a
+          href="/carnet"
+          class="inline-flex items-center rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+        >
+          Voir la page dédiée au carnet
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Zone d'intervention -->
+  <section class="border-t border-marine/10 bg-marine/[0.04]" aria-labelledby="zone-title">
+    <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
+      <h2 id="zone-title" class="font-display text-3xl text-marine md:text-4xl">Où intervenons-nous ?</h2>
+      <div class="mt-10 grid gap-10 lg:grid-cols-2">
+        <div class="space-y-4 leading-relaxed text-marine/85">
+          <p>
+            Nous intervenons principalement autour de <strong class="text-marine">Montauban</strong> et
+            <strong class="text-marine">Corbarieu</strong>, ainsi que dans une partie du
+            <strong class="text-marine">Tarn-et-Garonne (82)</strong> selon les créneaux disponibles et les temps de
+            trajet raisonnables.
+          </p>
+          <p>
+            Chaque demande est étudiée au cas par cas : distance, accessibilité du logement, durée souhaitée et fréquence.
+            En cas de zone plus éloignée, nous vous dirons honnêtement si un accompagnement durable reste cohérent pour
+            vous comme pour nous.
+          </p>
+        </div>
+        <ul class="rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm">
+          <li class="flex justify-between gap-4 border-b border-marine/10 py-3 text-marine/85">
+            <span>Ville-centre &amp; quartiers</span>
+            <span class="font-medium text-marine">Montauban</span>
+          </li>
+          <li class="flex justify-between gap-4 border-b border-marine/10 py-3 text-marine/85">
+            <span>Commune voisine</span>
+            <span class="font-medium text-marine">Corbarieu</span>
+          </li>
+          <li class="flex justify-between gap-4 py-3 text-marine/85">
+            <span>Département</span>
+            <span class="font-medium text-marine">Tarn-et-Garonne</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAP teaser -->
+  <section class="mx-auto max-w-6xl px-4 pb-16 md:px-6 md:pb-20" aria-labelledby="sap-home-title">
+    <div class="flex flex-col gap-8 rounded-3xl border border-marine/15 bg-white/95 p-8 shadow-sm md:flex-row md:items-center md:justify-between md:p-10">
+      <div>
+        <h2 id="sap-home-title" class="font-display text-2xl text-marine md:text-3xl">Crédit d’impôt &amp; service à la personne</h2>
+        <p class="mt-4 max-w-2xl leading-relaxed text-marine/85">
+          Les activités éligibles peuvent ouvrir droit à un <strong class="text-marine">crédit d’impôt de 50&nbsp;%</strong>
+          dans le cadre légal en vigueur (plafonds, conditions SAP). Sur la page contact, vous trouverez une explication
+          claire et un simulateur pour estimer le coût net après crédit.
+        </p>
+      </div>
+      <a
+        href="/contact#credit-impot"
+        class="inline-flex shrink-0 items-center justify-center rounded-xl border-2 border-marine px-6 py-3 font-semibold text-marine hover:bg-marine/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+      >
+        Infos crédit d’impôt &amp; simulateur
+      </a>
+    </div>
+  </section>
+
+  <!-- FAQ courte -->
+  <section class="border-y border-marine/10 bg-sauge/10" aria-labelledby="faq-title">
+    <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
+      <h2 id="faq-title" class="font-display text-3xl text-marine md:text-4xl">Questions fréquentes</h2>
+      <dl class="mt-12 space-y-10">
+        <div>
+          <dt class="font-display text-xl text-marine">Est-ce du médical ou du paramédical ?</dt>
+          <dd class="mt-3 max-w-3xl leading-relaxed text-marine/85">
+            Non : nous n’effectuons pas d’actes de soin. En cas de besoin de nursing ou de suivi médical, nous orientons
+            vers les professionnels compétents. Notre rôle est la présence, la stimulation douce et le lien social.
+          </dd>
+        </div>
+        <div>
+          <dt class="font-display text-xl text-marine">Les aidants familiaux peuvent-ils vous solliciter ?</dt>
+          <dd class="mt-3 max-w-3xl leading-relaxed text-marine/85">
+            Oui, souvent : un créneau régulier permet de souffler tout en sachant que la personne accompagnée a eu du lien
+            et de la stimulation dans la journée. Nous pouvons nous coordonner avec vous sur les priorités.
+          </dd>
+        </div>
+        <div>
+          <dt class="font-display text-xl text-marine">Comment fixez-vous les durées et la fréquence ?</dt>
+          <dd class="mt-3 max-w-3xl leading-relaxed text-marine/85">
+            Au premier contact, nous définissons ensemble une première série de séances ou une expérience pilote, puis nous
+            ajustons selon les retours — fatigue, envies, saisonnalité.
+          </dd>
+        </div>
+        <div>
+          <dt class="font-display text-xl text-marine">Que se passe-t-il si la journée est difficile ?</dt>
+          <dd class="mt-3 max-w-3xl leading-relaxed text-marine/85">
+            Nous privilégions l’écoute et la réduction des stimuli : à la maison, il est toujours possible de raccourcir
+            une activité ou de simplement être présent·e sans agenda imposé.
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section class="relative overflow-hidden bg-gradient-to-b from-rose-vieux/20 to-ivoire pb-20 pt-12 md:pb-28 md:pt-16" aria-labelledby="cta-final-title">
+    <FloralAccent position="bottom" />
+    <div class="relative mx-auto max-w-6xl px-4 text-center md:px-6">
+      <h2 id="cta-final-title" class="font-display text-3xl text-marine md:text-4xl">Parlons de votre situation</h2>
+      <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-marine/85">
+        Une question sur les créneaux, la zone ou le carnet ? Écrivez-nous : nous répondons avec soin, sans engagement
+        immédiat.
+      </p>
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <a
+          href="/contact"
+          class="inline-flex items-center justify-center rounded-xl bg-marine px-10 py-4 font-semibold text-ivoire shadow-lg hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+        >
+          Formulaire de contact
+        </a>
+        <a
+          href="/services"
+          class="inline-flex items-center justify-center rounded-xl border-2 border-marine bg-white/90 px-10 py-4 font-semibold text-marine hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+        >
+          Relire les services
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

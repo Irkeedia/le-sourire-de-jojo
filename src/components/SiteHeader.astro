@@ -1,0 +1,336 @@
+---
+import TextSizeToggle from "./TextSizeToggle.astro";
+
+const links = [
+  { href: "/", label: "Accueil", shortLabel: "Accueil" },
+  { href: "/a-propos", label: "À propos", shortLabel: "À propos" },
+  { href: "/services", label: "Nos services", shortLabel: "Services" },
+  { href: "/carnet", label: "Le carnet de sourires", shortLabel: "Carnet" },
+  { href: "/contact", label: "Contact & infos légales", shortLabel: "Contact" },
+];
+
+const pathname = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname.startsWith(href);
+}
+---
+
+<a
+  href="#contenu-principal"
+  class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-marine focus:px-4 focus:py-3 focus:text-ivoire focus:shadow-lg"
+>
+  Aller au contenu principal
+</a>
+
+<!-- Barre supérieure uniquement (sans panneau fixed à l'intérieur → évite les bugs iOS / backdrop-blur) -->
+<header
+  class="sticky top-0 z-50 border-b border-marine/10 bg-ivoire/90 pt-[env(safe-area-inset-top)] shadow-[0_12px_40px_rgba(29,53,87,0.08)] backdrop-blur-xl"
+>
+  <div class="relative mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-5 lg:py-4">
+    <a
+      href="/"
+      class="group flex min-w-0 flex-1 items-center gap-3 py-1 lg:flex-none"
+      aria-label="Le Sourire de Jojo — Accueil"
+    >
+      <span class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-marine/15 bg-white/75 text-marine shadow-sm sm:flex">
+        <svg viewBox="0 0 48 48" class="h-8 w-8" fill="none" aria-hidden="true">
+          <path d="M14 27c5 7 16 7 21 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+          <path d="M16 20c2-2 5-2 7 0M27 20c2-2 5-2 7 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M35 12c5-6 10-3 11 2-5 0-8 3-11-2Z" fill="#8FA892" opacity="0.85" />
+        </svg>
+      </span>
+      <span class="min-w-0">
+        <span
+          class="block truncate font-display text-2xl font-semibold leading-tight text-marine transition group-hover:text-aquarelle-bleu sm:text-3xl lg:text-4xl"
+        >
+          Le Sourire de Jojo
+        </span>
+        <span class="mt-0.5 hidden text-xs leading-snug text-marine/65 sm:block sm:text-sm">
+          Rayon de soleil à domicile — Montauban &amp; alentours
+        </span>
+      </span>
+    </a>
+
+    <div class="hidden items-center gap-2 lg:flex lg:gap-1 xl:gap-2">
+      <nav aria-label="Navigation principale" class="flex items-center">
+        <ul class="flex flex-wrap items-center justify-end gap-0.5 xl:gap-1">
+          {
+            links.map((l) => {
+              const active = isActive(l.href);
+              return (
+                <li>
+                  <a
+                    href={l.href}
+                    class:list={[
+                      "whitespace-nowrap rounded-full border px-3 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine xl:px-4",
+                      active
+                        ? "border-marine bg-marine text-ivoire shadow-sm"
+                        : "border-transparent bg-white/35 text-marine/90 hover:border-marine/15 hover:bg-white/80 hover:text-marine",
+                    ]}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </nav>
+      <div class="ml-2 flex items-center border-l border-marine/15 pl-4 xl:ml-4 xl:pl-5">
+        <TextSizeToggle variant="default" />
+      </div>
+    </div>
+
+    <button
+      type="button"
+      id="nav-menu-toggle"
+      class="relative z-[60] flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-full border border-marine/20 bg-white/90 text-marine shadow-sm transition hover:border-marine/40 hover:bg-marine/5 active:bg-marine/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine lg:hidden"
+      aria-expanded="false"
+      aria-controls="mobile-nav-panel"
+      aria-label="Ouvrir le menu de navigation"
+    >
+      <svg class="pointer-events-none h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          id="nav-icon-hamburger"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+        <path
+          id="nav-icon-close-toggle"
+          class="hidden"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!--
+  Panneau mobile : rendu comme frère du header (pas dedans).
+  Corrige overlay invisible / mal positionné sur mobile quand un ancêtre a backdrop-filter.
+-->
+<div
+  id="mobile-nav-panel"
+  class="mobile-nav-overlay fixed inset-0 z-[500] flex min-h-[100dvh] flex-col lg:!hidden"
+  style="display: none;"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu de navigation"
+  aria-hidden="true"
+>
+  <div class="relative flex min-h-[100dvh] flex-1 flex-col bg-marine/45 backdrop-blur-[3px]">
+    <div
+      id="nav-menu-backdrop"
+      class="absolute inset-0 z-0 touch-manipulation"
+      role="presentation"
+    >
+    </div>
+
+    <div
+      id="mobile-nav-sheet"
+      class="relative z-10 ml-auto flex h-full min-h-0 w-full max-w-[min(100%,21rem)] flex-col overflow-hidden bg-ivoire shadow-[-12px_0_40px_rgba(29,53,87,0.18)]"
+      style="padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);"
+    >
+      <div
+        class="relative flex shrink-0 items-center justify-between gap-3 border-b border-marine/10 bg-gradient-to-l from-sauge/35 via-ivoire to-rose-vieux/10 px-4 py-4 sm:px-5"
+      >
+        <span class="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-aquarelle-jaune/20 blur-2xl" aria-hidden="true"></span>
+        <p class="font-display text-2xl text-marine">Menu</p>
+        <button
+          type="button"
+          id="nav-menu-close"
+          class="flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl border border-marine/15 bg-white text-marine shadow-sm transition hover:bg-marine/5 active:bg-marine/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+          aria-label="Fermer le menu"
+        >
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <nav
+        class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5 [-webkit-overflow-scrolling:touch]"
+        aria-label="Navigation principale"
+      >
+        <ul class="space-y-1.5">
+          {
+            links.map((l) => {
+              const active = isActive(l.href);
+              return (
+                <li>
+                  <a
+                    href={l.href}
+                    data-mobile-nav-link
+                    title={l.label}
+                    class:list={[
+                      "flex min-h-[52px] touch-manipulation items-center rounded-xl px-4 py-3.5 text-base font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine active:opacity-90",
+                      active
+                        ? "bg-marine text-ivoire shadow-md"
+                        : "bg-white/85 text-marine shadow-sm hover:bg-white",
+                    ]}
+                    aria-current={active ? "page" : undefined}
+                  >
+                    {l.shortLabel}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </nav>
+
+      <div class="shrink-0 border-t border-marine/10 bg-white/70 px-4 py-5 sm:px-5">
+        <p class="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-marine/60">Accessibilité</p>
+        <TextSizeToggle variant="compact" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    function ready(fn) {
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+      else fn();
+    }
+
+    ready(function () {
+      var toggle = document.getElementById("nav-menu-toggle");
+      var panel = document.getElementById("mobile-nav-panel");
+      var backdrop = document.getElementById("nav-menu-backdrop");
+      var closeBtn = document.getElementById("nav-menu-close");
+      var iconHam = document.getElementById("nav-icon-hamburger");
+      var iconCloseT = document.getElementById("nav-icon-close-toggle");
+      if (!toggle || !panel || !backdrop || !closeBtn) return;
+
+      var previousFocus = null;
+
+      function isLargeViewport() {
+        return window.matchMedia("(min-width: 1024px)").matches;
+      }
+
+      function setOpen(open) {
+        if (isLargeViewport()) {
+          open = false;
+        }
+
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        toggle.setAttribute(
+          "aria-label",
+          open ? "Fermer le menu de navigation" : "Ouvrir le menu de navigation",
+        );
+
+        if (open) {
+          panel.style.display = "flex";
+          panel.removeAttribute("aria-hidden");
+          var sy = window.scrollY || window.pageYOffset || 0;
+          document.body.dataset.scrollLock = String(sy);
+          document.body.style.position = "fixed";
+          document.body.style.top = "-" + scrollLockY + "px";
+          document.body.style.left = "0";
+          document.body.style.right = "0";
+          document.body.style.width = "100%";
+          document.documentElement.style.overflow = "hidden";
+
+          if (iconHam) iconHam.classList.add("hidden");
+          if (iconCloseT) iconCloseT.classList.remove("hidden");
+
+          previousFocus = document.activeElement;
+          requestAnimationFrame(function () {
+            closeBtn.focus();
+          });
+        } else {
+          panel.style.display = "none";
+          panel.setAttribute("aria-hidden", "true");
+
+          var savedScroll = document.body.dataset.scrollLock;
+          document.body.style.position = "";
+          document.body.style.top = "";
+          document.body.style.left = "";
+          document.body.style.right = "";
+          document.body.style.width = "";
+          delete document.body.dataset.scrollLock;
+          document.documentElement.style.overflow = "";
+
+          if (iconHam) iconHam.classList.remove("hidden");
+          if (iconCloseT) iconCloseT.classList.add("hidden");
+
+          if (savedScroll !== undefined && savedScroll !== "") {
+            var y = parseInt(savedScroll, 10);
+            if (!isNaN(y)) window.scrollTo(0, y);
+          }
+
+          if (previousFocus && typeof previousFocus.focus === "function") {
+            try {
+              previousFocus.focus();
+            } catch (e) {}
+            previousFocus = null;
+          }
+        }
+      }
+
+      function close() {
+        setOpen(false);
+      }
+
+      toggle.addEventListener(
+        "click",
+        function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var expanded = toggle.getAttribute("aria-expanded") === "true";
+          setOpen(!expanded);
+        },
+        { passive: false },
+      );
+
+      closeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        close();
+      });
+
+      backdrop.addEventListener(
+        "click",
+        function () {
+          close();
+        },
+        { passive: true },
+      );
+
+      document.querySelectorAll("[data-mobile-nav-link]").forEach(function (link) {
+        link.addEventListener("click", close);
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && panel.style.display !== "none") {
+          e.preventDefault();
+          close();
+        }
+      });
+
+      window.addEventListener(
+        "resize",
+        function () {
+          if (isLargeViewport()) close();
+        },
+        { passive: true },
+      );
+    });
+  })();
+</script>

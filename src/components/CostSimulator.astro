@@ -1,0 +1,57 @@
+---
+---
+
+<section
+  class="rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm"
+  aria-labelledby="sim-title"
+>
+  <h2 id="sim-title" class="font-display text-2xl text-marine">
+    Simulateur de coût (crédit d’impôt 50&nbsp;%)
+  </h2>
+  <p class="mt-2 text-marine/85">
+    Indiquez une estimation du tarif horaire ou du montant pour voir le coût net après crédit d’impôt sur les
+    dépenses éligibles (réglementation en vigueur).
+  </p>
+  <div class="mt-6 grid gap-4 md:grid-cols-2">
+    <div>
+      <label for="sim-brut" class="block text-sm font-medium text-marine"> Montant brut (€) </label>
+      <input
+        id="sim-brut"
+        type="number"
+        min="0"
+        step="0.5"
+        inputmode="decimal"
+        class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        value="40"
+      />
+    </div>
+    <div class="rounded-xl bg-sauge/25 p-4">
+      <p class="text-sm font-medium text-marine">Coût net estimé après 50&nbsp;%</p>
+      <p class="mt-2 font-display text-3xl text-marine" id="sim-net" aria-live="polite">
+        20,00&nbsp;€
+      </p>
+      <p class="mt-2 text-xs text-marine/70">
+        Simulation indicative — vérifiez votre situation avec un conseiller ou les informations officielles des
+        services à la personne.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const input = document.getElementById("sim-brut") as HTMLInputElement | null;
+  const out = document.getElementById("sim-net");
+
+  function fmt(n: number) {
+    return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
+  }
+
+  function update() {
+    const brut = Math.max(0, Number(input?.value) || 0);
+    const net = brut * 0.5;
+    if (out) out.textContent = fmt(net);
+  }
+
+  input?.addEventListener("input", update);
+  update();
+</script>

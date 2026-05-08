@@ -1,0 +1,87 @@
+---
+import "../styles/global.css";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import BrandBackdrop from "@/components/BrandBackdrop.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  breadcrumb?: { href?: string; label: string }[];
+  jsonLd?: Record<string, unknown>;
+}
+
+const { title, description, breadcrumb, jsonLd } = Astro.props;
+
+const siteUrl = Astro.site?.href ?? Astro.url.origin;
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+
+const defaultLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "Le Sourire de Jojo",
+  description:
+    "Accompagnement à domicile — lecture, sorties, jeux, nature et souvenirs. Montauban, Corbarieu, Tarn-et-Garonne.",
+  url: siteUrl,
+  areaServed: {
+    "@type": "AdministrativeArea",
+    name: "Tarn-et-Garonne",
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Montauban",
+    addressRegion: "Occitanie",
+    addressCountry: "FR",
+  },
+  priceRange: "$$",
+};
+
+const structured = jsonLd ?? defaultLd;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="keywords" content="accompagnement à domicile, Montauban, Corbarieu, Tarn-et-Garonne, SAP, crédit d'impôt, seniors, PMR" />
+    <link rel="canonical" href={canonical} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Lato:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <script type="application/ld+json" set:html={JSON.stringify(structured)} />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <BrandBackdrop />
+    <SiteHeader />
+    {
+      breadcrumb && breadcrumb.length > 0 && (
+        <nav aria-label="Fil d'Ariane" class="relative z-10 mx-auto w-full max-w-6xl px-4 py-3 text-sm text-marine/80 md:px-6">
+          <ol class="flex flex-wrap items-center gap-2">
+            {breadcrumb.map((item, i) => (
+              <li class="flex items-center gap-2">
+                {i > 0 && <span class="text-marine/40">/</span>}
+                {item.href ? (
+                  <a href={item.href} class="underline decoration-marine/30 underline-offset-2 hover:text-marine">
+                    {item.label}
+                  </a>
+                ) : (
+                  <span class="font-medium text-marine">{item.label}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+    <main id="contenu-principal" class="relative z-10 flex-1">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

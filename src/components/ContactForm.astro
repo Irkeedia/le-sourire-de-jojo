@@ -1,0 +1,147 @@
+---
+---
+
+<form
+  id="contact-form"
+  class="space-y-4 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm"
+  novalidate
+>
+  <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <div>
+      <label for="cf-name" class="block text-sm font-medium text-marine">Nom et prénom *</label>
+      <input
+        id="cf-name"
+        name="name"
+        type="text"
+        required
+        maxlength="120"
+        autocomplete="name"
+        class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+      />
+      <p class="mt-1 hidden text-sm text-red-800" data-error-for="name"></p>
+    </div>
+    <div>
+      <label for="cf-email" class="block text-sm font-medium text-marine">E-mail *</label>
+      <input
+        id="cf-email"
+        name="email"
+        type="email"
+        required
+        maxlength="254"
+        autocomplete="email"
+        class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+      />
+      <p class="mt-1 hidden text-sm text-red-800" data-error-for="email"></p>
+    </div>
+  </div>
+
+  <div class="max-w-md">
+    <label for="cf-phone" class="block text-sm font-medium text-marine">Téléphone (facultatif)</label>
+    <input
+      id="cf-phone"
+      name="phone"
+      type="tel"
+      maxlength="40"
+      autocomplete="tel"
+      class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+    />
+    <p class="mt-1 hidden text-sm text-red-800" data-error-for="phone"></p>
+  </div>
+
+  <div>
+    <label for="cf-subject" class="block text-sm font-medium text-marine">Sujet *</label>
+    <input
+      id="cf-subject"
+      name="subject"
+      type="text"
+      required
+      maxlength="200"
+      class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+    />
+    <p class="mt-1 hidden text-sm text-red-800" data-error-for="subject"></p>
+  </div>
+
+  <div>
+    <label for="cf-message" class="block text-sm font-medium text-marine">Message *</label>
+    <textarea
+      id="cf-message"
+      name="message"
+      required
+      rows="6"
+      maxlength="8000"
+      class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+    ></textarea>
+    <p class="mt-1 hidden text-sm text-red-800" data-error-for="message"></p>
+  </div>
+
+  <p class="text-xs text-marine/70">
+    En envoyant ce formulaire, vous acceptez que vos données soient utilisées uniquement pour répondre à votre
+    demande (RGPD). Pas de revente, pas de newsletter sans consentement.
+  </p>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <button
+      type="submit"
+      class="rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine disabled:opacity-60"
+    >
+      Envoyer
+    </button>
+    <p id="cf-status" class="text-sm text-marine/80" role="status" aria-live="polite"></p>
+  </div>
+</form>
+
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement | null;
+  const status = document.getElementById("cf-status");
+
+  function showFieldErrors(errors: Record<string, string[] | undefined>) {
+    document.querySelectorAll("[data-error-for]").forEach((el) => {
+      el.classList.add("hidden");
+      (el as HTMLElement).textContent = "";
+    });
+    for (const [key, msgs] of Object.entries(errors)) {
+      const target = document.querySelector(`[data-error-for="${key}"]`);
+      if (target && msgs?.[0]) {
+        target.classList.remove("hidden");
+        target.textContent = msgs[0];
+      }
+    }
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!form || !status) return;
+    status.textContent = "Envoi en cours…";
+    const fd = new FormData(form);
+    const payload = {
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      phone: String(fd.get("phone") ?? ""),
+      subject: String(fd.get("subject") ?? ""),
+      message: String(fd.get("message") ?? ""),
+      website: String(fd.get("website") ?? ""),
+    };
+
+    showFieldErrors({});
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data.errors) showFieldErrors(data.errors);
+        status.textContent = data.error ?? "Une erreur est survenue.";
+        return;
+      }
+      status.textContent = "Message envoyé. Nous vous répondons très vite.";
+      form.reset();
+    } catch {
+      status.textContent = "Erreur réseau. Réessayez dans un instant.";
+    }
+  });
+</script>

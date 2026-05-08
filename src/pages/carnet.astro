@@ -1,0 +1,94 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Le carnet de sourires — Le Sourire de Jojo";
+const description =
+  "Le carnet physique relie les séances, capture les souvenirs et raconte votre histoire — Montauban, Tarn-et-Garonne.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Le carnet de sourires" }]}
+>
+  <article class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Le carnet de sourires</h1>
+
+    <section class="mt-10 max-w-3xl space-y-5 text-marine/90 leading-relaxed" aria-labelledby="concept-carnet">
+      <h2 id="concept-carnet" class="sr-only">Le concept</h2>
+      <p class="text-lg">
+        Le carnet n’est pas un gadget : c’est le fil conducteur entre nos rencontres. Y sont notés les petits détails
+        qui comptent — une chanson aimée, une photo ratée devenue culte, une promesse pour la semaine suivante.
+      </p>
+      <p>
+        Pour les familles, il trace une mémoire partagée ; pour la personne accompagnée, il restitue la continuité
+        lorsque les journées se ressemblent. C’est un objet tangible de dignité et de joie.
+      </p>
+    </section>
+
+    <section class="mt-14" aria-labelledby="galerie-carnet">
+      <h2 id="galerie-carnet" class="font-display text-3xl text-marine">Visuels du carnet</h2>
+      <p class="mt-4 max-w-3xl text-marine/85">
+        Placez vos clichés haute définition dans <code class="rounded bg-marine/10 px-1.5 py-0.5 text-sm">public/images/</code>
+        (par ex. <span class="whitespace-nowrap">carnet-ferme.webp</span>, <span class="whitespace-nowrap">carnet-ouvert.webp</span>,
+        <span class="whitespace-nowrap">carnet-pages.webp</span>) pour remplacer les emplacements ci-dessous — les alt restent adaptés au contenu réel.
+      </p>
+
+      <div class="mt-10 grid gap-8 md:grid-cols-3">
+        <figure class="overflow-hidden rounded-2xl border border-marine/15 bg-white shadow-sm">
+          <img
+            src="/images/carnet-placeholder.svg"
+            data-photo="/images/carnet-ferme.webp"
+            alt="Carnet fermé, reliure et détails du Sourire de Jojo"
+            width="800"
+            height="600"
+            loading="lazy"
+            decoding="async"
+            class="photo-replace h-auto w-full object-cover"
+          />
+          <figcaption class="px-4 py-3 text-center text-sm text-marine/75">Fermé — première impression</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-2xl border border-marine/15 bg-white shadow-sm">
+          <img
+            src="/images/carnet-placeholder.svg"
+            data-photo="/images/carnet-ouvert.webp"
+            alt="Carnet ouvert sur une séance récente"
+            width="800"
+            height="600"
+            loading="lazy"
+            decoding="async"
+            class="photo-replace h-auto w-full object-cover"
+          />
+          <figcaption class="px-4 py-3 text-center text-sm text-marine/75">Ouvert — dialogue avec les pages</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-2xl border border-marine/15 bg-white shadow-sm">
+          <img
+            src="/images/carnet-placeholder.svg"
+            data-photo="/images/carnet-pages.webp"
+            alt="Exemples de pages intérieures remplies"
+            width="800"
+            height="600"
+            loading="lazy"
+            decoding="async"
+            class="photo-replace h-auto w-full object-cover"
+          />
+          <figcaption class="px-4 py-3 text-center text-sm text-marine/75">Pages intérieures — souvenirs écrits et collés</figcaption>
+        </figure>
+      </div>
+
+      <script>
+        document.querySelectorAll("img.photo-replace").forEach((img) => {
+          const el = img;
+          const hi = el.dataset.photo;
+          if (!hi) return;
+          const probe = new window.Image();
+          probe.onload = () => {
+            el.src = hi;
+          };
+          probe.onerror = () => {};
+          probe.src = hi;
+        });
+      </script>
+    </section>
+  </article>
+</BaseLayout>

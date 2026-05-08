@@ -1,0 +1,41 @@
+---
+import SealBadge from "./SealBadge.astro";
+---
+
+<footer class="relative z-10 mt-16 overflow-hidden border-t border-marine/15 bg-gradient-to-br from-sauge/35 via-ivoire to-rose-vieux/20">
+  <div class="pointer-events-none absolute -left-16 bottom-0 h-52 w-52 rounded-full bg-aquarelle-jaune/20 blur-3xl" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute -right-20 top-0 h-64 w-64 rounded-full bg-aquarelle-mauve/15 blur-3xl" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-6xl px-4 py-12 md:px-6">
+    <div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="flex h-12 w-12 items-center justify-center rounded-full border border-marine/15 bg-white/75 text-marine shadow-sm">
+            <svg viewBox="0 0 48 48" class="h-8 w-8" fill="none" aria-hidden="true">
+              <path d="M14 27c5 7 16 7 21 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+              <path d="M16 20c2-2 5-2 7 0M27 20c2-2 5-2 7 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </span>
+          <p class="font-display text-3xl text-marine">Le Sourire de Jojo</p>
+        </div>
+        <p class="mt-2 max-w-md text-marine/85">
+          Faire de chaque instant une danse — accompagnement bienveillant à domicile dans le Tarn-et-Garonne.
+        </p>
+        <p class="mt-4 text-sm text-marine/70">
+          Zone d’intervention : Montauban, Corbarieu et environs (82).
+        </p>
+      </div>
+      <SealBadge />
+    </div>
+    <div class="mt-10 flex flex-wrap gap-6 border-t border-marine/10 pt-8 text-sm">
+      <a href="/contact#mentions" class="underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">
+        Mentions légales & confidentialité
+      </a>
+      <a href="/contact" class="underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">
+        Contact
+      </a>
+    </div>
+    <p class="mt-6 text-center text-xs text-marine/60">
+      © {new Date().getFullYear()} Le Sourire de Jojo — Tous droits réservés.
+    </p>
+  </div>
+</footer>

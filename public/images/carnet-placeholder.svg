@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-labelledby="t">
+  <title id="t">Emplacement photo carnet  remplacer par votre visuel</title>
+  <rect fill="#F5F3E7" width="800" height="600"/>
+  <rect x="120" y="80" width="560" height="440" rx="12" fill="#fff" stroke="#1D3557" stroke-width="3" opacity="0.35"/>
+  <text x="400" y="290" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#1D3557" opacity="0.55">Photo du carnet</text>
+  <text x="400" y="330" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#1D3557" opacity="0.45">Remplacez ce fichier dans /public/images/</text>
+</svg>
