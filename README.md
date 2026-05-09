@@ -4,6 +4,8 @@ Site vitrine pour **Le Sourire de Jojo** : accompagnement à domicile bienveilla
 
 **Dépôt :** [github.com/Irkeedia/le-sourire-de-jojo](https://github.com/Irkeedia/le-sourire-de-jojo)
 
+**Indexation :** par défaut, le site est en **noindex** (il ne doit **pas** apparaître dans Google et les autres moteurs tant que vous n’activez pas volontairement l’indexation). Voir la section [Indexation (noindex par défaut)](#indexation-noindex-par-défaut).
+
 ---
 
 ## Sommaire
@@ -20,8 +22,9 @@ Site vitrine pour **Le Sourire de Jojo** : accompagnement à domicile bienveilla
 10. [Interface : design et composants clés](#interface--design-et-composants-clés)
 11. [Assets statiques et images](#assets-statiques-et-images)
 12. [Build et déploiement](#build-et-déploiement)
-13. [Documentation complémentaire](#documentation-complémentaire)
-14. [Licence](#licence)
+13. [Indexation (noindex par défaut)](#indexation-noindex-par-défaut)
+14. [Documentation complémentaire](#documentation-complémentaire)
+15. [Licence](#licence)
 
 ---
 
@@ -92,11 +95,15 @@ Résumé (table complète : `docs/ENVIRONNEMENT.md`) :
 | Variable | Usage |
 |----------|--------|
 | `PUBLIC_SITE_URL` | URL canonique du site (SEO, `Astro.site`) — fortement conseillé en production |
+| `PUBLIC_ALLOW_INDEXING` | **`true`** ou **`1`** uniquement quand vous voulez être référencé. Toute autre valeur ou l’absence de variable = site **non indexé** (voir section dédiée ci-dessous) |
 | `CONTACT_TO_EMAIL` | Destinataire des messages contact |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` | Envoi des e-mails de notification |
 | `MONGODB_URI` | Optionnel : enregistrement des messages en base |
 | `HSTS_ENABLE`, `CSP_REPORT_ONLY`, `CSP_REPORT_URI` | Durcissement HTTP / CSP |
 | `CONTACT_RATE_LIMIT`, `CONTACT_RATE_WINDOW_MS` | Limite de débit sur `POST /api/contact` |
+| `PUBLIC_GOOGLE_MAPS_EMBED_URL` | Optionnel : URL d’iframe « Partager → Intégrer une carte » (recommandé sans compte API) |
+| `PUBLIC_GOOGLE_MAPS_API_KEY` | Optionnel : clé **Maps Embed API** (alternative à l’URL d’embed) |
+| `PUBLIC_GOOGLE_MAPS_EMBED_QUERY`, `PUBLIC_GOOGLE_MAPS_EMBED_ZOOM` | Optionnel : lieu et zoom si pas d’URL personnalisée |
 
 **Ne jamais committer** le fichier `.env` (il doit rester dans `.gitignore`).
 
@@ -158,7 +165,7 @@ Les routes suivent la convention Astro : un fichier dans `src/pages/` = une URL.
 | `/services` | `pages/services.astro` | Détail des axes d’accompagnement |
 | `/offres` | `pages/offres.astro` | Forfaits / tarifs indicatifs |
 | `/carnet` | `pages/carnet.astro` | Carnet de sourires |
-| `/contact` | `pages/contact.astro` | Formulaire + simulateur crédit d’impôt |
+| `/contact` | `pages/contact.astro` | Carte Google Maps (optionnelle), formulaire, simulateur crédit d’impôt |
 | `POST /api/contact` | `pages/api/contact.ts` | API JSON du formulaire |
 
 Page d’erreur : `pages/404.astro`.
@@ -203,11 +210,12 @@ Polices : **Dancing Script** (titres affichage), **Lato** (corps), chargées via
 
 | Composant | Rôle |
 |-----------|------|
-| `BaseLayout.astro` | Structure HTML, meta, JSON-LD par défaut (LocalBusiness), header/footer globaux |
+| `BaseLayout.astro` | Structure HTML, meta (robots selon `PUBLIC_ALLOW_INDEXING`), JSON-LD LocalBusiness **uniquement si indexation autorisée**, header/footer globaux |
 | `SiteHeader.astro` / `SiteFooter.astro` | Navigation et pied de page |
 | `BrandBackdrop.astro` | Calque fixe plein écran : décor floral en PNG (toutes les images du dossier `public/images/assets fleur/`) |
 | `FloralAccent.astro` | Accents floraux **en PNG** dans certaines sections (remplace les anciens SVG décoratifs) |
 | `CursorTracker.astro` | Curseur personnalisé : **petit point** uniquement sur pointeur fin (`hover: hover` + `pointer: fine`), curseur masqué sur le document ; champs texte gardent le curseur système ; désactivé sur appareils tactiles |
+| `GoogleMapEmbed.astro` | Carte **Google Maps** toujours en **iframe** : URL d’embed (`PUBLIC_GOOGLE_MAPS_EMBED_URL`), ou clé API + lieu, ou embed sans clé (`output=embed`) |
 | `ContactForm.astro` | Formulaire relié à l’API |
 | `CostSimulator.astro` | Estimation liée au crédit d’impôt (page contact) |
 | `TextSizeToggle.astro` | Réglage taille de texte (accessibilité) |
@@ -231,6 +239,27 @@ Le fichier `src/styles/global.css` contient les utilitaires de mise en page (fon
 3. `npm run start` (ou lancer le point d’entrée généré selon la doc de l’hébergement Node)
 
 Détails (HTTPS, proxy, variables) : **`docs/DEPLOIEMENT.md`**.
+
+**Vercel :** le build utilise automatiquement l’adaptateur **`@astrojs/vercel`** (variable d’environnement `VERCEL=1` côté plateforme). Si vous ne voyez que `404 NOT_FOUND` Vercel sur tout le site, c’est en général qu’un adaptateur **Node standalone** était utilisé sans configuration Vercel — la config actuelle du dépôt corrige ce cas.
+
+---
+
+## Indexation (noindex par défaut)
+
+Le projet est réglé pour rester **invisible dans les résultats des moteurs de recherche** tant que vous ne basculez pas explicitement en mode indexable.
+
+**Comportement lorsque `PUBLIC_ALLOW_INDEXING` n’est pas `true` / `1`** (y compris variable absente ou `false`) :
+
+| Mécanisme | Effet |
+|-----------|--------|
+| Balise HTML | `<meta name="robots" content="noindex, nofollow">` sur toutes les pages (`BaseLayout.astro`) |
+| HTTP | En-tête `X-Robots-Tag: noindex, nofollow` sur les réponses (`middleware.ts`) |
+| `robots.txt` | Route dynamique `src/pages/robots.txt.ts` : **`Disallow: /`** pour tous les user-agents |
+| Données structurées | Pas de script JSON-LD « LocalBusiness » (évite d’envoyer un signal SEO contradictoire) |
+
+**Pour autoriser l’indexation** (mise en ligne publique, référencement souhaité) : dans le `.env` de production, définir `PUBLIC_ALLOW_INDEXING=true`, puis redémarrer l’application. Le `robots.txt` passera alors à `Allow: /` et le JSON-LD réapparaîtra.
+
+Référence détaillée des variables : `docs/ENVIRONNEMENT.md`.
 
 ---
 

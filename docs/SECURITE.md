@@ -14,7 +14,7 @@ Sur **toutes** les réponses, ajout d’en-têtes de durcissement (via `src/lib/
 | `X-Content-Type-Options: nosniff` | Limite le MIME-sniffing. |
 | `Referrer-Policy: strict-origin-when-cross-origin` | Contrôle les fuites d’URL vers des tiers. |
 | `Permissions-Policy` | Désactive par défaut caméra, micro, géoloc. etc. |
-| **CSP** (`Content-Security-Policy`) | En **production** uniquement (`astro build` / `preview`), pas pendant `astro dev` pour ne pas bloquer le flux de dev. Inclut `script-src 'unsafe-inline'` car le site utilise des scripts inline (menu, formulaire). Pour durcir : externaliser ces scripts et retirer `unsafe-inline`. |
+| **CSP** (`Content-Security-Policy`) | En **production** uniquement (`astro build` / `preview`), pas pendant `astro dev` pour ne pas bloquer le flux de dev. Inclut `script-src 'unsafe-inline'` car le site utilise des scripts inline (menu, formulaire). Pour durcir : externaliser ces scripts et retirer `unsafe-inline`. Inclut `frame-src https://www.google.com https://maps.google.com` pour les iframes **Google Maps** (carte intégrée). |
 | **HSTS** | Optionnel via `HSTS_ENABLE=true` **uniquement** si le site est réellement servi en **HTTPS** et si le proxy envoie `X-Forwarded-Proto: https`. Sinon risque de comportements incorrects. |
 
 Paramètres optionnels :

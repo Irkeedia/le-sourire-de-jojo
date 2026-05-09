@@ -30,6 +30,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
   const out = new Headers(response.headers);
   applySecurityHeaders(request, out);
+
+  const allowIndexing =
+    import.meta.env.PUBLIC_ALLOW_INDEXING === "true" || import.meta.env.PUBLIC_ALLOW_INDEXING === "1";
+  if (!allowIndexing) {
+    out.set("X-Robots-Tag", "noindex, nofollow");
+  }
+
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,

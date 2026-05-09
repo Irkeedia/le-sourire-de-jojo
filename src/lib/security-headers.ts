@@ -30,8 +30,10 @@ export function applySecurityHeaders(request: Request, headers: Headers): void {
   const imgSrc = "img-src 'self' data: blob: https:";
   const scriptSrc = "script-src 'self' 'unsafe-inline'";
   const connectSrc = "connect-src 'self'";
+  /** Carte Google Maps (iframe : www, maps, éventuels sous-domaines). */
+  const frameSrc = "frame-src https://www.google.com https://maps.google.com";
   const frameAncestors = "frame-ancestors 'none'";
-  const base = `default-src 'self'; ${scriptSrc}; ${styleSrc}; ${fontSrc}; ${imgSrc}; ${connectSrc}; ${frameAncestors}; base-uri 'self'; form-action 'self'`;
+  const base = `default-src 'self'; ${scriptSrc}; ${styleSrc}; ${fontSrc}; ${imgSrc}; ${connectSrc}; ${frameSrc}; ${frameAncestors}; base-uri 'self'; form-action 'self'`;
 
   const csp = reportUri ? `${base}; report-uri ${reportUri}` : base;
   const cspHeader = reportOnly ? "Content-Security-Policy-Report-Only" : "Content-Security-Policy";

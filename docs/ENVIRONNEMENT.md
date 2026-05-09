@@ -7,6 +7,18 @@ Copier `env.example` vers `.env` à la racine du projet (non versionné).
 | Variable | Obligatoire | Description |
 |----------|-------------|-------------|
 | `PUBLIC_SITE_URL` | Fortement conseillé | URL canonique du site (ex. `https://www.exemple.fr`). Utilisée pour canonical SEO et `Astro.site`. |
+| `PUBLIC_ALLOW_INDEXING` | Non | Si **`true`** ou **`1`** : le site est **indexable** (pas de `noindex`, `robots.txt` autorise le crawl, JSON-LD présent). Dans tout autre cas (variable absente ou autre valeur) : **`noindex, nofollow`** (meta + en-tête `X-Robots-Tag`), **`robots.txt`** en `Disallow: /`, JSON-LD désactivé — utile avant la mise en ligne publique. |
+
+## Google Maps (carte intégrée)
+
+La carte est **toujours affichée dans une iframe** sur le site (pas de simple lien de redirection).
+
+| Variable | Obligatoire | Description |
+|----------|-------------|-------------|
+| `PUBLIC_GOOGLE_MAPS_EMBED_URL` | Non | URL complète du `src` de l’iframe, telle que fournie par Google Maps (**Partager** → **Intégrer une carte**). Si défini, **prioritaire** sur la clé API et sur l’embed sans clé. |
+| `PUBLIC_GOOGLE_MAPS_API_KEY` | Non | Clé API **publique** + **Maps Embed API** sur Google Cloud : utilise `embed/v1/place` avec `PUBLIC_GOOGLE_MAPS_EMBED_QUERY` et zoom. |
+| `PUBLIC_GOOGLE_MAPS_EMBED_QUERY` | Non | Lieu recherché si pas d’URL personnalisée : utilisé avec la clé API ou avec l’embed « classique » `output=embed` (sans clé). |
+| `PUBLIC_GOOGLE_MAPS_EMBED_ZOOM` | Non | Zoom **1** à **20** (défaut **9**) — ignoré si seule `PUBLIC_GOOGLE_MAPS_EMBED_URL` est définie (carte déjà figée dans l’URL). |
 
 ## Contact & e-mail
 

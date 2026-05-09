@@ -1,5 +1,16 @@
 # Déploiement — Le Sourire de Jojo
 
+## Vercel
+
+Ce dépôt utilise le SSR Astro avec **deux adaptateurs** selon l’environnement :
+
+- **Sur Vercel** (`VERCEL=1`, défini automatiquement par la plateforme) : **`@astrojs/vercel`** — les routes et l’API sont servies comme attendu. Sans cet adaptateur, un déploiement « Node standalone » sur Vercel provoque souvent une erreur **`404 NOT_FOUND`** sur toutes les URLs.
+- **Ailleurs** (VPS, Docker, etc.) : **`@astrojs/node`** en mode `standalone`, puis `npm run start`.
+
+Sur Vercel : connecter le dépôt Git, laisser la **commande de build** par défaut (`npm run build`), le **répertoire de sortie** est géré par l’adaptateur. Définir les variables d’environnement (voir ci-dessous) dans le tableau *Settings → Environment Variables*.
+
+**MongoDB** : en serverless, privilégier une connexion réutilisée (pool) et des timeouts adaptés ; le premier appel après inactivité peut être plus lent (cold start).
+
 ## Build
 
 ```bash

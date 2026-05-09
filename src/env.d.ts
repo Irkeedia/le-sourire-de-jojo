@@ -2,6 +2,16 @@
 
 interface ImportMetaEnv {
   readonly PUBLIC_SITE_URL?: string;
+  /** Si "true" / "1" : autorise l’indexation (meta robots, robots.txt, JSON-LD). Sinon : noindex. */
+  readonly PUBLIC_ALLOW_INDEXING?: string;
+  /** URL complète d’iframe (Partager → Intégrer une carte), prioritaire sur clé API. */
+  readonly PUBLIC_GOOGLE_MAPS_EMBED_URL?: string;
+  /** Clé publique Google Maps (Embed API) pour l’iframe carte. */
+  readonly PUBLIC_GOOGLE_MAPS_API_KEY?: string;
+  /** Requête lieu affichée sur la carte (ex. ville, adresse). */
+  readonly PUBLIC_GOOGLE_MAPS_EMBED_QUERY?: string;
+  /** Zoom carte 1–20 (optionnel). */
+  readonly PUBLIC_GOOGLE_MAPS_EMBED_ZOOM?: string;
   readonly CONTACT_TO_EMAIL?: string;
   readonly SMTP_HOST?: string;
   readonly SMTP_PORT?: string;

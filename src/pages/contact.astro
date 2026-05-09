@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import CostSimulator from "@/components/CostSimulator.astro";
 import ContactForm from "@/components/ContactForm.astro";
 import SealBadge from "@/components/SealBadge.astro";
+import GoogleMapEmbed from "@/components/GoogleMapEmbed.astro";
 import { PACK_IDS, PACK_LABELS, type PackId } from "@/lib/packs";
 
 const title = "Contact & informations légales — Le Sourire de Jojo";
@@ -43,6 +44,17 @@ const defaultSubject = safePack ? `Demande — ${PACK_LABELS[safePack as PackId]
       <CostSimulator />
     </div>
 
+    <section class="mt-12 scroll-mt-28" id="carte" aria-labelledby="map-title">
+      <h2 id="map-title" class="font-display text-3xl text-marine">Nous trouver sur la carte</h2>
+      <p class="mt-4 max-w-3xl text-marine/85">
+        Repère géographique de la zone d’intervention (Montauban, Corbarieu et Tarn-et-Garonne). Vous pouvez ouvrir
+        l’itinéraire directement dans Google Maps.
+      </p>
+      <div class="mt-8 max-w-4xl">
+        <GoogleMapEmbed title="Le Sourire de Jojo — zone Montauban et Tarn-et-Garonne" />
+      </div>
+    </section>
+
     <section class="mt-12 scroll-mt-28" id="formulaire" aria-labelledby="form-title">
       <h2 id="form-title" class="font-display text-3xl text-marine">Nous écrire</h2>
       <p class="mt-4 max-w-3xl text-marine/85">
@@ -71,8 +83,9 @@ const defaultSubject = safePack ? `Demande — ${PACK_LABELS[safePack as PackId]
           contractuels.
         </p>
         <p>
-          <strong>Cookies :</strong> ce site vise à limiter les traceurs au strict nécessaire ; les scripts tiers
-          seront listés ici si vous en ajoutez (cartes, statistiques, etc.).
+          <strong>Cookies :</strong> ce site vise à limiter les traceurs au strict nécessaire. La carte Google Maps
+          intégrée (si activée) charge du contenu Google pouvant déposer des cookies selon la politique de Google —
+          voir aussi notre politique de confidentialité pour les finalités du formulaire.
         </p>
       </div>
     </section>
@@ -80,12 +93,12 @@ const defaultSubject = safePack ? `Demande — ${PACK_LABELS[safePack as PackId]
     <section class="mt-12 rounded-2xl bg-sauge/20 p-6" aria-labelledby="gmb-title">
       <h2 id="gmb-title" class="font-display text-2xl text-marine">Fiche Google Business Profile</h2>
       <p class="mt-2 text-marine/85">
-        Créez ou reliez votre fiche « Google Business Profile » pour le référencement local (Montauban, Corbarieu,
-        Tarn-et-Garonne), puis indiquez l’URL publique ici :
+        Pour renforcer le référencement local, reliez une fiche « Google Business Profile » et remplacez ce lien par
+        l’URL officielle de votre établissement :
         <a
-          href="https://www.google.com/maps"
+          href="https://www.google.com/intl/fr_fr/business/"
           class="font-medium text-aquarelle-bleu underline decoration-2 underline-offset-2 hover:text-marine"
-          >Maps — à personnaliser</a
+          >Google Business Profile</a
         >.
       </p>
     </section>
