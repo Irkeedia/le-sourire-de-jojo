@@ -57,32 +57,67 @@
     overflow: hidden;
   }
 
-  .brand-smile {
+  .brand-flower {
     position: absolute;
-    right: clamp(-9rem, -8vw, -4rem);
-    top: clamp(8rem, 18vh, 15rem);
-    width: clamp(18rem, 42vw, 38rem);
-    color: rgb(29 53 87 / 0.055);
+    width: clamp(12rem, 20vw, 20rem);
+    opacity: 0.16;
+    object-fit: contain;
+    filter: blur(0.1px);
+  }
+
+  .brand-flower-1 {
+    left: clamp(-4rem, -3vw, -1rem);
+    top: clamp(7rem, 14vh, 14rem);
     transform: rotate(-8deg);
   }
 
-  .brand-flower {
-    position: absolute;
-    filter: blur(0.15px);
+  .brand-flower-2 {
+    right: clamp(-4rem, -3vw, -1rem);
+    top: clamp(4rem, 8vh, 9rem);
+    transform: rotate(7deg);
   }
 
-  .brand-flower-left {
-    left: clamp(-11rem, -10vw, -5rem);
-    bottom: -5rem;
-    width: clamp(16rem, 32vw, 30rem);
-    opacity: 0.28;
+  .brand-flower-3 {
+    left: clamp(-5rem, -4vw, -2rem);
+    bottom: clamp(2rem, 6vh, 5rem);
+    transform: rotate(10deg);
   }
 
-  .brand-flower-right {
-    right: clamp(-12rem, -11vw, -5rem);
-    top: 6rem;
-    width: clamp(18rem, 34vw, 32rem);
-    opacity: 0.25;
+  .brand-flower-4 {
+    right: clamp(-4rem, -3vw, -1rem);
+    bottom: clamp(1rem, 4vh, 4rem);
+    transform: rotate(-11deg);
+  }
+
+  .brand-flower-5 {
+    left: clamp(20%, 24vw, 30%);
+    top: clamp(-3rem, -2vh, -1rem);
+    transform: rotate(6deg);
+  }
+
+  .brand-flower-6 {
+    right: clamp(18%, 22vw, 28%);
+    top: clamp(38%, 40vh, 46%);
+    transform: rotate(-7deg);
+  }
+
+  .brand-flower-7 {
+    left: clamp(28%, 32vw, 38%);
+    bottom: clamp(-4rem, -2vh, -1rem);
+    transform: rotate(9deg);
+  }
+
+  .brand-flower-8 {
+    right: clamp(34%, 38vw, 44%);
+    top: clamp(18%, 22vh, 26%);
+    transform: rotate(-5deg);
+  }
+
+  @media (max-width: 900px) {
+    .brand-flower {
+      width: clamp(9rem, 28vw, 14rem);
+      opacity: 0.13;
+    }
   }
 
   .jojo-paper {
