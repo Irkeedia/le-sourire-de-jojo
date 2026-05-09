@@ -1,0 +1,491 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Formulaire de consentement — Le Sourire de Jojo";
+const description =
+  "Document de consentement pour l’accompagnement à domicile et le traitement des données personnelles — à imprimer ou enregistrer en PDF.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { href: "/contact#mentions", label: "Contact & légal" }, { label: "Consentement" }]}
+>
+  <div class="consent-shell">
+    <div class="no-print consent-toolbar mx-auto max-w-3xl px-4 pt-10 md:px-6">
+      <div class="rounded border border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-700 shadow-sm">
+        <p class="font-semibold uppercase tracking-wide text-slate-800">Enregistrer au format PDF</p>
+        <p class="mt-2 leading-relaxed">
+          Bouton ci-dessous, ou <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">Ctrl</kbd
+          >+<kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">P</kbd> /
+          <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">⌘</kbd
+          >+<kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">P</kbd>, puis choisissez
+          <strong>Enregistrer au format PDF</strong>.
+        </p>
+        <button
+          id="print-consent-btn"
+          type="button"
+          class="mt-4 inline-flex items-center justify-center rounded border border-slate-800 bg-slate-900 px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+        >
+          Imprimer / PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="consent-sheet-wrap mx-auto max-w-[210mm] px-4 pb-16 pt-8 md:px-6 md:pb-24 md:pt-10 print:max-w-none print:p-0 print:pb-0">
+      <article id="document-consentement" class="consent-document">
+        <header class="consent-doc-header">
+          <p class="consent-doc-entity">Le Sourire de Jojo</p>
+          <p class="consent-doc-subentity">Services à la personne — Accompagnement à domicile</p>
+          <p class="consent-doc-director">Représentée par <strong>Céline Meunier Benneji</strong></p>
+          <div class="consent-doc-rule" aria-hidden="true"></div>
+          <h1 class="consent-doc-title">Formulaire de consentement</h1>
+          <p class="consent-doc-ref">Réf. document — Version à usage contractuel (modèle indicatif)</p>
+          <p class="consent-doc-warning">
+            Document type à compléter, signer et conserver par chaque partie. À faire valider par votre conseil juridique ou
+            comptable selon votre statut.
+          </p>
+        </header>
+
+        <section class="consent-section">
+          <h2 class="consent-art-title"><span class="consent-art-num">Article 1</span> — Parties</h2>
+          <p>
+            <span class="consent-label">Prestataire :</span> l’activité dénommée « Le Sourire de Jojo », représentée par Céline
+            Meunier Benneji, intervenant notamment sur Montauban, Corbarieu et le département du Tarn-et-Garonne (ci-après « la
+            Prestataire »).
+          </p>
+          <p>
+            <span class="consent-label">Personne signataire :</span> le bénéficiaire de l’accompagnement et/ou son représentant légal,
+            mandataire de protection future ou toute personne habilitée à engager au nom du foyer (ci-après « le Client » ou « la
+            Personne concernée »).
+          </p>
+        </section>
+
+        <section class="consent-section">
+          <h2 class="consent-art-title"><span class="consent-art-num">Article 2</span> — Nature de la prestation</h2>
+          <p>
+            La Prestataire assure un <strong>accompagnement à domicile de nature sociale, ludique et relationnelle</strong> (lecture,
+            sorties, animation douce, lien social, etc.), dans le cadre des activités éligibles aux services à la personne lorsque la
+            réglementation l’autorise, <strong>sans empiéter</strong> sur les actes réservés aux professions de santé (notamment actes
+            infirmiers au sens de l’art. L. 4311-1 du Code de la santé publique et textes d’application).
+          </p>
+          <p>
+            Il est expressément rappelé que cette prestation <strong>ne constitue pas un acte médical, paramédical ou de soins</strong>,
+            qu’elle ne se substitue pas au médecin traitant ni aux professionnels de santé, et qu’elle ne comprend pas le diagnostic, le
+            traitement ou la surveillance clinique d’affections médicales.
+          </p>
+          <p>
+            <span class="consent-label">Obligation de moyens —</span> La Prestataire est tenue d’une <strong>obligation de moyens</strong>
+            : elle s’engage à agir avec diligence et à mettre en œuvre les compétences et la vigilance attendues dans le cadre de l’accompagnement social
+            défini ci-dessus, y compris le cas échéant les gestes de premiers secours correspondant à sa formation lorsqu’elle en est
+            titulaire. Elle n’est pas tenue d’une <strong>obligation de résultat</strong> : aucune garantie d’absence d’accident, de
+            chute, ni de tout autre événement lié à la fragilité de la Personne concernée, à son environnement ou à des circonstances
+            indépendantes de la diligence raisonnablement attendue de la Prestataire ne peut être exigée.
+          </p>
+          <p>
+            <span class="consent-label">Alimentation et risque de fausse route —</span> La Prestataire <strong>ne réalise aucune aide à la
+            prise de repas complexe</strong> relevant d’un professionnel de santé ou d’un auxiliaire de vie spécialisé (notamment en cas
+            de troubles de la déglutition, de régime mixé ou texture strictement prescrite, ou de surveillance renforcée lors des
+            repas). Peuvent demeurer compatibles avec la présente convention des gestes de sociabilité courante (par exemple offrir un
+            verre d’eau ou une collation occasionnelle), <strong>sous réserve</strong> que le Client ait préalablement informé la
+            Prestataire de toute contre-indication. Le Client <strong>s’engage à signaler sans délai</strong> tout régime alimentaire
+            spécifique, protocole de texture, risque de fausse route ou consigne découlant d’une équipe soignante.
+          </p>
+        </section>
+
+        <section class="consent-section">
+          <h2 class="consent-art-title"><span class="consent-art-num">Article 3</span> — Santé, urgence et professionnels de santé</h2>
+          <p>
+            Le Client reconnaît que la Prestataire <strong>n’est pas habilitée à prendre en charge une urgence vitale</strong> ni à
+            modifier un traitement médical. En cas de malaise, aggravation, suspicion d’AVC ou de tout motif nécessitant une
+            intervention sanitaire immédiate, et conformément aux exigences attachées à la non-assistance à personne en danger (notamment
+            art. 223-6 du Code pénal), il convient de respecter l’ordre suivant :
+          </p>
+          <ol class="consent-ol">
+            <li>
+              <strong>Appeler en priorité les secours compétents</strong> (<strong>15</strong>, <strong>18</strong>, <strong>112</strong> ou <strong>114</strong> selon les situations) — avant tout contact familial ou amical lorsque la sécurité ou la vie est en jeu ;
+            </li>
+            <li>
+              ensuite seulement, lorsque les circonstances le permettent sans retard incompatible avec l’urgence, informer les proches
+              désignés ou les professionnels de santé référents des événements significatifs ;
+            </li>
+            <li>
+              la Prestataire pouvant <strong>interrompre ou reporter une séance</strong> pour motif objectif de sécurité ou lorsque la
+              situation dépasse le champ de l’accompagnement non médical défini ci-présent.
+            </li>
+          </ol>
+          <p>
+            Les informations relatives à la santé communiquées en séance sont traitées avec discrétion, dans la stricte mesure où elles
+            sont nécessaires à l’exécution de la prestation et au respect des obligations légales ; elles ne dispensent pas la famille
+            ni les professionnels référents de la coordination médicale lorsque celle-ci est requise.
+          </p>
+          <p>
+            <span class="consent-label">Assurance responsabilité civile professionnelle —</span> Dans le cadre des principes de
+            responsabilité civile délictuelle (<strong>notamment art. 1240 du Code civil</strong>), la Prestataire déclare disposer d’une
+            <strong>assurance responsabilité civile professionnelle</strong> adaptée à son activité, pouvant couvrir certains dommages
+            causés aux tiers ou au patrimoine dans le cadre de la prestation, conformément aux termes, plafonds et exclusions du contrat
+            souscrit. <strong>Sont notamment exclus ou non garantis</strong>, selon les clauses habituelles de ce type de contrats et
+            sans préjudice du libellé applicable au dossier : les dommages liés à une <strong>pathologie préexistante</strong> de la
+            Personne concernée, à l’aggravation naturelle d’un état de santé, à la survenance d’un événement non imputable à une faute
+            dans l’exécution de la prestation, ou à la méconnaissance par le Client des informations ou consignes prévues au présent
+            document ou par les professionnels de santé.
+          </p>
+        </section>
+
+        <section class="consent-section">
+          <h2 class="consent-art-title"><span class="consent-art-num">Article 4</span> — Données personnelles et vie privée</h2>
+          <p>
+            Dans le cadre de la relation précontractuelle et contractuelle, la Prestataire peut traiter des données d’identification,
+            de contact et d’organisation des séances, ainsi que des informations utiles à la qualité de l’accompagnement (centres
+            d’intérêt, habitudes, informations figurant dans le « carnet » ou supports équivalents le cas échéant).
+          </p>
+          <p>
+            <span class="consent-label">Finalités :</span> gestion des demandes et du planning, exécution de la prestation, facturation
+            le cas échéant, conservation de preuves dans les limites légales, obligations comptables et fiscales.
+          </p>
+          <p>
+            <span class="consent-label">Fondements juridiques :</span> notamment exécution du contrat, obligations légales, et,
+            le cas échéant, consentement pour des traitements non indispensables au contrat, recueilli distinctement lorsque requis.
+          </p>
+          <p>
+            Conservation pendant la durée nécessaire aux finalités susvisées ; au-delà, archivage légal ou prescription applicable.
+          </p>
+          <p>
+            Conformément au <strong>Règlement (UE) 2016/679</strong> et à la loi « Informatique et libertés » modifiée : droits d’accès,
+            rectification, effacement, limitation, portabilité lorsque applicable, opposition pour motifs légitimes, directives
+            post-mortem — auprès de la Prestataire ; réclamation auprès de la CNIL (<a
+              href="https://www.cnil.fr"
+              class="consent-link">cnil.fr</a
+            >).
+          </p>
+          <p>
+            Destinataires : personnes autorisées au sein de l’activité ; sous-traitants techniques strictement nécessaires (hébergement,
+            messagerie, base de données le cas échéant), dans le respect des articles 28 et suivants du RGPD lorsque applicable.
+          </p>
+        </section>
+
+        <section class="consent-section">
+          <h2 class="consent-art-title"><span class="consent-art-num">Article 5</span> — Déclaration de consentement</h2>
+          <p>Je soussigné(e) atteste avoir pris connaissance des articles ci-dessus et :</p>
+          <ol class="consent-ol">
+            <li>consens au déroulement de l’accompagnement dans le cadre non médical décrit, y compris la distinction obligation de moyens / obligation de résultat ;</li>
+            <li>
+              reconnais avoir été informé(e) des limites en matière d’aide à l’alimentation et m’engage à communiquer les informations
+              pertinentes sur les risques de déglutition ou de régimes spécifiques ;
+            </li>
+            <li>consens au traitement des données personnelles nécessaires à la relation avec la Prestataire, tel que prévu à l’article 4 ;</li>
+            <li>reconnais avoir été informé(e) de mes droits et de leurs modalités d’exercice ;</li>
+            <li>
+              atteste disposer de la pleine capacité juridique pour contracter ou, à défaut, agir en qualité de représentant légal dûment
+              habilité (tutelle, curatelle, habilitation familiale) ;
+            </li>
+            <li>
+              garantis que l’état de santé de la Personne concernée ne présente pas de contre-indication connue à la réalisation des
+              activités de loisirs et d’accompagnement social prévues.
+            </li>
+          </ol>
+        </section>
+
+        <section class="consent-sign-block">
+          <h2 class="consent-sign-heading">Signatures et mentions obligatoires</h2>
+          <p class="consent-place-date">Fait à <span class="consent-blank"> </span>, le <span class="consent-blank"> </span></p>
+          <div class="consent-sign-grid">
+            <div class="consent-sign-col">
+              <p class="consent-sign-role">La Prestataire</p>
+              <div class="consent-sign-line" aria-hidden="true"></div>
+              <p class="consent-sign-hint">Nom, qualité, signature et cachet le cas échéant</p>
+            </div>
+            <div class="consent-sign-col">
+              <p class="consent-sign-role">Le Client ou représentant légal</p>
+              <div class="consent-sign-line" aria-hidden="true"></div>
+              <p class="consent-sign-hint">Nom, prénom, lien avec la personne accompagnée, signature</p>
+            </div>
+          </div>
+        </section>
+
+        <footer class="consent-doc-footer">
+          <p>
+            Réalisation du site internet : Irkeedia Labs — Hébergement : Vercel Inc. — Les présentes clauses sont indicatives ; leur
+            adaptation relève de votre conseil pour alignement sur vos statuts et contrats.
+          </p>
+        </footer>
+      </article>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("print-consent-btn")?.addEventListener("click", () => window.print());
+  </script>
+
+  <style is:global>
+    .consent-shell {
+      min-height: 100%;
+      background: rgb(241 245 249);
+    }
+    @media print {
+      .consent-shell {
+        background: white !important;
+      }
+    }
+
+    .consent-document {
+      box-sizing: border-box;
+      font-family: "Times New Roman", Times, "Liberation Serif", serif;
+      font-size: 11pt;
+      line-height: 1.45;
+      color: #0f172a;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      padding: 14mm 18mm 16mm;
+      text-align: justify;
+      hyphens: auto;
+      box-shadow:
+        0 1px 3px rgb(15 23 42 / 0.08),
+        0 12px 40px rgb(15 23 42 / 0.06);
+    }
+
+    .consent-document strong {
+      font-weight: 700;
+    }
+
+    .consent-doc-header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1rem;
+    }
+
+    .consent-doc-entity {
+      margin: 0;
+      font-size: 13pt;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .consent-doc-subentity {
+      margin: 0.35rem 0 0;
+      font-size: 10pt;
+      font-style: italic;
+      color: #334155;
+    }
+
+    .consent-doc-director {
+      margin: 0.75rem 0 0;
+      font-size: 10pt;
+      color: #334155;
+    }
+
+    .consent-doc-rule {
+      margin: 1rem auto 1.25rem;
+      height: 4px;
+      border-top: 2px solid #0f172a;
+      border-bottom: 2px solid #0f172a;
+      max-width: 85%;
+    }
+
+    .consent-doc-title {
+      margin: 0;
+      font-size: 14pt;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: inherit;
+    }
+
+    .consent-doc-ref {
+      margin: 0.5rem 0 0;
+      font-size: 9pt;
+      letter-spacing: 0.02em;
+      color: #475569;
+    }
+
+    .consent-doc-warning {
+      margin: 1rem 0 0;
+      padding: 0.65rem 0.75rem;
+      font-size: 9pt;
+      text-align: center;
+      border: 1px solid #94a3b8;
+      background: #f8fafc;
+      color: #334155;
+    }
+
+    .consent-section {
+      margin-top: 1.15rem;
+    }
+
+    .consent-section:first-of-type {
+      margin-top: 0;
+    }
+
+    .consent-art-title {
+      margin: 0 0 0.5rem;
+      font-size: 10.5pt;
+      font-weight: 700;
+      font-family: inherit;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #0f172a;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 0.25rem;
+    }
+
+    .consent-art-num {
+      font-variant-numeric: lining-nums;
+    }
+
+    .consent-document p {
+      margin: 0.45rem 0 0;
+      orphans: 3;
+      widows: 3;
+    }
+
+    .consent-label {
+      font-weight: 700;
+    }
+
+    .consent-ol {
+      margin: 0.5rem 0 0;
+      padding-left: 1.35rem;
+      list-style-type: decimal;
+    }
+
+    .consent-ol li {
+      margin-top: 0.35rem;
+      padding-left: 0.25rem;
+    }
+
+    .consent-link {
+      color: #0f172a;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .consent-sign-block {
+      margin-top: 1.75rem;
+      padding: 1rem 1rem 1.15rem;
+      border: 2px solid #0f172a;
+      background: #fafafa;
+      break-inside: avoid;
+    }
+
+    .consent-sign-heading {
+      margin: 0 0 0.75rem;
+      font-size: 10.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-family: inherit;
+      text-align: center;
+    }
+
+    .consent-place-date {
+      margin: 0 0 1.25rem;
+      font-size: 10pt;
+      text-align: center;
+    }
+
+    .consent-blank {
+      display: inline-block;
+      min-width: 8rem;
+      border-bottom: 1px solid #0f172a;
+      margin: 0 0.15rem;
+      vertical-align: baseline;
+    }
+
+    .consent-sign-grid {
+      display: grid;
+      gap: 2rem;
+      margin-top: 1.25rem;
+    }
+
+    @media (min-width: 640px) {
+      .consent-sign-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+      }
+    }
+
+    .consent-sign-role {
+      margin: 0;
+      font-size: 10pt;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .consent-sign-line {
+      margin-top: 3rem;
+      height: 1px;
+      background: #0f172a;
+    }
+
+    .consent-sign-hint {
+      margin: 0.35rem 0 0;
+      font-size: 8.5pt;
+      color: #475569;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .consent-doc-footer {
+      margin-top: 1.75rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid #cbd5e1;
+      font-size: 8pt;
+      color: #64748b;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    @media print {
+      .brand-backdrop,
+      #jojo-cursor-root,
+      body > header,
+      body > footer,
+      nav[aria-label="Fil d'Ariane"],
+      .no-print {
+        display: none !important;
+      }
+
+      body {
+        background: white !important;
+      }
+
+      main {
+        padding-top: 0 !important;
+      }
+
+      .consent-shell {
+        background: white !important;
+      }
+
+      .consent-sheet-wrap {
+        padding: 0 !important;
+        max-width: none !important;
+      }
+
+      .consent-document {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 12mm 16mm !important;
+        max-width: 100% !important;
+        font-size: 10.5pt !important;
+        color: #000 !important;
+      }
+
+      .consent-doc-warning {
+        border-color: #666 !important;
+        background: #f5f5f5 !important;
+      }
+
+      .consent-link {
+        color: #000 !important;
+      }
+
+      .consent-sign-block {
+        background: white !important;
+        border-color: #000 !important;
+      }
+    }
+  </style>
+</BaseLayout>

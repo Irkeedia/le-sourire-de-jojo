@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import CostSimulator from "@/components/CostSimulator.astro";
+import SealBadge from "@/components/SealBadge.astro";
 import type { PackId } from "@/lib/packs";
+import { TARIF_HORAIRE_BRUT_EUR } from "@/lib/tarif";
 
 const title = "Offres & forfaits — Le Sourire de Jojo";
 const description =
-  "Tarifs indicatifs (SAP), forfait mensuel, packs découverte et ponctuel — Montauban, Tarn-et-Garonne. Devis personnalisé.";
-
-/** Tarif horaire brut indicatif (base commune aux calculs ci-dessous). À ajuster selon votre convention réelle. */
-const TARIF_HORAIRE_BRUT = "28";
+  "Tarifs indicatifs (SAP), simulateur crédit d'impôt, forfait mensuel, packs — Montauban, Tarn-et-Garonne. Devis personnalisé.";
 
 const packs: {
   id: PackId;
@@ -34,9 +34,9 @@ const packs: {
     ],
     tarifs: {
       resume: "Exemple : 8 h / mois",
-      brut: `${8 * Number(TARIF_HORAIRE_BRUT)} € / mois brut`,
-      netIndicatif: `env. ${(8 * Number(TARIF_HORAIRE_BRUT)) / 2} € / mois net après crédit d’impôt (simulation 50 %)`,
-      detail: `Base : ${TARIF_HORAIRE_BRUT} € brut / heure — volume mensuel ajustable avec vous.`,
+      brut: `${8 * TARIF_HORAIRE_BRUT_EUR} € / mois brut`,
+      netIndicatif: `env. ${(8 * TARIF_HORAIRE_BRUT_EUR) / 2} € / mois net après crédit d’impôt (simulation 50 %)`,
+      detail: `Base : ${TARIF_HORAIRE_BRUT_EUR} € brut / heure — volume mensuel ajustable avec vous.`,
     },
   },
   {
@@ -50,8 +50,8 @@ const packs: {
     ],
     tarifs: {
       resume: "Forfait fixe indicatif : 3 h",
-      brut: `${3 * Number(TARIF_HORAIRE_BRUT)} € brut`,
-      netIndicatif: `env. ${(3 * Number(TARIF_HORAIRE_BRUT)) / 2} € net après crédit (simulation 50 %)`,
+      brut: `${3 * TARIF_HORAIRE_BRUT_EUR} € brut`,
+      netIndicatif: `env. ${(3 * TARIF_HORAIRE_BRUT_EUR) / 2} € net après crédit (simulation 50 %)`,
       detail: "Soit 3 séances d’1 h ou 2 séances d’1 h 30 — à calendrier selon disponibilités.",
     },
   },
@@ -65,8 +65,8 @@ const packs: {
     ],
     tarifs: {
       resume: "À l’heure",
-      brut: `${TARIF_HORAIRE_BRUT} € brut / heure`,
-      netIndicatif: `env. ${Number(TARIF_HORAIRE_BRUT) / 2} € net / h après crédit (simulation 50 %)`,
+      brut: `${TARIF_HORAIRE_BRUT_EUR} € brut / heure`,
+      netIndicatif: `env. ${TARIF_HORAIRE_BRUT_EUR / 2} € net / h après crédit (simulation 50 %)`,
       detail: "Facturation au quart d’heure près après le 1er heure pleine (indicatif — précisé au devis).",
     },
   },
@@ -80,8 +80,8 @@ const packs: {
     ],
     tarifs: {
       resume: "Même base horaire + forfait suivi",
-      brut: `${TARIF_HORAIRE_BRUT} € brut / heure + forfait dossier 15 € brut / mois`,
-      netIndicatif: `net mensuel : à titre indicatif, diviser par deux les montants SAP éligibles (simulateur contact).`,
+      brut: `${TARIF_HORAIRE_BRUT_EUR} € brut / heure + forfait dossier 15 € brut / mois`,
+      netIndicatif: `net mensuel : à titre indicatif, diviser par deux les montants SAP éligibles (simulateur ci-dessous).`,
       detail: "Le forfait dossier couvre la mise à jour du carnet partagé et la coordination courte avec la famille (indicatif).",
     },
   },
@@ -97,7 +97,7 @@ const packs: {
       resume: "Devis après entretien",
       brut: "Selon prestations",
       netIndicatif: "Selon éligibilité SAP et plafonds",
-      detail: `Référence interne : nous nous alignons sur la même grille horaire indicatif ${TARIF_HORAIRE_BRUT} € brut / h sauf accord contraire écrit.`,
+      detail: `Référence interne : nous nous alignons sur la même grille horaire indicatif ${TARIF_HORAIRE_BRUT_EUR} € brut / h sauf accord contraire écrit.`,
     },
   },
 ];
@@ -125,28 +125,68 @@ const packs: {
       <dl class="mt-6 grid gap-4 sm:grid-cols-2">
         <div class="rounded-xl bg-sauge/15 px-4 py-3">
           <dt class="text-xs font-semibold uppercase tracking-wide text-marine/65">Tarif horaire brut (référence)</dt>
-          <dd class="mt-1 font-display text-3xl text-marine">{TARIF_HORAIRE_BRUT}&nbsp;€ / h</dd>
+          <dd class="mt-1 font-display text-3xl text-marine">{TARIF_HORAIRE_BRUT_EUR}&nbsp;€ / h</dd>
           <dd class="mt-1 text-sm text-marine/75">Hors majorations éventuelles (week-end, urgence) précisées au devis.</dd>
         </div>
         <div class="rounded-xl bg-ivoire px-4 py-3 ring-1 ring-marine/10">
           <dt class="text-xs font-semibold uppercase tracking-wide text-marine/65">Net après crédit d’impôt (ordre de grandeur)</dt>
           <dd class="mt-1 text-sm leading-relaxed text-marine/90">
             En cas d’éligibilité SAP à 50&nbsp;% : <strong class="text-marine">diviser par deux</strong> les montants
-            bruts éligibles (plafonds et règles fiscales en vigueur — voir simulateur).
+            bruts éligibles (plafonds et règles fiscales en vigueur — voir le simulateur ci-dessous).
           </dd>
         </div>
       </dl>
     </section>
 
-    <div
-      class="mt-8 rounded-2xl border border-aquarelle-jaune/40 bg-aquarelle-jaune/15 px-5 py-4 text-sm leading-relaxed text-marine/90"
-      role="note"
+    <section
+      class="mt-12 scroll-mt-24 rounded-2xl border border-marine/15 bg-white/90 p-8 shadow-sm"
+      id="credit-impot"
+      aria-labelledby="ci-title"
     >
-      <strong class="text-marine">Crédit d’impôt 50&nbsp;% (SAP)</strong> : les montants bruts éligibles peuvent réduire
-      fortement le coût net pour le foyer — voir le <a href="/contact#credit-impot" class="font-medium underline decoration-marine/40 underline-offset-2 hover:text-aquarelle-bleu">simulateur sur la page contact</a>.
+      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+        <div class="max-w-3xl">
+          <h2 id="ci-title" class="font-display text-3xl text-marine">Crédit d’impôt 50&nbsp;% (SAP)</h2>
+          <p class="mt-4 text-marine/90 leading-relaxed">
+            Les services à la personne agréés peuvent ouvrir droit à un crédit d’impôt de 50&nbsp;% sur les montants
+            admissibles, dans les limites fixées par la loi. Conservez vos justificatifs et renseignez-vous sur les
+            plafonds annuels et votre situation fiscale.
+          </p>
+          <p class="mt-4 text-sm text-marine/75">
+            Information générale : elle ne remplace pas un conseil comptable ou fiscal personnalisé.
+          </p>
+        </div>
+        <SealBadge />
+      </div>
+    </section>
+
+    <div class="mt-12 scroll-mt-28" id="simulateur-cout">
+      <CostSimulator />
     </div>
 
-    <p class="mt-4 text-xs leading-relaxed text-marine/65">
+    <section
+      id="consentement-pdf"
+      class="mt-10 scroll-mt-28 rounded-2xl border border-marine/15 bg-sauge/15 p-6 md:p-8"
+      aria-labelledby="consent-offres-title"
+    >
+      <h2 id="consent-offres-title" class="font-display text-xl text-marine md:text-2xl">Formulaire de consentement (PDF)</h2>
+      <p class="mt-3 max-w-3xl leading-relaxed text-marine/85">
+        Avant ou pendant la mise en place d’un accompagnement, vous pouvez utiliser le document type sur la nature de la prestation,
+        les urgences sanitaires et le traitement des données — à imprimer ou à enregistrer en PDF depuis votre navigateur. Les bases
+        juridiques détaillées figurent aussi sur la page <a
+          href="/contact#mentions"
+          class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine">Contact &amp; informations légales</a
+        >.
+      </p>
+      <p class="mt-6">
+        <a
+          href="/consentement"
+          class="inline-flex items-center justify-center rounded-xl bg-marine px-5 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+          >Ouvrir le formulaire de consentement</a
+        >
+      </p>
+    </section>
+
+    <p class="mt-8 text-xs leading-relaxed text-marine/65">
       Informations non contractuelles. Tarifs indicatifs susceptibles d’évolution ; seul un écrit de consultation ou devis
       fait foi.
     </p>

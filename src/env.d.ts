@@ -29,6 +29,11 @@ interface ImportMetaEnv {
   readonly CONTACT_RATE_LIMIT?: string;
   /** Fenêtre rate-limit en ms (défaut 900000 = 15 min). */
   readonly CONTACT_RATE_WINDOW_MS?: string;
+  /** Base64 de 32 octets — chiffrement AES-256-GCM des champs sensibles en base (optionnel). */
+  readonly ENCRYPTION_KEY?: string;
+  /** Intégration future signature électronique (ex. Yousign). */
+  readonly YOUSIGN_API_KEY?: string;
+  readonly HELLOSIGN_API_KEY?: string;
 }
 
 interface ImportMeta {

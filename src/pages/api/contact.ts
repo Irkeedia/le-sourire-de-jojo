@@ -4,6 +4,14 @@ import { connectDb } from "@/lib/db";
 import { ContactMessage } from "@/models/ContactMessage";
 import { sendContactNotification } from "@/lib/mail";
 import { packLabel } from "@/lib/packs";
+import {
+  audienceLabel,
+  creneauLabel,
+  horizonLabel,
+  relationLabel,
+  zoneLabel,
+} from "@/lib/contact-form-options";
+import { encryptAtRest, parseEncryptionKeyFromBase64 } from "@/lib/crypto-at-rest";
 
 export const prerender = false;
 
@@ -45,12 +53,32 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  const { website: _h, ...store } = data;
+  const {
+    website: _h,
+    emergency_protocol_acknowledged: _ack,
+    medical_cert_date: medRaw,
+    deglutition_risk_alert: alertPlain,
+    ...rest
+  } = data;
+
+  const confirmedAt = new Date();
+  const encKey = parseEncryptionKeyFromBase64(import.meta.env.ENCRYPTION_KEY);
+  const alertTrimmed = alertPlain?.trim() || undefined;
+
+  const mongoPayload = {
+    ...rest,
+    medical_cert_date:
+      medRaw && medRaw.trim() !== ""
+        ? new Date(`${medRaw.trim()}T12:00:00.000Z`)
+        : undefined,
+    emergency_protocol_confirmed: confirmedAt,
+    deglutition_risk_alert: encryptAtRest(alertTrimmed, encKey),
+  };
 
   try {
     const mongo = await connectDb();
     if (mongo) {
-      await ContactMessage.create(store);
+      await ContactMessage.create(mongoPayload);
     }
   } catch (e) {
     console.error("MongoDB:", e);
@@ -60,17 +88,32 @@ export const POST: APIRoute = async ({ request }) => {
   if (notifyTo) {
     try {
       await sendContactNotification({
-        fromName: store.name,
-        fromEmail: store.email,
+        fromName: mongoPayload.name,
+        fromEmail: mongoPayload.email,
         to: notifyTo,
-        subject: `[Le Sourire de Jojo] ${store.subject}`,
+        subject: `[Le Sourire de Jojo] ${mongoPayload.subject}`,
         text: [
-          `Nom : ${store.name}`,
-          `E-mail : ${store.email}`,
-          store.phone ? `Téléphone : ${store.phone}` : null,
-          store.pack ? `Formule / pack : ${packLabel(store.pack)}` : null,
+          `Nom : ${mongoPayload.name}`,
+          `E-mail : ${mongoPayload.email}`,
+          mongoPayload.phone ? `Téléphone : ${mongoPayload.phone}` : null,
           "",
-          store.message,
+          `Capacité juridique (art. 1145 et s. C. civ.) : confirmée`,
+          `Protocole d’urgence accepté : ${confirmedAt.toISOString()} (réception serveur)`,
+          medRaw && medRaw.trim() !== ""
+            ? `Certificat médical aptitudes loisirs (facultatif) : ${medRaw.trim()}`
+            : null,
+          alertTrimmed ? `Alertes déglutition / régime alimentaire : ${alertTrimmed}` : null,
+          "",
+          mongoPayload.audience ? `Public concerné : ${audienceLabel(mongoPayload.audience)}` : null,
+          mongoPayload.relation ? `Vous contactez en tant que : ${relationLabel(mongoPayload.relation)}` : null,
+          mongoPayload.zone ? `Zone géographique : ${zoneLabel(mongoPayload.zone)}` : null,
+          mongoPayload.zone_detail ? `Précision lieu : ${mongoPayload.zone_detail}` : null,
+          mongoPayload.creneau ? `Créneau souhaité : ${creneauLabel(mongoPayload.creneau)}` : null,
+          mongoPayload.horizon ? `Délai / urgence : ${horizonLabel(mongoPayload.horizon)}` : null,
+          mongoPayload.pack ? `Formule / pack : ${packLabel(mongoPayload.pack)}` : null,
+          "",
+          `— Message —`,
+          mongoPayload.message,
         ]
           .filter(Boolean)
           .join("\n"),

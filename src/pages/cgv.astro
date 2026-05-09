@@ -1,0 +1,95 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Conditions générales — Le Sourire de Jojo";
+const description =
+  "Cadre juridique, responsabilité, RGPD et références légales — accompagnement à domicile, Tarn-et-Garonne.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Conditions générales" }]}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Conditions générales — cadre juridique</h1>
+    <p class="mt-6 text-sm leading-relaxed text-marine/75">
+      Ce document synthétise le cadre contractuel et réglementaire applicable aux prestations « Le Sourire de Jojo ». Il complète les{' '}
+      <a href="/consentement" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+        >formulaire de consentement</a
+      >
+      et les{' '}
+      <a href="/contact#mentions" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+        >mentions légales</a
+      >. Les références ci-dessous sont données à titre éducatif ; seuls vos contrats signés et votre assurance font foi.
+    </p>
+
+    <section class="mt-12 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">1. Nature de la prestation</h2>
+      <p>
+        L’activité relève d’un <strong>accompagnement social et relationnel à domicile</strong>, dans le respect des limites fixées par la
+        réglementation des services à la personne. Elle ne constitue pas des soins infirmiers : la frontière avec les actes réservés aux
+        professions de santé est notamment posée par le <strong>Code de la santé publique</strong> (dont l’art. L. 4311-1 pour les actes
+        infirmiers).
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">2. Responsabilité civile</h2>
+      <p>
+        Conformément au droit commun de la responsabilité délictuelle (<strong>art. 1240 du Code civil</strong> et jurisprudence
+        associée), <strong>aucune obligation de résultat</strong> n’est assumée sur des événements indépendants d’une faute dans
+        l’exécution de la prestation. Les dommages liés à des <strong>pathologies préexistantes</strong>, à la fragilité de la personne
+        accompagnée ou à des causes externes ne sont pas présumés imputables à la Prestataire sans analyse au cas par cas.
+      </p>
+      <p>
+        Une <strong>assurance responsabilité civile professionnelle</strong> adaptée est détenue ; les garanties effectives sont celles
+        du contrat d’assurance souscrit (franchises, exclusions, plafonds).
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">3. Urgences et secours</h2>
+      <p>
+        Conformément aux exigences attachées à la <strong>non-assistance à personne en danger</strong> (<strong>art. 223-6 du Code pénal</strong>),
+        en présence d’un péril imminent pour la vie ou l’intégrité physique, la <strong>priorité est l’appel aux secours</strong> (15,
+        18, 112, 114 selon les situations) <strong>avant</strong> les contacts privés lorsque l’urgence l’exige. Ce principe est
+        rappelé sur le <a href="/contact#formulaire" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+          >formulaire de contact</a
+        > et dans le document de consentement.
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">4. Capacité juridique</h2>
+      <p>
+        Toute commande ou engagement suppose une <strong>capacité juridique valide</strong> ou une <strong>représentation légale</strong>
+        conforme (<strong>art. 1145 et suivants du Code civil</strong>). Le formulaire en ligne exige une confirmation explicite à cet
+        égard.
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">5. Données personnelles</h2>
+      <p>
+        Le traitement des données est décrit dans les{' '}
+        <a href="/contact#rgpd" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+          >mentions légales — section RGPD</a
+        >. Les données sensibles sont collectées avec parcimonie ; un chiffrement applicatif peut être activé côté serveur pour certains
+        champs (variable d’environnement <code class="rounded bg-sauge/30 px-1 text-sm">ENCRYPTION_KEY</code>).
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">6. Signature électronique</h2>
+      <p>
+        Une intégration avec un prestataire de signature électronique qualifiée (type Yousign, HelloSign / Dropbox Sign, etc.) peut être
+        ajoutée pour les documents contractuels — voir les variables d’environnement prévues et la procédure métier avec votre conseil.
+      </p>
+    </section>
+
+    <p class="mt-14 border-t border-marine/15 pt-8 text-xs text-marine/65">
+      Édition : Le Sourire de Jojo — Céline Meunier Benneji — Zone Montauban / Tarn-et-Garonne (82).
+    </p>
+  </article>
+</BaseLayout>

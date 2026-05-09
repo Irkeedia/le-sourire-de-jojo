@@ -1,14 +1,12 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import CostSimulator from "@/components/CostSimulator.astro";
 import ContactForm from "@/components/ContactForm.astro";
-import SealBadge from "@/components/SealBadge.astro";
 import GoogleMapEmbed from "@/components/GoogleMapEmbed.astro";
 import { PACK_IDS, PACK_LABELS, type PackId } from "@/lib/packs";
 
 const title = "Contact & informations légales — Le Sourire de Jojo";
 const description =
-  "Crédit d'impôt 50 % SAP, simulateur de coût, formulaire de contact sécurisé — Montauban, Corbarieu, Tarn-et-Garonne.";
+  "Contact, mentions légales, RGPD, cadre de prestation et consentement — Montauban, Corbarieu, Tarn-et-Garonne. Tarifs sur la page Offres.";
 
 const packParam = Astro.url.searchParams.get("pack") ?? "";
 const safePack = PACK_IDS.includes(packParam as PackId) ? packParam : "";
@@ -23,26 +21,17 @@ const defaultSubject = safePack ? `Demande — ${PACK_LABELS[safePack as PackId]
   <div class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
     <h1 class="font-display text-4xl text-marine md:text-5xl">Contact & informations légales</h1>
 
-    <section class="mt-12 scroll-mt-24 rounded-2xl border border-marine/15 bg-white/90 p-8 shadow-sm" id="credit-impot" aria-labelledby="ci-title">
-      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-        <div class="max-w-3xl">
-          <h2 id="ci-title" class="font-display text-3xl text-marine">Crédit d’impôt 50&nbsp;% (SAP)</h2>
-          <p class="mt-4 text-marine/90 leading-relaxed">
-            Les services à la personne agréés peuvent ouvrir droit à un crédit d’impôt de 50&nbsp;% sur les montants
-            admissibles, dans les limites fixées par la loi. Conservez vos justificatifs et renseignez-vous sur les
-            plafonds annuels et votre situation fiscale.
-          </p>
-          <p class="mt-4 text-sm text-marine/75">
-            Information générale : elle ne remplace pas un conseil comptable ou fiscal personnalisé.
-          </p>
-        </div>
-        <SealBadge />
-      </div>
-    </section>
-
-    <div class="mt-12">
-      <CostSimulator />
-    </div>
+    <p class="mt-6 max-w-3xl text-marine/85">
+      <strong class="text-marine">Crédit d’impôt et tarifs</strong> — simulation du coût net et détail SAP sur la page
+      <a
+        href="/offres#simulateur-cout"
+        class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine"
+        >Offres &amp; forfaits</a
+      >. Les informations légales, la confidentialité et le cadre de la prestation sont détaillées plus bas sur cette page ; un
+      <a href="/consentement" class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine"
+        >formulaire de consentement imprimable (PDF)</a
+      > est également disponible.
+    </p>
 
     <section class="mt-12 scroll-mt-28" id="carte" aria-labelledby="map-title">
       <h2 id="map-title" class="font-display text-3xl text-marine">Nous trouver sur la carte</h2>
@@ -67,26 +56,201 @@ const defaultSubject = safePack ? `Demande — ${PACK_LABELS[safePack as PackId]
     </section>
 
     <section class="mt-20 scroll-mt-24 border-t border-marine/15 pt-16" id="mentions" aria-labelledby="mentions-title">
-      <h2 id="mentions-title" class="font-display text-3xl text-marine">Mentions légales & confidentialité</h2>
-      <div class="mt-8 max-w-3xl space-y-4 leading-relaxed text-marine/90">
-        <p>
-          <strong>Éditeur du site :</strong> Le Sourire de Jojo — [statut juridique et coordonnées complètes à
-          compléter].
-        </p>
-        <p>
-          <strong>Hébergement :</strong> [nom et adresse de l’hébergeur à compléter].
-        </p>
-        <p>
-          <strong>Données personnelles :</strong> les informations envoyées via le formulaire servent uniquement à
-          traiter votre demande. Vous pouvez exercer vos droits (accès, rectification, suppression, limitation,
-          opposition) en nous contactant à l’adresse indiquée sur vos échanges ou dans vos futurs documents
-          contractuels.
-        </p>
-        <p>
-          <strong>Cookies :</strong> ce site vise à limiter les traceurs au strict nécessaire. La carte Google Maps
-          intégrée (si activée) charge du contenu Google pouvant déposer des cookies selon la politique de Google —
-          voir aussi notre politique de confidentialité pour les finalités du formulaire.
-        </p>
+      <h2 id="mentions-title" class="font-display text-3xl text-marine">Mentions légales, RGPD &amp; cadre de la prestation</h2>
+      <p class="mt-4 max-w-3xl text-sm leading-relaxed text-marine/70">
+        Les paragraphes ci-dessous encadrent de façon transparente l’usage du site et le service d’accompagnement. Ils peuvent être
+        complétés ou adaptés avec votre conseiller juridique ou comptable selon votre statut exact (entreprise individuelle,
+        société, association, etc.).
+      </p>
+
+      <div class="mt-10 max-w-3xl space-y-12 leading-relaxed text-marine/90">
+        <section id="editeur" class="scroll-mt-28">
+          <h3 class="font-display text-xl text-marine">Édition du site &amp; directrice de publication</h3>
+          <p class="mt-4">
+            <strong>Éditeur du site :</strong> activité <strong>Le Sourire de Jojo</strong>, représentée par <strong
+              >Céline Meunier Benneji</strong
+            >, en qualité de <strong>dirigeante</strong> et <strong>directrice de la publication</strong>.
+          </p>
+          <p class="mt-4">
+            <strong>Identité d’entreprise :</strong> statut juridique, numéro SIREN/SIRET, numéro de TVA intracommunautaire le cas
+            échéant, et adresse du siège social ou du principal établissement : <strong>à compléter sur vos documents contractuels et
+              factures</strong> ; vous pouvez les reproduire ici lorsque vous souhaitez les rendre publics intégralement.
+          </p>
+          <p class="mt-4">
+            <strong>Contact :</strong> via le <a href="#formulaire" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+              >formulaire</a
+            > du présent site et, le cas échéant, aux coordonnées figurant sur vos devis, conventions ou correspondances professionnelles.
+          </p>
+        </section>
+
+        <section id="realisation-site" class="scroll-mt-28">
+          <h3 class="font-display text-xl text-marine">Réalisation technique</h3>
+          <p class="mt-4">
+            Conception, développement et mise en ligne du site : <strong>Irkeedia Labs</strong>.
+          </p>
+        </section>
+
+        <section id="hebergement" class="scroll-mt-28">
+          <h3 class="font-display text-xl text-marine">Hébergement</h3>
+          <p class="mt-4">
+            Le site est déployé sur l’infrastructure <strong>Vercel</strong> (hébergeur technique). Mentions utiles au titre de la
+            réglementation applicable :
+          </p>
+          <ul class="mt-4 list-inside list-disc space-y-2 pl-1">
+            <li>
+              <strong>Vercel Inc.</strong>, 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis —{' '}
+              <a
+                href="https://vercel.com"
+                class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+                rel="noopener noreferrer"
+                target="_blank"
+                >vercel.com</a
+              >
+            </li>
+            <li>
+              Les données techniques de connexion et de journalisation peuvent être traitées par l’hébergeur dans les conditions de
+              sa politique de confidentialité et, en cas de transfert hors de l’Espace économique européen, avec les garanties
+              prévues par la réglementation (clauses contractuelles types, mesures supplémentaires le cas échéant).
+            </li>
+          </ul>
+        </section>
+
+        <section id="rgpd" class="scroll-mt-28">
+          <h3 class="font-display text-xl text-marine">Données personnelles &amp; respect de la vie privée (RGPD)</h3>
+          <p class="mt-4">
+            <strong>Responsable du traitement :</strong> <strong>Céline Meunier Benneji</strong>, agissant pour les besoins de
+            l’activité Le Sourire de Jojo concernant les traitements liés au site et à la relation clients.
+          </p>
+          <p class="mt-4">
+            <strong>Données concernées :</strong> notamment nom, prénom, adresse électronique, numéro de téléphone lorsque fourni,
+            contenu des messages, ainsi que les informations d’organisation et de suivi nécessaires à l’accompagnement lorsqu’un
+            contrat existe (créneaux, préférences, éléments du « carnet de sourires » ou équivalent lorsque vous utilisez cet outil).
+          </p>
+          <p class="mt-4">
+            <strong>Finalités :</strong> répondre aux demandes entrantes ; préparer et exécuter la prestation ; assurer la gestion
+            administrative et comptable ; respecter les obligations légales et réglementaires ; défendre un droit en justice en cas de
+            litige dans la limite des prescriptions applicables.
+          </p>
+          <p class="mt-4">
+            <strong>Bases juridiques :</strong> notamment l’exécution de mesures précontractuelles ou du contrat ; le respect
+            d’obligations légales (comptabilité, fiscalité, archivage lorsque requis) ; l’intérêt légitime pour la sécurité du site et
+            la lutte contre les abus ; le <strong>consentement</strong> lorsqu’il est requis pour des traitements non indispensables
+            au cœur du service (par exemple certaines communications facultatives), recueilli de façon distincte et documentée le cas
+            échéant.
+          </p>
+          <p class="mt-4">
+            <strong>Durées :</strong> conservation pendant la relation active de l’accompagnement ou du dossier commercial ; au-delà,
+            durées légales de prescription ou d’archivage applicables aux obligations comptables et fiscales, puis suppression ou
+            anonymisation lorsque possible.
+          </p>
+          <p class="mt-4">
+            <strong>Destinataires :</strong> données strictement nécessaires au sein de l’activité ; sous-traitants techniques (par
+            exemple hébergement sur Vercel, fournisseur de messagerie pour la réception des messages du formulaire, prestataire de
+            base de données si vous en utilisez une) dans le cadre de contrats conformes à l’article 28 du RGPD lorsque la loi
+            l’impose.
+          </p>
+          <p class="mt-4">
+            <strong>Droits des personnes :</strong> vous disposez des droits d’accès, de rectification, d’effacement, de limitation du
+            traitement, d’opposition pour motifs légitimes, de portabilité des données lorsque les conditions sont réunies, et du droit
+            de définir des directives relatives au sort de vos données après le décès. Ces droits s’exercent en priorité auprès du
+            responsable du traitement aux coordonnées professionnelles communiquées sur vos échanges ; vous pouvez aussi introduire une
+            réclamation auprès de l’autorité de contrôle compétente en France, la{' '}
+            <a
+              href="https://www.cnil.fr"
+              class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+              rel="noopener noreferrer"
+              target="_blank"
+              >CNIL</a
+            >.
+          </p>
+          <p class="mt-4 text-sm text-marine/75">
+            Les informations concernant la santé sont des données sensibles au sens du RGPD lorsqu’elles sont collectées de façon
+            systématique ou structurée ; dans le cadre d’un accompagnement social non médical, seules les informations strictement
+            nécessaires et proportionnées doivent être échangées, et la coordination médicale reste du ressort des professionnels de
+            santé et de la famille lorsque la situation l’exige.
+          </p>
+        </section>
+
+        <section id="cookies" class="scroll-mt-28">
+          <h3 class="font-display text-xl text-marine">Cookies &amp; traceurs</h3>
+          <p class="mt-4">
+            Ce site vise à limiter les traceurs au strict nécessaire au fonctionnement et à la mesure d’audience si vous en activez
+            une. La carte Google Maps intégrée le cas échéant peut charger des contenus tiers susceptibles de déposer des cookies
+            conformément à la politique de Google ; vous pouvez paramétrer votre navigateur ou consulter les informations éditées par
+            Google à ce sujet.
+          </p>
+        </section>
+
+        <section id="references-legales" class="scroll-mt-28">
+          <h3 class="font-display text-xl text-marine">Références juridiques utiles (non exhaustives)</h3>
+          <p class="mt-4">
+            Les références ci-dessous encadrent la délimitation entre accompagnement social et activités réglementées, la
+            responsabilité civile, la non-assistance et la capacité juridique. Elles complètent les{' '}
+            <a href="/cgv" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">conditions générales</a>{' '}
+            et le document de <a href="/consentement" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+              >consentement</a
+            >.
+          </p>
+          <ul class="mt-4 list-inside list-disc space-y-3 pl-1 text-marine/90">
+            <li>
+              <strong>Article L. 4311-1 du Code de la santé publique</strong> et textes liés : réservent certaines activités de soins aux
+              professions de santé diplômées ; l’accompagnement social décrit sur ce site ne constitue pas un exercice illégal de la
+              profession d’infirmier lorsqu’il respecte cette frontière.
+            </li>
+            <li>
+              <strong>Article 1240 du Code civil</strong> (responsabilité civile délictuelle) : la responsabilité de la Prestataire ne
+              peut être engagée qu’en présence d’une <strong>faute</strong> lui étant imputable et dans les limites du lien causal,
+              sans préjuger des pathologies préexistantes ou des circonstances étrangères à cette faute.
+            </li>
+            <li>
+              <strong>Article 223-6 du Code pénal</strong> (non-assistance à personne en danger) : en cas de péril imminent, la
+              priorité est l’alerte des secours compétents ; le protocole du site et du formulaire impose l’acceptation de cette règle
+              avant envoi d’un message.
+            </li>
+            <li>
+              <strong>Articles 1145 et suivants du Code civil</strong> : capacité juridique à contracter ; le formulaire exige une
+              confirmation explicite de pleine capacité ou de mandat légal valide pour le signataire.
+            </li>
+          </ul>
+        </section>
+
+        <section id="cadre-prestation" class="scroll-mt-28">
+          <h3 class="font-display text-xl text-marine">Nature juridique de l’accompagnement &amp; urgence médicale</h3>
+          <p class="mt-4">
+            L’activité « Le Sourire de Jojo » relève d’un <strong>accompagnement à domicile</strong> de type social, relationnel et
+            ludique dans le cadre des services à la personne lorsque la réglementation applicable le permet. Elle ne constitue pas une
+            activité de soins infirmiers, de diagnostic médical, de surveillance clinique ni de rééducation paramédicale.
+          </p>
+          <p class="mt-4">
+            En cas de <strong>urgence vitale</strong>, de malaise grave ou d’aggravation brutale de l’état de santé au cours d’une
+            séance, la <strong>priorité absolue</strong> est d’<strong>alerter les services de secours</strong> (<strong>15</strong>,{' '}
+            <strong>18</strong>, <strong>112</strong>, <strong>114</strong> selon les situations) — conformément aux obligations liées à
+            la non-assistance à personne en danger — <strong>avant</strong> tout contact avec la famille ou les proches lorsque la vie
+            ou l’intégrité physique est en jeu. Ensuite seulement, informer les personnes désignées ou les professionnels de santé
+            référents lorsque les circonstances le permettent sans retard incompatible avec l’urgence. L’intervenante peut interrompre
+            la prestation si la sécurité des personnes ou le dépassement manifeste du périmètre d’intervention l’impose.
+          </p>
+          <p class="mt-4">
+            Les échanges d’informations sur la santé sont limités au strict nécessaire au bon déroulement d’un accompagnement non
+            médical ; ils ne se substituent pas aux obligations de confidentialité et de compétence propres aux professions réglementées
+            de santé lorsque celles-ci sont en cause.
+          </p>
+        </section>
+
+        <section id="document-consentement-lien" class="scroll-mt-28 rounded-2xl border border-marine/15 bg-sauge/15 p-6 md:p-8">
+          <h3 class="font-display text-xl text-marine">Formulaire de consentement (PDF)</h3>
+          <p class="mt-4">
+            Un document type — consentement sur la nature de la prestation, les urgences sanitaires et le traitement des données — est
+            disponible pour être complété, imprimé ou enregistré au format PDF depuis votre navigateur :
+          </p>
+          <p class="mt-6">
+            <a
+              href="/consentement"
+              class="inline-flex items-center justify-center rounded-xl bg-marine px-5 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+              >Ouvrir le formulaire de consentement</a
+            >
+          </p>
+        </section>
       </div>
     </section>
 

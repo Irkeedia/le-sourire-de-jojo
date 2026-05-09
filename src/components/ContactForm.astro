@@ -1,5 +1,17 @@
 ---
 import { PACK_IDS, PACK_LABELS, type PackId } from "@/lib/packs";
+import {
+  AUDIENCE_IDS,
+  AUDIENCE_LABELS,
+  CRENEAU_IDS,
+  CRENEAU_LABELS,
+  HORIZON_IDS,
+  HORIZON_LABELS,
+  RELATION_IDS,
+  RELATION_LABELS,
+  ZONE_IDS,
+  ZONE_LABELS,
+} from "@/lib/contact-form-options";
 
 interface Props {
   initialPack?: string;
@@ -12,114 +24,292 @@ const safePack = PACK_IDS.includes(initialPack as PackId) ? initialPack : "";
 const subjectValue =
   defaultSubject ||
   (safePack ? `Demande — ${PACK_LABELS[safePack as PackId]}` : "");
+
+const selectBaseClass =
+  "mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30";
 ---
 
 <form
   id="contact-form"
-  class="space-y-4 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm"
+  class="space-y-8 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm md:p-8"
   novalidate
   data-initial-pack={safePack}
 >
   <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-  <div class="grid gap-4 md:grid-cols-2">
-    <div>
-      <label for="cf-name" class="block text-sm font-medium text-marine">Nom et prénom *</label>
+  <fieldset class="space-y-4">
+    <legend class="font-display text-xl text-marine">Vos coordonnées</legend>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <label for="cf-name" class="block text-sm font-medium text-marine">Nom et prénom *</label>
+        <input
+          id="cf-name"
+          name="name"
+          type="text"
+          required
+          maxlength="120"
+          autocomplete="name"
+          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        />
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="name"></p>
+      </div>
+      <div>
+        <label for="cf-email" class="block text-sm font-medium text-marine">E-mail *</label>
+        <input
+          id="cf-email"
+          name="email"
+          type="email"
+          required
+          maxlength="254"
+          autocomplete="email"
+          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        />
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="email"></p>
+      </div>
+    </div>
+
+    <div class="max-w-md">
+      <label for="cf-phone" class="block text-sm font-medium text-marine">Téléphone (facultatif)</label>
       <input
-        id="cf-name"
-        name="name"
+        id="cf-phone"
+        name="phone"
+        type="tel"
+        maxlength="40"
+        autocomplete="tel"
+        class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+      />
+      <p class="mt-1 hidden text-sm text-red-800" data-error-for="phone"></p>
+    </div>
+  </fieldset>
+
+  <fieldset class="space-y-4 border-t border-marine/10 pt-8">
+    <legend class="font-display text-xl text-marine">Public &amp; situation</legend>
+    <p class="text-sm text-marine/75">
+      Ces précisions aident à préparer un premier échange pertinent — tout reste indicatif.
+    </p>
+
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div>
+        <label for="cf-audience" class="block text-sm font-medium text-marine">Pour qui est l’accompagnement ?</label>
+        <select id="cf-audience" name="audience" class={selectBaseClass}>
+          <option value="">— Choisir ou laisser vide —</option>
+          {
+            AUDIENCE_IDS.map((id) => (
+              <option value={id}>{AUDIENCE_LABELS[id]}</option>
+            ))
+          }
+        </select>
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="audience"></p>
+      </div>
+      <div>
+        <label for="cf-relation" class="block text-sm font-medium text-marine">Vous nous contactez en tant que…</label>
+        <select id="cf-relation" name="relation" class={selectBaseClass}>
+          <option value="">— Choisir ou laisser vide —</option>
+          {
+            RELATION_IDS.map((id) => (
+              <option value={id}>{RELATION_LABELS[id]}</option>
+            ))
+          }
+        </select>
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="relation"></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="space-y-4 border-t border-marine/10 pt-8">
+    <legend class="font-display text-xl text-marine">Lieu &amp; créneaux</legend>
+
+    <div class="grid gap-4 lg:grid-cols-2">
+      <div class="lg:col-span-2">
+        <label for="cf-zone" class="block text-sm font-medium text-marine">Secteur géographique (Montauban, Corbarieu &amp; alentours)</label>
+        <select id="cf-zone" name="zone" class={selectBaseClass}>
+          <option value="">— Choisir ou laisser vide —</option>
+          {
+            ZONE_IDS.map((id) => (
+              <option value={id}>{ZONE_LABELS[id]}</option>
+            ))
+          }
+        </select>
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="zone"></p>
+      </div>
+      <div class="lg:col-span-2">
+        <label for="cf-zone-detail" class="block text-sm font-medium text-marine">Précision lieu (facultatif)</label>
+        <input
+          id="cf-zone-detail"
+          name="zone_detail"
+          type="text"
+          maxlength="160"
+          autocomplete="street-address"
+          placeholder="Ex. : quartier, nom de commune si « autre 82 », précisions d’accès…"
+          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        />
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="zone_detail"></p>
+      </div>
+      <div>
+        <label for="cf-creneau" class="block text-sm font-medium text-marine">Créneau souhaité</label>
+        <select id="cf-creneau" name="creneau" class={selectBaseClass}>
+          <option value="">— Indifférent / à définir —</option>
+          {
+            CRENEAU_IDS.map((id) => (
+              <option value={id}>{CRENEAU_LABELS[id]}</option>
+            ))
+          }
+        </select>
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="creneau"></p>
+      </div>
+      <div>
+        <label for="cf-horizon" class="block text-sm font-medium text-marine">Délai ou urgence</label>
+        <select id="cf-horizon" name="horizon" class={selectBaseClass}>
+          <option value="">— Pas encore défini —</option>
+          {
+            HORIZON_IDS.map((id) => (
+              <option value={id}>{HORIZON_LABELS[id]}</option>
+            ))
+          }
+        </select>
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="horizon"></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="space-y-4 border-t border-marine/10 pt-8">
+    <legend class="font-display text-xl text-marine">Formule</legend>
+
+    <div class="max-w-xl">
+      <label for="cf-pack" class="block text-sm font-medium text-marine">Formule / pack (facultatif)</label>
+      <select
+        id="cf-pack"
+        name="pack"
+        class={selectBaseClass}
+      >
+        <option value="">Je ne sais pas encore / à discuter</option>
+        {
+          PACK_IDS.map((id) => (
+            <option value={id} selected={safePack === id}>
+              {PACK_LABELS[id]}
+            </option>
+          ))
+        }
+      </select>
+      <p class="mt-1 hidden text-sm text-red-800" data-error-for="pack"></p>
+      <p class="mt-1 text-xs text-marine/65">
+        Retrouvez le détail des formules sur la page <a href="/offres" class="font-medium underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Offres &amp; forfaits</a>.
+      </p>
+    </div>
+  </fieldset>
+
+  <fieldset class="space-y-4 border-t border-marine/10 pt-8">
+    <legend class="font-display text-xl text-marine">Cadre juridique &amp; sécurité</legend>
+    <p class="text-sm leading-relaxed text-marine/75">
+      Conformément aux articles du Code civil sur la capacité à contracter et au Code pénal sur la non-assistance à personne en
+      danger, les cases ci-dessous sont obligatoires pour envoyer votre demande.
+    </p>
+
+    <div class="rounded-xl border border-marine/15 bg-sauge/10 p-4">
+      <label class="flex cursor-pointer gap-3 text-sm leading-snug text-marine">
+        <input
+          id="cf-legal-capacity"
+          name="legal_capacity_status"
+          type="checkbox"
+          value="true"
+          class="mt-1 h-4 w-4 shrink-0 rounded border-marine/40 text-marine focus:ring-marine"
+        />
+        <span>
+          Je confirme disposer de ma <strong>pleine capacité juridique</strong> pour contracter, ou agir en qualité de
+          <strong>représentant légal habilité</strong> (tutelle, curatelle, mandat de protection future, etc.) — art. 1145 et
+          suivants du Code civil.
+        </span>
+      </label>
+      <p class="mt-1 hidden pl-7 text-sm text-red-800" data-error-for="legal_capacity_status"></p>
+    </div>
+
+    <div class="rounded-xl border border-marine/15 bg-sauge/10 p-4">
+      <label class="flex cursor-pointer gap-3 text-sm leading-snug text-marine">
+        <input
+          id="cf-emergency-protocol"
+          name="emergency_protocol_acknowledged"
+          type="checkbox"
+          value="true"
+          class="mt-1 h-4 w-4 shrink-0 rounded border-marine/40 text-marine focus:ring-marine"
+        />
+        <span>
+          J’accepte le <strong>protocole d’urgence</strong> : en cas de danger vital ou de situation sanitaire grave, la
+          <strong>priorité absolue</strong> est d’appeler les secours (<strong>15</strong>, <strong>18</strong>, <strong>112</strong>,
+          <strong>114</strong> selon les cas) <strong>avant</strong> tout autre contact — art. 223-6 du Code pénal.
+        </span>
+      </label>
+      <p class="mt-1 hidden pl-7 text-sm text-red-800" data-error-for="emergency_protocol_acknowledged"></p>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div>
+        <label for="cf-medical-cert" class="block text-sm font-medium text-marine">Certificat médical d’aptitude aux loisirs (facultatif)</label>
+        <input
+          id="cf-medical-cert"
+          name="medical_cert_date"
+          type="date"
+          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        />
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="medical_cert_date"></p>
+        <p class="mt-1 text-xs text-marine/60">Date du dernier certificat, si vous en disposez.</p>
+      </div>
+      <div class="md:col-span-2">
+        <label for="cf-deglutition" class="block text-sm font-medium text-marine">Risques de fausse route, régimes spécifiques (facultatif)</label>
+        <textarea
+          id="cf-deglutition"
+          name="deglutition_risk_alert"
+          rows="3"
+          maxlength="2000"
+          placeholder="Textures prescrites, contre-indications, protocole équipe soignante…"
+          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        ></textarea>
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="deglutition_risk_alert"></p>
+        <p class="mt-1 text-xs text-marine/60">
+          Donnée sensible : peut être chiffrée côté serveur si configuré (voir hébergeur / politique de sécurité).
+        </p>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="space-y-4 border-t border-marine/10 pt-8">
+    <legend class="font-display text-xl text-marine">Message</legend>
+
+    <div>
+      <label for="cf-subject" class="block text-sm font-medium text-marine">Sujet *</label>
+      <input
+        id="cf-subject"
+        name="subject"
         type="text"
         required
-        maxlength="120"
-        autocomplete="name"
+        maxlength="200"
+        value={subjectValue}
         class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
       />
-      <p class="mt-1 hidden text-sm text-red-800" data-error-for="name"></p>
+      <p class="mt-1 hidden text-sm text-red-800" data-error-for="subject"></p>
     </div>
+
     <div>
-      <label for="cf-email" class="block text-sm font-medium text-marine">E-mail *</label>
-      <input
-        id="cf-email"
-        name="email"
-        type="email"
+      <label for="cf-message" class="block text-sm font-medium text-marine">Message *</label>
+      <textarea
+        id="cf-message"
+        name="message"
         required
-        maxlength="254"
-        autocomplete="email"
+        rows="7"
+        maxlength="8000"
         class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-      />
-      <p class="mt-1 hidden text-sm text-red-800" data-error-for="email"></p>
+        placeholder="Habitudes, centres d’intérêt, contraintes médicales non urgentes à signaler, présence d’animaux, etc."
+      ></textarea>
+      <p class="mt-1 hidden text-sm text-red-800" data-error-for="message"></p>
     </div>
-  </div>
-
-  <div class="max-w-md">
-    <label for="cf-phone" class="block text-sm font-medium text-marine">Téléphone (facultatif)</label>
-    <input
-      id="cf-phone"
-      name="phone"
-      type="tel"
-      maxlength="40"
-      autocomplete="tel"
-      class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-    />
-    <p class="mt-1 hidden text-sm text-red-800" data-error-for="phone"></p>
-  </div>
-
-  <div class="max-w-xl">
-    <label for="cf-pack" class="block text-sm font-medium text-marine">Formule / pack (facultatif)</label>
-    <select
-      id="cf-pack"
-      name="pack"
-      class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-    >
-      <option value="">Je ne sais pas encore / à discuter</option>
-      {
-        PACK_IDS.map((id) => (
-          <option value={id} selected={safePack === id}>
-            {PACK_LABELS[id]}
-          </option>
-        ))
-      }
-    </select>
-    <p class="mt-1 hidden text-sm text-red-800" data-error-for="pack"></p>
-    <p class="mt-1 text-xs text-marine/65">
-      Retrouvez le détail des formules sur la page <a href="/offres" class="font-medium underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Offres &amp; forfaits</a>.
-    </p>
-  </div>
-
-  <div>
-    <label for="cf-subject" class="block text-sm font-medium text-marine">Sujet *</label>
-    <input
-      id="cf-subject"
-      name="subject"
-      type="text"
-      required
-      maxlength="200"
-      value={subjectValue}
-      class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-    />
-    <p class="mt-1 hidden text-sm text-red-800" data-error-for="subject"></p>
-  </div>
-
-  <div>
-    <label for="cf-message" class="block text-sm font-medium text-marine">Message *</label>
-    <textarea
-      id="cf-message"
-      name="message"
-      required
-      rows="6"
-      maxlength="8000"
-      class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-      placeholder="Précisez vos disponibilités, la zone, et ce que vous recherchez."
-    ></textarea>
-    <p class="mt-1 hidden text-sm text-red-800" data-error-for="message"></p>
-  </div>
+  </fieldset>
 
   <p class="text-xs text-marine/70">
     En envoyant ce formulaire, vous acceptez que vos données soient utilisées uniquement pour répondre à votre
     demande (RGPD). Pas de revente, pas de newsletter sans consentement.
   </p>
 
-  <div class="flex flex-wrap items-center gap-4">
+  <div class="flex flex-wrap items-center gap-4 border-t border-marine/10 pt-6">
     <button
       type="submit"
       class="rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine disabled:opacity-60"
@@ -158,14 +348,27 @@ const subjectValue =
     if (!form || !status) return;
     status.textContent = "Envoi en cours…";
     const fd = new FormData(form);
+    const legalCap = form.querySelector("#cf-legal-capacity") as HTMLInputElement | null;
+    const emergProt = form.querySelector("#cf-emergency-protocol") as HTMLInputElement | null;
+
     const payload = {
       name: String(fd.get("name") ?? ""),
       email: String(fd.get("email") ?? ""),
       phone: String(fd.get("phone") ?? ""),
+      audience: String(fd.get("audience") ?? ""),
+      relation: String(fd.get("relation") ?? ""),
+      zone: String(fd.get("zone") ?? ""),
+      zone_detail: String(fd.get("zone_detail") ?? ""),
+      creneau: String(fd.get("creneau") ?? ""),
+      horizon: String(fd.get("horizon") ?? ""),
       pack: String(fd.get("pack") ?? ""),
       subject: String(fd.get("subject") ?? ""),
       message: String(fd.get("message") ?? ""),
       website: String(fd.get("website") ?? ""),
+      legal_capacity_status: legalCap?.checked === true,
+      emergency_protocol_acknowledged: emergProt?.checked === true,
+      medical_cert_date: String(fd.get("medical_cert_date") ?? ""),
+      deglutition_risk_alert: String(fd.get("deglutition_risk_alert") ?? ""),
     };
 
     showFieldErrors({});
@@ -184,8 +387,8 @@ const subjectValue =
       }
       status.textContent = "Message envoyé. Nous vous répondons très vite.";
       form.reset();
-      const sel = document.getElementById("cf-pack") as HTMLSelectElement | null;
-      if (sel) sel.value = "";
+      const packSel = document.getElementById("cf-pack") as HTMLSelectElement | null;
+      if (packSel) packSel.value = "";
     } catch {
       status.textContent = "Erreur réseau. Réessayez dans un instant.";
     }
