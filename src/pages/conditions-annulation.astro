@@ -1,0 +1,85 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Annulation & résiliation — Le Sourire de Jojo";
+const description =
+  "Conditions d’annulation de séances, modification du planning et résiliation du contrat d’accompagnement à domicile.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Annulation & résiliation" }]}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
+    <p class="text-sm font-medium text-aquarelle-bleu">
+      <a href="/legal" class="underline underline-offset-2 hover:text-marine">← Documents juridiques</a>
+      ·
+      <a href="/cgv" class="underline underline-offset-2 hover:text-marine">CGV</a>
+      ·
+      <a href="/imprimer/conditions-annulation" class="underline underline-offset-2 hover:text-marine">Version PDF / imprimable</a>
+    </p>
+
+    <h1 class="mt-6 font-display text-4xl text-marine md:text-5xl">Annulation, modification &amp; résiliation</h1>
+    <p class="mt-6 leading-relaxed text-marine/85">
+      Ce document précise les modalités d’<strong>annulation d’une séance</strong>, de <strong>modification du planning</strong> et de
+      <strong>fin de prestation</strong>. Il complète les{' '}
+      <a href="/cgv" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">conditions générales</a>
+      et tout contrat ou devis signé avec la Prestataire.
+    </p>
+
+    <section class="mt-12 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">1. Annulation ou déplacement d’une séance par le Client</h2>
+      <p>
+        Toute annulation ou demande de déplacement doit être communiquée <strong>dès que possible</strong>, par les canaux convenus
+        (téléphone, e-mail, message selon l’échange en cours). Un délai de préavis minimal peut être fixé dans votre <strong
+          >contrat ou devis</strong
+        >
+        (ex. 24 h ou 48 h ouvrées) : à défaut de clause écrite, les parties appliquent une bonne foi raisonnable au cas par cas.
+      </p>
+      <p>
+        Les séances annulées <strong>tardivement ou à répétition</strong> sans motif légitime peuvent être facturées ou déduites du
+        forfait conformément aux termes du contrat écrit.
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">2. Annulation ou report par la Prestataire</h2>
+      <p>
+        La Prestataire peut annuler ou reporter une séance pour <strong>motif impérieux</strong> (maladie, cas de force majeure,
+        impossibilité matérielle d’accéder au domicile, situation mettant en danger la sécurité). Un report est proposé dans les meilleurs
+        délais.
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">3. Résiliation du contrat</h2>
+      <p>
+        La fin de la relation contractuelle est régie par le <strong>contrat signé</strong> ou, à défaut, par un préavis raisonnable
+        notifié par écrit (courrier ou e-mail conservé). En cas de manquement grave par une partie, résiliation motivée selon droit
+        commun et clauses du contrat.
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">4. Effets financiers</h2>
+      <p>
+        Les sommes déjà acquittées ou les heures déjà facturées sont traitées selon le <strong>devis et la facturation</strong> en vigueur.
+        Les packs ou forfaits peuvent prévoir des règles spécifiques de remboursement ou de régularisation.
+      </p>
+    </section>
+
+    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
+      <h2 class="font-display text-2xl text-marine">5. Force majeure</h2>
+      <p>
+        Événements imprévisibles, irrésistibles et extérieurs (catastrophe, pandémie avec restrictions légales, etc.) peuvent suspendre ou
+        mettre fin à la prestation sans application de pénalités disproportionnées, conformément au droit français.
+      </p>
+    </section>
+
+    <p class="mt-14 border-t border-marine/15 pt-8 text-xs text-marine/65">
+      Le Sourire de Jojo — Céline Meunier Benneji — Pour version imprimable :{' '}
+      <a href="/imprimer/conditions-annulation" class="underline hover:text-marine">PDF</a>
+    </p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,98 @@
+---
+import LegalPrintChrome from "@/components/LegalPrintChrome.astro";
+
+const title = "Annulation & résiliation (PDF) — Le Sourire de Jojo";
+const description = "Conditions d’annulation et de résiliation — version PDF / impression.";
+---
+
+<LegalPrintChrome
+  title={title}
+  description={description}
+  breadcrumb={[
+    { href: "/", label: "Accueil" },
+    { href: "/legal", label: "Documents juridiques" },
+    { href: "/conditions-annulation", label: "Annulation" },
+    { label: "Imprimable" },
+  ]}
+>
+  <article class="consent-document" id="document-annulation-pdf">
+    <header class="consent-doc-header">
+      <p class="consent-doc-entity">Le Sourire de Jojo</p>
+      <p class="consent-doc-subentity">Services à la personne — Accompagnement à domicile</p>
+      <p class="consent-doc-director">Représentée par <strong>Céline Meunier Benneji</strong></p>
+      <div class="consent-doc-rule" aria-hidden="true"></div>
+      <h1 class="consent-doc-title">Annulation, modification &amp; résiliation</h1>
+      <p class="consent-doc-ref">Document imprimable — Complément aux CGV et au contrat signé</p>
+      <p class="consent-doc-warning">
+        Les durées de préavis et pénalités effectives sont celles figurant sur votre devis ou convention individuelle lorsqu’elles existent.
+      </p>
+    </header>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 1</span> — Champ d’application</h2>
+      <p>
+        Le présent document précise les modalités d’<strong>annulation ou de déplacement d’une séance</strong>, de
+        <strong>modification du planning</strong> et de <strong>résiliation</strong> de la relation contractuelle d’accompagnement.
+        Il complète les <strong>conditions générales de vente</strong> et tout acte signé entre les parties.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 2</span> — Annulation ou report par le Client</h2>
+      <p>
+        Le Client informe la Prestataire de toute impossibilité de tenir un créneau <strong>dès qu’il en a connaissance</strong>, par le
+        canal convenu (téléphone, courriel, etc.).
+      </p>
+      <p>
+        Lorsqu’un <strong>préavis minimal</strong> est fixé au contrat (ex. 24 h ou 48 h avant le début de séance), son non-respect peut
+        entraîner la <strong>facturation partielle ou totale</strong> de la séance, selon les termes du devis.
+      </p>
+      <p>
+        Des annulations <strong>répétées sans motif légitime</strong> peuvent justifier une révision du planning, une suspension ou une
+        résiliation dans les conditions de l’article 4.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 3</span> — Annulation ou report par la Prestataire</h2>
+      <p>
+        La Prestataire peut annuler ou reporter une séance en cas de <strong>force majeure</strong>, de <strong>maladie</strong>, de
+        <strong>impossibilité d’accès</strong> au domicile ou de <strong>risque pour la sécurité</strong> des personnes. Un nouveau
+        créneau est proposé dans les meilleurs délais. Aucune pénalité ne pèse sur le Client lorsque l’impossibilité est imputable à la
+        Prestataire.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 4</span> — Résiliation du contrat</h2>
+      <p>
+        Sauf clause contraire, chaque partie peut mettre fin à la prestation moyennant un <strong>préavis écrit</strong> (durée fixée au
+        contrat ou, à défaut, préavis raisonnable compte tenu de la nature du service et des usages).
+      </p>
+      <p>
+        En cas de <strong>manquement grave</strong> à l’une des obligations contractuelles, résiliation de plein droit ou aux torts
+        selon les articles du Code civil et le contrat signé, après mise en demeure le cas échéant.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 5</span> — Effets financiers</h2>
+      <p>
+        Les sommes déjà perçues et les prestations déjà réalisées restent <strong>exigibles</strong> conformément au devis. Les forfaits
+        ou packs peuvent prévoir des règles de <strong>remboursement prorata temporis</strong> ou de crédit sur séances futures.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 6</span> — Force majeure</h2>
+      <p>
+        Conformément au droit français, la survenance d’un cas de force majeure peut suspendre ou mettre fin aux obligations sans
+        pénalités injustifiées, dans la limite des textes applicables.
+      </p>
+    </section>
+
+    <footer class="consent-doc-footer">
+      <p>Le Sourire de Jojo — Céline Meunier Benneji — Tarn-et-Garonne (82) — Document indicatif.</p>
+    </footer>
+  </article>
+</LegalPrintChrome>

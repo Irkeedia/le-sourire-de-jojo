@@ -13,13 +13,22 @@ const links = [
     shortLabel: "Contact",
     desktopLabel: "Contact",
   },
-  { href: "/cgv", label: "CGV", shortLabel: "CGV", desktopLabel: "CGV" },
+  { href: "/legal", label: "Documents juridiques", shortLabel: "Juridique", desktopLabel: "Juridique" },
 ];
 
 const pathname = Astro.url.pathname;
 
 function isActive(href: string): boolean {
   if (href === "/") return pathname === "/";
+  if (href === "/legal") {
+    return (
+      pathname.startsWith("/legal") ||
+      pathname === "/cgv" ||
+      pathname.startsWith("/conditions-annulation") ||
+      pathname.startsWith("/consentement") ||
+      pathname.startsWith("/imprimer/")
+    );
+  }
   return pathname.startsWith(href);
 }
 ---

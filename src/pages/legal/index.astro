@@ -1,0 +1,73 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Documents juridiques — Le Sourire de Jojo";
+const description =
+  "Conditions générales, annulation, consentement et mentions légales — versions web et PDF.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Documents juridiques" }]}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Documents juridiques</h1>
+    <p class="mt-6 leading-relaxed text-marine/85">
+      Accès centralisé aux textes contractuels et références légales. Les versions <strong class="text-marine">PDF</strong> sont
+      optimisées pour impression ou enregistrement depuis le navigateur (<kbd class="rounded bg-sauge/30 px-1 font-mono text-sm">Ctrl</kbd
+      >+<kbd class="rounded bg-sauge/30 px-1 font-mono text-sm">P</kbd> → Enregistrer au format PDF).
+    </p>
+
+    <ul class="mt-12 space-y-6">
+      <li class="rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm">
+        <h2 class="font-display text-xl text-marine">Conditions générales de vente (CGV)</h2>
+        <p class="mt-2 text-sm text-marine/80">
+          Cadre contractuel : prestation, tarifs, annulation, responsabilité, données.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href="/cgv" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">Lire en ligne</a>
+          <span class="text-marine/40">·</span>
+          <a href="/imprimer/cgv" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+            >Version PDF / imprimable</a
+          >
+        </div>
+      </li>
+
+      <li class="rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm">
+        <h2 class="font-display text-xl text-marine">Annulation, modification &amp; résiliation</h2>
+        <p class="mt-2 text-sm text-marine/80">Délais, préavis et effets en cas d’arrêt de la prestation.</p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href="/conditions-annulation" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+            >Lire en ligne</a
+          >
+          <span class="text-marine/40">·</span>
+          <a
+            href="/imprimer/conditions-annulation"
+            class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">Version PDF / imprimable</a
+          >
+        </div>
+      </li>
+
+      <li class="rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm">
+        <h2 class="font-display text-xl text-marine">Formulaire de consentement</h2>
+        <p class="mt-2 text-sm text-marine/80">Nature de la prestation, urgences, données personnelles, signatures.</p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href="/consentement" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+            >Document PDF / imprimable</a
+          >
+        </div>
+      </li>
+
+      <li class="rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm">
+        <h2 class="font-display text-xl text-marine">Mentions légales &amp; RGPD</h2>
+        <p class="mt-2 text-sm text-marine/80">Éditeur, hébergement, traitement des données, références légales.</p>
+        <div class="mt-4">
+          <a href="/contact#mentions" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+            >Voir sur la page Contact</a
+          >
+        </div>
+      </li>
+    </ul>
+  </article>
+</BaseLayout>

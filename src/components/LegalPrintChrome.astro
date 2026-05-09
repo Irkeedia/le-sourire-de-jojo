@@ -1,0 +1,46 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import "@/styles/legal-document.css";
+
+interface Props {
+  title: string;
+  description: string;
+  breadcrumb: { href?: string; label: string }[];
+}
+
+const { title, description, breadcrumb } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} breadcrumb={breadcrumb}>
+  <div class="consent-shell">
+    <div class="no-print consent-toolbar mx-auto max-w-3xl px-3 pt-8 sm:px-4 sm:pt-10 md:px-6">
+      <div class="rounded border border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-700 shadow-sm">
+        <p class="font-semibold uppercase tracking-wide text-slate-800">Enregistrer au format PDF</p>
+        <p class="mt-2 leading-relaxed">
+          Bouton ci-dessous, ou <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">Ctrl</kbd>+<kbd
+            class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">P</kbd> /
+          <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">⌘</kbd>+<kbd
+            class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">P</kbd>, puis
+          <strong>Enregistrer au format PDF</strong>.
+        </p>
+        <button
+          type="button"
+          data-print-legal
+          class="mt-4 inline-flex items-center justify-center rounded border border-slate-800 bg-slate-900 px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+        >
+          Imprimer / PDF
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="consent-sheet-wrap mx-auto w-full max-w-full px-2 pb-12 pt-6 sm:px-3 sm:pb-16 sm:pt-8 md:max-w-[210mm] md:px-5 md:pb-24 md:pt-10 print:max-w-none print:p-0 print:pb-0"
+    >
+      <slot />
+    </div>
+  </div>
+
+  <script is:inline>
+    document.querySelector("[data-print-legal]")?.addEventListener("click", () => window.print());
+  </script>
+</BaseLayout>

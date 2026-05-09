@@ -1,0 +1,127 @@
+---
+import LegalPrintChrome from "@/components/LegalPrintChrome.astro";
+
+const title = "CGV (document imprimable) — Le Sourire de Jojo";
+const description = "Conditions générales de vente — version PDF / impression.";
+---
+
+<LegalPrintChrome
+  title={title}
+  description={description}
+  breadcrumb={[
+    { href: "/", label: "Accueil" },
+    { href: "/legal", label: "Documents juridiques" },
+    { href: "/cgv", label: "CGV" },
+    { label: "Imprimable" },
+  ]}
+>
+  <article class="consent-document" id="document-cgv-pdf">
+    <header class="consent-doc-header">
+      <p class="consent-doc-entity">Le Sourire de Jojo</p>
+      <p class="consent-doc-subentity">Services à la personne — Accompagnement à domicile</p>
+      <p class="consent-doc-director">Représentée par <strong>Céline Meunier Benneji</strong></p>
+      <div class="consent-doc-rule" aria-hidden="true"></div>
+      <h1 class="consent-doc-title">Conditions générales de vente</h1>
+      <p class="consent-doc-ref">Version imprimable — Modèle indicatif</p>
+      <p class="consent-doc-warning">
+        Document type à adapter avec votre conseil juridique. Les devis et conventions signés prévalent sur ce texte générique.
+      </p>
+    </header>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 1</span> — Objet</h2>
+      <p>
+        Les présentes conditions générales de vente (CGV) régissent la fourniture de prestations d’<strong
+          >accompagnement à domicile</strong
+        >
+        de nature sociale, ludique et relationnelle, dans le cadre légal des services à la personne lorsque la réglementation l’autorise,
+        sans empiéter sur les actes réservés aux professions de santé (réf. art. L. 4311-1 du Code de la santé publique pour les actes
+        infirmiers).
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 2</span> — Devis et commande</h2>
+      <p>
+        Toute prestation fait l’objet d’un <strong>échange préalable</strong> et, le cas échéant, d’un <strong>devis</strong> ou
+        d’une <strong>convention</strong> détaillant l’objet, la fréquence, la zone d’intervention, le tarif et la durée. L’engagement
+        du Client vaut acceptation des CGV en vigueur à la date de signature.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 3</span> — Tarifs et paiement</h2>
+      <p>
+        Les prix sont <strong>indicatifs</strong> sur support de communication ; le montant contractuel est celui du devis ou de la
+        facture. Paiement selon modalités convenues (virement, chèque, titres ou moyens autorisés). Toute révision tarifaire est
+        notifiée dans les formes prévues au contrat.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 4</span> — Exécution</h2>
+      <p>
+        La Prestataire s’engage à une <strong>obligation de moyens</strong>. Le planning est fixé d’un commun accord ; les modifications
+        font l’objet d’une concertation dans un délai raisonnable.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 5</span> — Annulation, modification, résiliation</h2>
+      <p>
+        Les modalités détaillées d’annulation de séance, de report et de fin de contrat figurent au document « Conditions d’annulation et
+        de résiliation » (version web et PDF). En l’absence de clause spécifique, un <strong>préavis raisonnable</strong> et la bonne
+        foi des parties s’appliquent.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 6</span> — Responsabilité</h2>
+      <p>
+        Conformément à l’<strong>art. 1240 du Code civil</strong>, toute responsabilité est subordonnée à la preuve d’une
+        <strong>faute</strong> et d’un préjudice lié par le <strong>rapport de causalité</strong>. L’assurance responsabilité civile
+        professionnelle de la Prestataire s’applique selon les termes du contrat d’assurance. Sont notamment exclus les dommages liés à des
+        pathologies préexistantes ou à des causes étrangères à la faute de la Prestataire.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 7</span> — Urgence et non-assistance</h2>
+      <p>
+        Conformément à l’<strong>art. 223-6 du Code pénal</strong> et au protocole communiqué au Client, en cas de péril immédiat, la
+        priorité est l’<strong>appel aux secours</strong> (15, 18, 112, 114 selon les cas) avant les contacts non prioritaires.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 8</span> — Données personnelles</h2>
+      <p>
+        Traitements conformes au RGPD et à la loi Informatique et libertés — voir politique de confidentialité communiquée sur le site.
+        Chiffrement optionnel de certains champs côté hébergeur si activé.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 9</span> — Droit applicable et litiges</h2>
+      <p>
+        <strong>Droit français</strong>. Recherche d’une solution amiable préalable. À défaut, tribunaux compétents selon les règles de
+        compétence en vigueur.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 10</span> — Force majeure</h2>
+      <p>
+        Exonération partielle ou totale en cas de force majeure au sens du Code civil, dès lors qu’elle rend l’exécution impossible de
+        manière définitive ou temporaire.
+      </p>
+    </section>
+
+    <footer class="consent-doc-footer">
+      <p>
+        Le Sourire de Jojo — Céline Meunier Benneji — Tarn-et-Garonne (82) — Irkeedia Labs (site) — Vercel (hébergement) — Texte
+        indicatif.
+      </p>
+    </footer>
+  </article>
+</LegalPrintChrome>
