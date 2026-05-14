@@ -11,6 +11,11 @@ const today = new Intl.DateTimeFormat("fr-FR", {
   month: "2-digit",
   year: "numeric",
 }).format(new Date());
+
+const generatedAt = new Intl.DateTimeFormat("fr-FR", {
+  dateStyle: "long",
+  timeStyle: "short",
+}).format(new Date());
 ---
 
 <LegalPrintChrome
@@ -22,8 +27,8 @@ const today = new Intl.DateTimeFormat("fr-FR", {
     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-rose-vieux">Signature simple en ligne</p>
     <h1 id="contract-form-title" class="mt-2 font-display text-3xl text-marine md:text-4xl">Préparer le contrat</h1>
     <p class="mt-3 leading-relaxed text-marine/75">
-      Remplissez les informations, faites signer le client dans le cadre, puis utilisez
-      <strong>Imprimer / PDF</strong>. La signature sera visible dans le contrat généré.
+      Remplissez les informations, faites signer la prestataire puis le client dans les cadres, puis utilisez
+      <strong>Imprimer / PDF</strong>. Les signatures et horodatages seront visibles dans le contrat généré.
     </p>
     <p class="mt-3 rounded-2xl border border-aquarelle-jaune/40 bg-aquarelle-jaune/15 p-4 text-sm leading-relaxed text-marine/80">
       Cette version produit une signature simple intégrée au document. Elle ajoute une preuve visuelle, une date et les informations du
@@ -84,11 +89,49 @@ const today = new Intl.DateTimeFormat("fr-FR", {
             <label for="contract-place" class="block text-sm font-medium text-marine">Fait à *</label>
             <input id="contract-place" name="place" data-contract-input data-contract-required placeholder="Ex. Corbarieu" maxlength="100" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
           </div>
+          <div>
+            <label for="contract-payment-method" class="block text-sm font-medium text-marine">Moyen de paiement prévu</label>
+            <input id="contract-payment-method" name="payment_method" data-contract-input placeholder="Ex. virement, chèque, CESU..." maxlength="120" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-cancellation-notice" class="block text-sm font-medium text-marine">Préavis d’annulation</label>
+            <input id="contract-cancellation-notice" name="cancellation_notice" data-contract-input placeholder="Ex. 48 h ouvrées, sauf urgence légitime" maxlength="140" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div class="md:col-span-2">
+            <label for="contract-service-address" class="block text-sm font-medium text-marine">Lieu d’intervention</label>
+            <textarea id="contract-service-address" name="service_address" data-contract-input rows="2" maxlength="240" placeholder="Adresse si différente de celle du client, accès, étage, digicode..." class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"></textarea>
+          </div>
         </div>
       </fieldset>
 
       <fieldset class="space-y-4 border-t border-marine/10 pt-8">
-        <legend class="font-display text-xl text-marine">Signature</legend>
+        <legend class="font-display text-xl text-marine">Sécurité, limites et contacts utiles</legend>
+        <p class="text-sm leading-relaxed text-marine/75">
+          Ces informations aident à cadrer l’intervention et à protéger les deux parties. Elles ne remplacent pas une coordination
+          médicale lorsque celle-ci est nécessaire.
+        </p>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="contract-emergency-contact" class="block text-sm font-medium text-marine">Contact d’urgence</label>
+            <input id="contract-emergency-contact" name="emergency_contact" data-contract-input placeholder="Nom, lien, téléphone" maxlength="180" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-health-reference" class="block text-sm font-medium text-marine">Référent santé / proche à prévenir</label>
+            <input id="contract-health-reference" name="health_reference" data-contract-input placeholder="Facultatif : médecin, proche, établissement..." maxlength="180" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div class="md:col-span-2">
+            <label for="contract-known-limits" class="block text-sm font-medium text-marine">Besoins, limites connues ou vigilances</label>
+            <textarea id="contract-known-limits" name="known_limits" data-contract-input rows="3" maxlength="420" placeholder="Ex. mobilité, fatigue, risque de chute, contre-indications, consignes alimentaires..." class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"></textarea>
+          </div>
+          <div class="md:col-span-2">
+            <label for="contract-special-instructions" class="block text-sm font-medium text-marine">Consignes particulières convenues</label>
+            <textarea id="contract-special-instructions" name="special_instructions" data-contract-input rows="3" maxlength="420" placeholder="Ex. activités autorisées, sorties, personnes à contacter, limites d’intervention..." class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="space-y-4 border-t border-marine/10 pt-8">
+        <legend class="font-display text-xl text-marine">Signatures</legend>
         <label class="flex gap-3 rounded-2xl border border-marine/15 bg-sauge/10 p-4 text-sm leading-relaxed text-marine">
           <input id="contract-acceptance" name="acceptance" data-contract-required type="checkbox" class="mt-1 h-4 w-4 shrink-0 rounded border-marine/40 text-marine focus:ring-marine" />
           <span>
@@ -96,7 +139,10 @@ const today = new Intl.DateTimeFormat("fr-FR", {
             document imprimé ou enregistré en PDF.
           </span>
         </label>
-        <SignaturePad inputId="contract-signature" inputName="client_signature" />
+        <div class="grid gap-6 lg:grid-cols-2">
+          <SignaturePad inputId="contract-provider-signature" inputName="provider_signature" label="Signature de la prestataire" />
+          <SignaturePad inputId="contract-client-signature" inputName="client_signature" label="Signature du client ou représentant légal" />
+        </div>
       </fieldset>
 
       <p id="contract-form-error" class="hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"></p>
@@ -119,17 +165,19 @@ const today = new Intl.DateTimeFormat("fr-FR", {
       <p class="consent-doc-director">Représentée par <strong>Céline Meunier Benneji</strong></p>
       <div class="consent-doc-rule" aria-hidden="true"></div>
       <h1 class="consent-doc-title">Contrat de prestation</h1>
-      <p class="consent-doc-ref">Document généré depuis le site — Signature simple du client</p>
+      <p class="consent-doc-ref">Document généré depuis le site — Double signature simple et horodatée</p>
       <p class="consent-doc-warning">
-        Modèle indicatif à adapter à votre statut, vos assurances et vos obligations légales. La prestation décrite reste non médicale.
+        Contrat renforcé par les clauses déjà présentes dans les CGV, le consentement, l’annulation/résiliation et les mentions RGPD.
+        Ce modèle reste à faire valider par un conseil juridique pour un usage sensible.
       </p>
     </header>
 
     <section class="consent-section">
-      <h2 class="consent-art-title"><span class="consent-art-num">Article 1</span> — Parties</h2>
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 1</span> — Parties et documents applicables</h2>
       <p>
-        <span class="consent-label">Prestataire :</span> Le Sourire de Jojo, représenté par Céline Meunier Benneji, intervenant sur
-        Montauban, Corbarieu et les environs du Tarn-et-Garonne.
+        <span class="consent-label">Prestataire :</span> Le Sourire de Jojo, activité représentée par
+        <strong>Céline Meunier Benneji</strong>, intervenant sur Montauban, Corbarieu et les environs du Tarn-et-Garonne, ci-après
+        « la Prestataire ».
       </p>
       <p>
         <span class="consent-label">Client / signataire :</span>
@@ -142,23 +190,33 @@ const today = new Intl.DateTimeFormat("fr-FR", {
         <span class="consent-label">Adresse :</span>
         <span data-contract-field="client_address" class="contract-field contract-field-multiline">Adresse à compléter</span>
       </p>
+      <p>
+        <span class="consent-label">Documents contractuels applicables :</span> le présent contrat, les CGV, les conditions
+        d’annulation/résiliation, le document de consentement et les mentions RGPD disponibles sur le site. En cas de contradiction, les
+        stipulations particulières du présent contrat prévalent pour la mission concernée.
+      </p>
     </section>
 
     <section class="consent-section">
-      <h2 class="consent-art-title"><span class="consent-art-num">Article 2</span> — Objet du contrat</h2>
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 2</span> — Objet et nature non médicale</h2>
       <p>
-        La Prestataire propose une prestation d’accompagnement social, relationnel et ludique, sans acte médical, paramédical ni soin
-        relevant d’une profession réglementée de santé.
+        La Prestataire propose une prestation d’accompagnement social, relationnel, ludique et de lien social, dans le cadre des services
+        à la personne lorsque la réglementation applicable le permet. La prestation n’est ni un acte médical, ni un soin infirmier, ni
+        une surveillance clinique, ni une rééducation paramédicale.
       </p>
       <p>
         La prestation convenue concerne
-        <span data-contract-field="beneficiary_name" class="contract-field">la personne accompagnée à compléter</span>
+        <span data-contract-field="beneficiary_name" data-empty="la personne accompagnée à compléter" class="contract-field">la personne accompagnée à compléter</span>
         et porte sur : <strong><span data-contract-field="service_label" class="contract-field">prestation à compléter</span></strong>.
+      </p>
+      <p>
+        La Prestataire n’effectue aucun acte réservé aux professionnels de santé et ne se substitue pas au médecin traitant, aux proches,
+        aux auxiliaires de vie, aux infirmiers, aux établissements ou aux services d’urgence lorsque leur intervention est nécessaire.
       </p>
     </section>
 
     <section class="consent-section">
-      <h2 class="consent-art-title"><span class="consent-art-num">Article 3</span> — Organisation et tarif</h2>
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 3</span> — Organisation, lieu, tarif et paiement</h2>
       <p>
         Date de début prévue :
         <span data-contract-field="start_date" data-contract-format="date" class="contract-field">à définir</span>.
@@ -166,32 +224,132 @@ const today = new Intl.DateTimeFormat("fr-FR", {
         <span data-contract-field="frequency" class="contract-field">à définir</span>.
       </p>
       <p>
+        Lieu d’intervention :
+        <span data-contract-field="service_address" data-empty="adresse ou accès à définir" class="contract-field contract-field-multiline">adresse ou accès à définir</span>.
+      </p>
+      <p>
         Tarif convenu :
         <span data-contract-field="price" class="contract-field">selon devis ou accord écrit complémentaire</span>.
-        Les modalités exactes de règlement, d’annulation et de crédit d’impôt éventuel restent encadrées par les CGV et documents
-        commerciaux remis au Client.
+        Moyen de paiement prévu :
+        <span data-contract-field="payment_method" data-empty="à définir" class="contract-field">à définir</span>. Les montants définitifs sont ceux du devis,
+        de la facture ou de tout accord écrit complémentaire accepté par les parties.
       </p>
     </section>
 
     <section class="consent-section">
-      <h2 class="consent-art-title"><span class="consent-art-num">Article 4</span> — Cadre, sécurité et responsabilité</h2>
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 4</span> — Obligations du client et informations transmises</h2>
       <p>
-        Le Client reconnaît que la prestation est une obligation de moyens : la Prestataire s’engage à agir avec attention, prudence et
-        bienveillance, sans garantir un résultat déterminé ni se substituer aux proches, aux auxiliaires de vie ou aux professionnels de
-        santé lorsque leur intervention est nécessaire.
+        Le Client garantit disposer de la capacité juridique pour contracter ou agir en qualité de représentant légal, mandataire ou
+        personne habilitée. Il s’engage à communiquer avant l’intervention toute information utile à la sécurité, au rythme, à l’accès au
+        domicile, aux contre-indications ou aux limites connues.
       </p>
       <p>
-        En cas d’urgence ou de danger vital, la priorité est l’appel aux secours compétents (<strong>15</strong>, <strong>18</strong>,
-        <strong>112</strong> ou <strong>114</strong>) avant tout autre contact.
+        Contact d’urgence :
+        <span data-contract-field="emergency_contact" data-empty="à compléter si disponible" class="contract-field">à compléter si disponible</span>. Référent santé ou proche à
+        prévenir :
+        <span data-contract-field="health_reference" data-empty="à compléter si disponible" class="contract-field">à compléter si disponible</span>.
+      </p>
+      <p>
+        Besoins, limites ou vigilances déclarées :
+        <span data-contract-field="known_limits" data-empty="aucune information particulière déclarée" class="contract-field contract-field-multiline">aucune information particulière déclarée</span>.
+      </p>
+      <p>
+        Consignes particulières convenues :
+        <span data-contract-field="special_instructions" data-empty="aucune consigne particulière" class="contract-field contract-field-multiline">aucune consigne particulière</span>.
       </p>
     </section>
 
     <section class="consent-section">
-      <h2 class="consent-art-title"><span class="consent-art-num">Article 5</span> — Données personnelles</h2>
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 5</span> — Sécurité, urgence et interruption possible</h2>
+      <p>
+        En cas de malaise, chute, aggravation brutale, suspicion d’urgence vitale ou tout risque sérieux pour l’intégrité physique, la
+        priorité absolue est d’appeler les secours compétents (<strong>15</strong>, <strong>18</strong>, <strong>112</strong> ou
+        <strong>114</strong>) avant tout contact non urgent avec la famille ou les proches.
+      </p>
+      <p>
+        La Prestataire peut interrompre, reporter ou refuser une séance si la sécurité des personnes est compromise, si l’état de la
+        personne accompagnée dépasse manifestement le cadre non médical convenu, si l’accès au lieu est impossible ou si les informations
+        essentielles à la sécurité n’ont pas été communiquées.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 6</span> — Responsabilité et obligation de moyens</h2>
+      <p>
+        La Prestataire est tenue à une obligation de moyens : elle s’engage à intervenir avec diligence, prudence, bienveillance et
+        attention dans le cadre défini au présent contrat. Elle n’est pas tenue à une obligation de résultat et ne garantit pas l’absence
+        d’accident, de chute, de malaise ou d’aggravation liée à l’état de santé, à l’environnement ou à des circonstances extérieures.
+      </p>
+      <p>
+        Sa responsabilité ne peut être engagée qu’en cas de faute prouvée dans l’exécution de la prestation, dans la limite du lien causal
+        et sous réserve des garanties, plafonds et exclusions de son assurance responsabilité civile professionnelle. Sont notamment
+        exclus les dommages liés à une pathologie préexistante, à une information non communiquée par le Client ou à un événement non
+        imputable à une faute de la Prestataire.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 7</span> — Annulation, modification et résiliation</h2>
+      <p>
+        Toute annulation ou demande de déplacement par le Client doit être communiquée dès que possible. Préavis convenu :
+        <span data-contract-field="cancellation_notice" data-empty="préavis raisonnable à définir" class="contract-field">préavis raisonnable à définir</span>. Les annulations
+        tardives ou répétées sans motif légitime peuvent être facturées, déduites du forfait ou conduire à un réajustement du planning
+        selon les CGV et conditions d’annulation applicables.
+      </p>
+      <p>
+        La fin de la prestation peut intervenir selon le préavis prévu au contrat ou par écrit conservé. En cas de manquement grave,
+        danger, impossibilité durable d’exécution ou perte de confiance objective, la partie concernée peut demander la résiliation selon
+        le droit commun et les documents contractuels applicables.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 8</span> — Alimentation, sorties et gestes du quotidien</h2>
+      <p>
+        La Prestataire ne réalise aucune aide à la prise de repas complexe, acte de soin, surveillance médicale ou manipulation nécessitant
+        une compétence réglementée. Les gestes courants de sociabilité ou d’accompagnement restent possibles uniquement s’ils sont
+        compatibles avec les informations communiquées, l’état de la personne accompagnée et les limites du présent contrat.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 9</span> — Données personnelles et confidentialité</h2>
       <p>
         Les données renseignées servent à préparer et exécuter la prestation, établir les documents contractuels, gérer la relation
-        client et respecter les obligations administratives applicables. Le Client dispose des droits RGPD rappelés dans les mentions
-        légales du site.
+        client, organiser le planning, facturer si nécessaire, conserver une preuve contractuelle et respecter les obligations
+        administratives, comptables ou légales applicables.
+      </p>
+      <p>
+        Les informations relatives à la santé ou à la situation personnelle sont limitées au strict nécessaire dans le cadre d’un
+        accompagnement non médical. Elles ne se substituent pas à la coordination des professionnels de santé. Les droits RGPD du Client
+        sont rappelés dans les mentions légales du site.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 10</span> — Force majeure et impossibilité d’exécution</h2>
+      <p>
+        Les parties ne pourront être tenues responsables en cas de force majeure au sens du droit français ou d’impossibilité objective
+        d’exécution : maladie, catastrophe, restrictions administratives, danger au domicile, impossibilité matérielle d’accès ou tout
+        événement imprévisible, irrésistible et extérieur empêchant temporairement ou définitivement la prestation.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 11</span> — Droit applicable et règlement des litiges</h2>
+      <p>
+        Le présent contrat est soumis au droit français. Les parties privilégient une résolution amiable et écrite de tout différend. À
+        défaut d’accord amiable, les juridictions compétentes seront déterminées selon les règles applicables et, le cas échéant, les
+        stipulations des CGV ou du contrat signé.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 12</span> — Acceptation et signature simple</h2>
+      <p>
+        Les parties reconnaissent que la signature dessinée sur le site est intégrée au document imprimé ou enregistré en PDF avec un
+        horodatage local du navigateur. Elle constitue une signature simple destinée à matérialiser l’accord des parties sur le présent
+        contrat, sans constituer une signature électronique qualifiée.
       </p>
     </section>
 
@@ -204,14 +362,17 @@ const today = new Intl.DateTimeFormat("fr-FR", {
       <div class="consent-sign-grid">
         <div class="consent-sign-col">
           <p class="consent-sign-role">La Prestataire</p>
-          <div class="consent-sign-line" aria-hidden="true"></div>
-          <p class="consent-sign-hint">Nom, qualité, signature et cachet le cas échéant</p>
+          <div class="contract-signature-preview">
+            <img data-contract-signature-preview="provider" alt="Signature de la prestataire" />
+            <span data-contract-signature-empty="provider">Signature à compléter</span>
+          </div>
+          <p class="consent-sign-hint">Céline Meunier Benneji — signature simple recueillie sur le site</p>
         </div>
         <div class="consent-sign-col">
           <p class="consent-sign-role">Le Client ou représentant légal</p>
           <div class="contract-signature-preview">
-            <img data-contract-signature-preview alt="Signature du client" />
-            <span data-contract-signature-empty>Signature à compléter</span>
+            <img data-contract-signature-preview="client" alt="Signature du client" />
+            <span data-contract-signature-empty="client">Signature à compléter</span>
           </div>
           <p class="consent-sign-hint">
             <span data-contract-field="client_name">Nom du signataire</span> — signature simple recueillie sur le site
@@ -219,7 +380,13 @@ const today = new Intl.DateTimeFormat("fr-FR", {
         </div>
       </div>
       <p class="contract-signature-meta">
-        Signature simple confirmée le <span data-contract-field="signature_timestamp">date et heure à compléter</span>.
+        Signature prestataire horodatée le
+        <span data-contract-field="provider_signature_timestamp">date et heure à compléter</span> —
+        signature client horodatée le
+        <span data-contract-field="client_signature_timestamp">date et heure à compléter</span>.
+      </p>
+      <p class="contract-signature-meta">
+        Document généré côté navigateur le <span data-contract-field="document_timestamp">{generatedAt}</span>.
       </p>
     </section>
 
@@ -237,10 +404,23 @@ const today = new Intl.DateTimeFormat("fr-FR", {
       var error = document.getElementById("contract-form-error");
       var previewBtn = document.querySelector("[data-contract-preview]");
       var printBtn = document.querySelector("[data-contract-print]");
-      var signatureInput = document.getElementById("contract-signature");
-      var signatureImg = document.querySelector("[data-contract-signature-preview]");
-      var signatureEmpty = document.querySelector("[data-contract-signature-empty]");
-      var signatureTimestamp = "";
+      var signatures = {
+        provider: {
+          input: document.getElementById("contract-provider-signature"),
+          img: document.querySelector('[data-contract-signature-preview="provider"]'),
+          empty: document.querySelector('[data-contract-signature-empty="provider"]'),
+          timestampField: "provider_signature_timestamp",
+          timestamp: "",
+        },
+        client: {
+          input: document.getElementById("contract-client-signature"),
+          img: document.querySelector('[data-contract-signature-preview="client"]'),
+          empty: document.querySelector('[data-contract-signature-empty="client"]'),
+          timestampField: "client_signature_timestamp",
+          timestamp: "",
+        },
+      };
+      var documentTimestamp = "";
 
       function formatDate(value) {
         if (!value) return "";
@@ -254,6 +434,10 @@ const today = new Intl.DateTimeFormat("fr-FR", {
           dateStyle: "long",
           timeStyle: "short",
         }).format(new Date());
+      }
+
+      function nowIsoLike() {
+        return new Date().toISOString();
       }
 
       function setText(name, value) {
@@ -283,25 +467,30 @@ const today = new Intl.DateTimeFormat("fr-FR", {
           setText(key, data[key]);
           updateOptional(key, data[key]);
         });
+        if (!documentTimestamp) documentTimestamp = niceNow() + " (" + nowIsoLike() + ")";
         setText("signed_date", new Intl.DateTimeFormat("fr-FR").format(new Date()));
+        setText("document_timestamp", documentTimestamp);
 
-        if (signatureInput && signatureInput.value) {
-          if (!signatureTimestamp) signatureTimestamp = niceNow();
-          if (signatureImg) {
-            signatureImg.src = signatureInput.value;
-            signatureImg.style.display = "block";
+        Object.keys(signatures).forEach(function (key) {
+          var sig = signatures[key];
+          if (sig.input && sig.input.value) {
+            if (!sig.timestamp) sig.timestamp = niceNow() + " (" + nowIsoLike() + ")";
+            if (sig.img) {
+              sig.img.src = sig.input.value;
+              sig.img.style.display = "block";
+            }
+            if (sig.empty) sig.empty.style.display = "none";
+            setText(sig.timestampField, sig.timestamp);
+          } else {
+            sig.timestamp = "";
+            if (sig.img) {
+              sig.img.removeAttribute("src");
+              sig.img.style.display = "none";
+            }
+            if (sig.empty) sig.empty.style.display = "";
+            setText(sig.timestampField, "");
           }
-          if (signatureEmpty) signatureEmpty.style.display = "none";
-          setText("signature_timestamp", signatureTimestamp);
-        } else {
-          signatureTimestamp = "";
-          if (signatureImg) {
-            signatureImg.removeAttribute("src");
-            signatureImg.style.display = "none";
-          }
-          if (signatureEmpty) signatureEmpty.style.display = "";
-          setText("signature_timestamp", "");
-        }
+        });
       }
 
       function requiredFields() {
@@ -316,11 +505,14 @@ const today = new Intl.DateTimeFormat("fr-FR", {
           field.setAttribute("aria-invalid", ok ? "false" : "true");
           if (!ok) missing.push(field);
         });
-        if (!signatureInput || !signatureInput.value) missing.push(signatureInput);
+        Object.keys(signatures).forEach(function (key) {
+          var input = signatures[key].input;
+          if (!input || !input.value) missing.push(input);
+        });
 
         if (missing.length > 0) {
           if (error) {
-            error.textContent = "Merci de compléter les champs obligatoires, de cocher l’acceptation et d’ajouter la signature avant l’impression.";
+            error.textContent = "Merci de compléter les champs obligatoires, de cocher l’acceptation et d’ajouter les deux signatures avant l’impression.";
             error.classList.remove("hidden");
           }
           var first = missing[0];
@@ -335,7 +527,7 @@ const today = new Intl.DateTimeFormat("fr-FR", {
       }
 
       document.addEventListener("input", function (event) {
-        if (event.target && (event.target.matches("[data-contract-input]") || event.target.id === "contract-signature")) updatePreview();
+        if (event.target && (event.target.matches("[data-contract-input]") || event.target.matches("[data-signature-input]"))) updatePreview();
       });
       document.addEventListener("change", function (event) {
         if (event.target && event.target.matches("[data-contract-required]")) updatePreview();

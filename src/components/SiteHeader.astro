@@ -1,6 +1,4 @@
 ---
-import TextSizeToggle from "./TextSizeToggle.astro";
-
 const links = [
   { href: "/", label: "Accueil", shortLabel: "Accueil", desktopLabel: "Accueil" },
   { href: "/services", label: "Nos services", shortLabel: "Services", desktopLabel: "Services" },
@@ -104,12 +102,6 @@ function isActive(href: string): boolean {
           }
         </ul>
       </nav>
-      <div
-        class="flex shrink-0 items-center gap-2 rounded-2xl border border-marine/10 bg-white/50 px-2 py-1.5 shadow-sm backdrop-blur-sm"
-        title="Taille du texte"
-      >
-        <TextSizeToggle variant="default" />
-      </div>
     </div>
 
     <button
@@ -248,8 +240,6 @@ function isActive(href: string): boolean {
             Plan du site
           </a>
         </div>
-        <p class="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-marine/60">Accessibilité</p>
-        <TextSizeToggle variant="compact" />
       </div>
     </div>
   </div>

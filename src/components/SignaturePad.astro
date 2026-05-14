@@ -43,6 +43,9 @@ const canvasId = `${inputId}-canvas`;
 <script is:inline>
   (function () {
     function setupSignaturePad(root) {
+      if (root.dataset.signatureReady === "true") return;
+      root.dataset.signatureReady = "true";
+
       var canvas = root.querySelector("[data-signature-canvas]");
       var input = root.querySelector("[data-signature-input]");
       var clearBtn = root.querySelector("[data-signature-clear]");

@@ -4,14 +4,12 @@
 
 @layer base {
   :root {
-    --font-scale: 1;
     --color-marine: #1d3557;
     --color-ivoire: #f5f3e7;
     --paper-shadow: 0 22px 70px rgb(29 53 87 / 0.1);
   }
 
   html {
-    font-size: calc(100% * var(--font-scale, 1));
     scroll-behavior: smooth;
   }
 

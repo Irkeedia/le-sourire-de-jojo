@@ -217,6 +217,10 @@
   white-space: pre-line;
 }
 
+.contract-document .consent-section {
+  break-inside: avoid;
+}
+
 .contract-signature-preview {
   display: flex;
   align-items: center;
@@ -244,6 +248,10 @@
   font-size: 8.5pt;
   color: #475569;
   text-align: center;
+}
+
+.contract-document .consent-sign-block {
+  page-break-inside: avoid;
 }
 
 [aria-invalid="true"] {
@@ -363,5 +371,14 @@
 
   .contract-signature-preview {
     border-color: #000 !important;
+    min-height: 4rem !important;
+  }
+
+  .contract-signature-preview img {
+    max-height: 3.85rem !important;
+  }
+
+  .contract-document .consent-section {
+    break-inside: avoid-page;
   }
 }

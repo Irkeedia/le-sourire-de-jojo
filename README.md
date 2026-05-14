@@ -1,86 +1,62 @@
-# Le Sourire de Jojo — site web
+# Le Sourire de Jojo — Site Web
 
-Site vitrine pour **Le Sourire de Jojo** : accompagnement à domicile bienveillant (lecture, sorties, jeux, nature, souvenirs) autour de **Montauban**, **Corbarieu** et le **Tarn-et-Garonne**. Le site présente l’offre, les tarifs indicatifs, le carnet de sourires, et un **formulaire de contact** branché sur une API sécurisée.
+Site vitrine Astro pour **Le Sourire de Jojo**, activité d’accompagnement social, relationnel et bienveillant à domicile autour de **Montauban**, **Corbarieu** et le **Tarn-et-Garonne**.
+
+Le site présente les services, les offres, le carnet de sourires, les documents juridiques, un formulaire de contact sécurisé et une page de contrat signable en ligne.
 
 **Dépôt :** [github.com/Irkeedia/le-sourire-de-jojo](https://github.com/Irkeedia/le-sourire-de-jojo)
 
-**Indexation :** par défaut, le site est en **noindex** (il ne doit **pas** apparaître dans Google et les autres moteurs tant que vous n’activez pas volontairement l’indexation). Voir la section [Indexation (noindex par défaut)](#indexation-noindex-par-défaut).
+Par défaut, le site reste en **noindex** tant que `PUBLIC_ALLOW_INDEXING` n’est pas défini à `true` ou `1`.
 
 ---
 
 ## Sommaire
 
-1. [Stack technique](#stack-technique)
-2. [Prérequis](#prérequis)
-3. [Installation rapide](#installation-rapide)
-4. [Variables d’environnement](#variables-denvironnement)
-5. [Scripts npm](#scripts-npm)
-6. [Architecture du projet](#architecture-du-projet)
-7. [Pages et routes](#pages-et-routes)
+1. [Stack](#stack)
+2. [Installation](#installation)
+3. [Variables d’environnement](#variables-denvironnement)
+4. [Scripts](#scripts)
+5. [Architecture](#architecture)
+6. [Pages principales](#pages-principales)
+7. [Fonctionnalités clés](#fonctionnalités-clés)
 8. [API contact](#api-contact)
-9. [Sécurité et conformité](#sécurité-et-conformité)
-10. [Interface : design et composants clés](#interface--design-et-composants-clés)
-11. [Assets statiques et images](#assets-statiques-et-images)
-12. [Build et déploiement](#build-et-déploiement)
-13. [Indexation (noindex par défaut)](#indexation-noindex-par-défaut)
-14. [Documentation complémentaire](#documentation-complémentaire)
-15. [Licence](#licence)
+9. [Signature et contrat](#signature-et-contrat)
+10. [Sécurité, RGPD et indexation](#sécurité-rgpd-et-indexation)
+11. [Build et déploiement](#build-et-déploiement)
+12. [Documentation complémentaire](#documentation-complémentaire)
 
 ---
 
-## Stack technique
+## Stack
 
 | Technologie | Rôle |
-|-------------|------|
-| **[Astro](https://astro.build) 5** | Framework web, pages `.astro`, routing fichier |
-| **Mode `output: "server"`** | Rendu côté serveur (SSR), pas de site entièrement statique |
-| **[@astrojs/node](https://docs.astro.build/en/guides/integrations-guide/node/)** | Adaptateur Node en mode **standalone** (serveur après build) |
-| **[Tailwind CSS](https://tailwindcss.com) 3** | Styles utilitaires, thème couleurs et polices personnalisés |
-| **[Zod](https://zod.dev)** | Validation du corps JSON du formulaire de contact |
-| **[Mongoose](https://mongoosejs.com)** | Persistance **optionnelle** des messages (si `MONGODB_URI` est défini) |
-| **[Nodemailer](https://nodemailer.com)** | Envoi d’e-mails SMTP pour les notifications de contact |
+| --- | --- |
+| **Astro 5** | Framework web et routing fichier |
+| **SSR `output: "server"`** | Rendu serveur |
+| **@astrojs/node** | Adaptateur Node standalone hors Vercel |
+| **@astrojs/vercel** | Adaptateur Vercel lorsque `VERCEL=1` |
+| **Tailwind CSS 3** | Design system et styles utilitaires |
+| **Zod** | Validation des données du formulaire |
+| **Mongoose** | Stockage optionnel des messages contact |
+| **Nodemailer** | Notifications e-mail SMTP |
 
-Alias Vite : `@` → répertoire `src/` (voir `astro.config.mjs`).
-
----
-
-## Prérequis
-
-- **Node.js** 20 ou supérieur (recommandé : LTS actuelle)
-- **npm** (livré avec Node)
-
-Vérifier les versions :
-
-```bash
-node -v
-npm -v
-```
+Alias import : `@/*` pointe vers `src/*`.
 
 ---
 
-## Installation rapide
+## Installation
 
 ```bash
 git clone git@github.com:Irkeedia/le-sourire-de-jojo.git
 cd le-sourire-de-jojo
 npm install
-```
-
-Copier le fichier d’exemple des variables d’environnement :
-
-```bash
 cp env.example .env
-```
-
-Puis éditer `.env` selon votre environnement (voir [Variables d’environnement](#variables-denvironnement) et le guide détaillé dans `docs/ENVIRONNEMENT.md`).
-
-Lancer le serveur de développement :
-
-```bash
 npm run dev
 ```
 
-Par défaut, Astro affiche l’URL locale (souvent `http://localhost:4321`). Pour exposer le serveur sur le réseau local :
+Astro affiche ensuite l’URL locale, généralement `http://localhost:4321`.
+
+Pour exposer le serveur sur le réseau local :
 
 ```bash
 npm run dev -- --host
@@ -88,190 +64,203 @@ npm run dev -- --host
 
 ---
 
-## Variables d’environnement
+## Variables D’environnement
 
-Résumé (table complète : `docs/ENVIRONNEMENT.md`) :
+Les variables principales sont :
 
 | Variable | Usage |
-|----------|--------|
-| `PUBLIC_SITE_URL` | URL canonique du site (SEO, `Astro.site`) — fortement conseillé en production |
-| `PUBLIC_ALLOW_INDEXING` | **`true`** ou **`1`** uniquement quand vous voulez être référencé. Toute autre valeur ou l’absence de variable = site **non indexé** (voir section dédiée ci-dessous) |
+| --- | --- |
+| `PUBLIC_SITE_URL` | URL canonique du site |
+| `PUBLIC_ALLOW_INDEXING` | Active l’indexation si `true` ou `1` |
 | `CONTACT_TO_EMAIL` | Destinataire des messages contact |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` | Envoi des e-mails de notification |
-| `MONGODB_URI` | Optionnel : enregistrement des messages en base |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` | Configuration SMTP |
+| `MONGODB_URI` | Stockage optionnel des messages |
+| `ENCRYPTION_KEY` | Chiffrement optionnel de champs sensibles |
+| `CONTACT_RATE_LIMIT`, `CONTACT_RATE_WINDOW_MS` | Limitation du débit contact |
 | `HSTS_ENABLE`, `CSP_REPORT_ONLY`, `CSP_REPORT_URI` | Durcissement HTTP / CSP |
-| `CONTACT_RATE_LIMIT`, `CONTACT_RATE_WINDOW_MS` | Limite de débit sur `POST /api/contact` |
-| `PUBLIC_GOOGLE_MAPS_EMBED_URL` | Optionnel : URL d’iframe « Partager → Intégrer une carte » (recommandé sans compte API) |
-| `PUBLIC_GOOGLE_MAPS_API_KEY` | Optionnel : clé **Maps Embed API** (alternative à l’URL d’embed) |
-| `PUBLIC_GOOGLE_MAPS_EMBED_QUERY`, `PUBLIC_GOOGLE_MAPS_EMBED_ZOOM` | Optionnel : lieu et zoom si pas d’URL personnalisée |
+| `PUBLIC_GOOGLE_MAPS_EMBED_URL` | Iframe Google Maps personnalisée |
+| `PUBLIC_GOOGLE_MAPS_API_KEY` | Alternative Maps Embed API |
+| `PUBLIC_GOOGLE_MAPS_EMBED_QUERY`, `PUBLIC_GOOGLE_MAPS_EMBED_ZOOM` | Fallback carte sans URL personnalisée |
 
-**Ne jamais committer** le fichier `.env` (il doit rester dans `.gitignore`).
+Ne jamais committer `.env`.
+
+Guide complet : [`docs/ENVIRONNEMENT.md`](docs/ENVIRONNEMENT.md).
 
 ---
 
-## Scripts npm
+## Scripts
 
 | Commande | Description |
-|----------|-------------|
-| `npm run dev` | Serveur de développement avec rechargement à chaud |
-| `npm run dev -- --host` | Même chose, accessible depuis d’autres machines du LAN |
-| `npm run build` | Compilation production → répertoire `dist/` |
-| `npm run preview` | Prévisualisation locale du build (Astro) |
-| `npm run start` | Démarrage du serveur Node **après** `npm run build` (`node ./dist/server/entry.mjs`) |
-
-En production, placez le processus derrière un reverse proxy (HTTPS, en-têtes `X-Forwarded-*`). Voir `docs/DEPLOIEMENT.md`.
+| --- | --- |
+| `npm run dev` | Serveur de développement |
+| `npm run build` | Build production dans `dist/` |
+| `npm run preview` | Prévisualisation du build |
+| `npm run start` | Démarrage Node après build |
 
 ---
 
-## Architecture du projet
+## Architecture
 
-```
+```text
 .
-├── astro.config.mjs      # Astro : SSR, adapter Node, Tailwind, alias @
-├── tailwind.config.mjs   # Couleurs marque, polices, texture "grain"
+├── astro.config.mjs
+├── tailwind.config.mjs
 ├── package.json
-├── env.example           # Modèle des variables d’environnement
-├── public/               # Fichiers servis tels quels (URL = racine du site)
-│   └── images/           # Photographies, illustrations, packs d’assets fleurs, etc.
-├── docs/                 # Guides : env, sécurité, déploiement, RGPD
+├── env.example
+├── public/
+│   └── images/
+├── docs/
 ├── src/
-│   ├── components/       # Blocs UI réutilisables
-│   ├── layouts/          # BaseLayout (en-tête HTML, SEO, fil d’Ariane)
-│   ├── lib/              # Logique : Zod, mail, rate limit, packs, DB, en-têtes
-│   ├── models/           # Schéma Mongoose (messages contact)
-│   ├── middleware.ts     # En-têtes de sécurité + rate limiting global
-│   ├── pages/            # Routes (fichiers = URLs) + API
-│   └── styles/
-│       └── global.css    # Couches Tailwind + composants (.brand-backdrop, .jojo-paper, etc.)
-└── dist/                 # Généré par `npm run build` (ne pas éditer à la main)
+│   ├── components/
+│   ├── layouts/
+│   ├── lib/
+│   ├── models/
+│   ├── pages/
+│   │   ├── api/
+│   │   ├── imprimer/
+│   │   └── legal/
+│   ├── styles/
+│   └── middleware.ts
+└── dist/
 ```
 
-### Fichiers transverses importants
+Fichiers transverses importants :
 
-- **`src/middleware.ts`** : appliqué aux requêtes entrantes (sécurité, limitation du débit sur le POST contact).
-- **`src/lib/security-headers.ts`** : configuration des en-têtes (CSP, etc., selon variables).
-- **`src/lib/rate-limit.ts`** : logique de fenêtre glissante par IP.
-
----
-
-## Pages et routes
-
-Les routes suivent la convention Astro : un fichier dans `src/pages/` = une URL.
-
-| Chemin (exemple) | Fichier | Contenu principal |
-|------------------|---------|-------------------|
-| `/` | `pages/index.astro` | Accueil, sections services, « Rayon de soleil », FAQ, CTA |
-| `/a-propos` | `pages/a-propos.astro` | Histoire et philosophie |
-| `/services` | `pages/services.astro` | Détail des axes d’accompagnement |
-| `/offres` | `pages/offres.astro` | Forfaits / tarifs indicatifs |
-| `/carnet` | `pages/carnet.astro` | Carnet de sourires |
-| `/contact` | `pages/contact.astro` | Carte Google Maps (optionnelle), formulaire, simulateur crédit d’impôt |
-| `POST /api/contact` | `pages/api/contact.ts` | API JSON du formulaire |
-
-Page d’erreur : `pages/404.astro`.
+- `src/layouts/BaseLayout.astro` : layout global, SEO, scripts d’animation et navigation des carrousels.
+- `src/middleware.ts` : en-têtes de sécurité et rate limiting.
+- `src/lib/security-headers.ts` : politique CSP et headers.
+- `src/lib/zod-contact.ts` : validation du formulaire contact.
+- `src/lib/esign.ts` : point d’extension pour une future signature qualifiée type Yousign.
 
 ---
 
-## API contact
+## Pages Principales
 
-- **Endpoint :** `POST /api/contact`
-- **Format :** JSON validé par `contactSchema` (`src/lib/zod-contact.ts`)
-- **Protections :** honeypot (`website`), limite de taille du corps, rate limiting (middleware + variables d’env)
-- **Comportement :**
-  - Si `MONGODB_URI` est configuré et joignable, le message peut être enregistré via `ContactMessage`
-  - Si `CONTACT_TO_EMAIL` et SMTP sont configurés, un e-mail de notification est envoyé
-- **Prerender :** désactivé (`prerender = false`) pour exécution serveur à chaque requête
-
-En cas d’erreur d’envoi mail, l’API renvoie une réponse d’erreur appropriée (voir le code de `contact.ts` pour le détail des statuts).
-
----
-
-## Sécurité et conformité
-
-- En-têtes de sécurité et politique de contenu documentés dans `docs/SECURITE.md`
-- Données personnelles et formulaire : `docs/RGPD.md`
-- Signalement de vulnérabilités : `SECURITY.md`
+| Route | Fichier | Rôle |
+| --- | --- | --- |
+| `/` | `src/pages/index.astro` | Accueil, services, missions, méthode |
+| `/a-propos` | `src/pages/a-propos.astro` | Histoire et posture |
+| `/services` | `src/pages/services.astro` | Détail de l’accompagnement |
+| `/offres` | `src/pages/offres.astro` | Formules, tarifs indicatifs, simulateur |
+| `/carnet` | `src/pages/carnet.astro` | Carnet de sourires |
+| `/contact` | `src/pages/contact.astro` | Carte, formulaire, mentions et RGPD |
+| `/contrat` | `src/pages/contrat.astro` | Contrat renforcé avec double signature |
+| `/legal` | `src/pages/legal/index.astro` | Hub des documents juridiques |
+| `/cgv` | `src/pages/cgv.astro` | Conditions générales |
+| `/conditions-annulation` | `src/pages/conditions-annulation.astro` | Annulation et résiliation |
+| `/consentement` | `src/pages/consentement.astro` | Consentement imprimable |
+| `/plan-du-site` | `src/pages/plan-du-site.astro` | Plan du site |
+| `POST /api/contact` | `src/pages/api/contact.ts` | API du formulaire contact |
 
 ---
 
-## Interface : design et composants clés
+## Fonctionnalités Clés
 
-### Charte (Tailwind)
+- Header responsive avec menu mobile plein écran.
+- Footer avec liens de navigation, hub juridique et contrat à signer.
+- Hero d’accueil extrait dans `HomeHero.astro`.
+- Cartes d’audience via `HomeAudienceCard.astro`.
+- Carrousels horizontaux mobile avec flèches via `SnapCarouselNav.astro`.
+- Navigation carrousel robuste basée sur `getBoundingClientRect()`.
+- Curseur personnalisé desktop via `CursorTracker.astro`.
+- Décor floral global via `BrandBackdrop.astro`.
+- Carte Google Maps via iframe, configurable par variables publiques.
+- Formulaire de contact validé, protégé par honeypot, taille maximale et rate limiting.
+- Documents juridiques imprimables avec `LegalPrintChrome.astro` et `legal-document.css`.
+- Contrat signable en ligne avec double signature tactile et horodatage.
 
-Couleurs principales définies dans `tailwind.config.mjs` :
-
-- **marine** (`#1D3557`) — texte fort, boutons
-- **ivoire** (`#F5F3E7`) — fonds clairs
-- **rose-vieux**, **sauge**, **aquarelle-*** — accents illustratifs
-
-Polices : **Dancing Script** (titres affichage), **Lato** (corps), chargées via Google Fonts dans `BaseLayout.astro`.
-
-### Composants notables
-
-| Composant | Rôle |
-|-----------|------|
-| `BaseLayout.astro` | Structure HTML, meta (robots selon `PUBLIC_ALLOW_INDEXING`), JSON-LD LocalBusiness **uniquement si indexation autorisée**, header/footer globaux |
-| `SiteHeader.astro` / `SiteFooter.astro` | Navigation et pied de page |
-| `BrandBackdrop.astro` | Calque fixe plein écran : décor floral en PNG (toutes les images du dossier `public/images/assets fleur/`) |
-| `FloralAccent.astro` | Accents floraux **en PNG** dans certaines sections (remplace les anciens SVG décoratifs) |
-| `CursorTracker.astro` | Curseur personnalisé : **petit point** uniquement sur pointeur fin (`hover: hover` + `pointer: fine`), curseur masqué sur le document ; champs texte gardent le curseur système ; désactivé sur appareils tactiles |
-| `GoogleMapEmbed.astro` | Carte **Google Maps** toujours en **iframe** : URL d’embed (`PUBLIC_GOOGLE_MAPS_EMBED_URL`), ou clé API + lieu, ou embed sans clé (`output=embed`) |
-| `ContactForm.astro` | Formulaire relié à l’API |
-| `CostSimulator.astro` | Estimation liée au crédit d’impôt (page contact) |
-| `TextSizeToggle.astro` | Réglage taille de texte (accessibilité) |
-
-Le fichier `src/styles/global.css` contient les utilitaires de mise en page (fond `body`, grain, cartes `.jojo-paper`, séparateur `.jojo-floral-divider`, positionnement des fleurs du backdrop).
+Le contrôle de taille de texte A/A+ a été retiré de l’interface.
 
 ---
 
-## Assets statiques et images
+## API Contact
 
-- Tout ce qui est dans **`public/`** est accessible à la racine : `public/images/photo.png` → `/images/photo.png`.
-- Les **fleurs de fond** globales sont dans `public/images/assets fleur/` (`1.png` … `8.png`). Dans le HTML, l’espace du nom de dossier est encodé en URL : `/images/assets%20fleur/1.png`.
-- Pour ajouter ou remplacer des visuels : déposer les fichiers dans `public/` puis mettre à jour les chemins dans les composants concernés (`BrandBackdrop.astro`, `FloralAccent.astro`, ou pages).
+Endpoint : `POST /api/contact`
 
----
+Comportement :
 
-## Build et déploiement
+- corps JSON validé par Zod ;
+- honeypot `website` contre les bots ;
+- limite de taille du body ;
+- rate limiting par IP côté middleware ;
+- stockage MongoDB optionnel si `MONGODB_URI` est configuré ;
+- notification SMTP si `CONTACT_TO_EMAIL` et les variables SMTP sont configurés ;
+- chiffrement optionnel de certaines informations sensibles avec `ENCRYPTION_KEY`.
 
-1. Définir les variables d’environnement sur l’hébergement (équivalent de `.env`).
-2. `npm run build`
-3. `npm run start` (ou lancer le point d’entrée généré selon la doc de l’hébergement Node)
-
-Détails (HTTPS, proxy, variables) : **`docs/DEPLOIEMENT.md`**.
-
-**Vercel :** le build utilise automatiquement l’adaptateur **`@astrojs/vercel`** (variable d’environnement `VERCEL=1` côté plateforme). Si vous ne voyez que `404 NOT_FOUND` Vercel sur tout le site, c’est en général qu’un adaptateur **Node standalone** était utilisé sans configuration Vercel — la config actuelle du dépôt corrige ce cas.
+Le message contient notamment les confirmations juridiques : capacité à contracter et protocole d’urgence.
 
 ---
 
-## Indexation (noindex par défaut)
+## Signature Et Contrat
 
-Le projet est réglé pour rester **invisible dans les résultats des moteurs de recherche** tant que vous ne basculez pas explicitement en mode indexable.
+La page `/contrat` permet de générer un contrat opérationnel :
 
-**Comportement lorsque `PUBLIC_ALLOW_INDEXING` n’est pas `true` / `1`** (y compris variable absente ou `false`) :
+- informations client et représentant légal ;
+- prestation, rythme, tarif, paiement et lieu d’intervention ;
+- préavis d’annulation ;
+- contact d’urgence, référent santé/proche, limites connues et consignes particulières ;
+- clauses croisées avec CGV, consentement, annulation/résiliation et RGPD ;
+- protections prestataire : nature non médicale, obligation de moyens, limites de responsabilité, risques préexistants, urgence, interruption possible, force majeure ;
+- double signature tactile : prestataire + client ;
+- horodatage local et ISO pour chaque signature ;
+- impression ou enregistrement PDF via le navigateur.
 
-| Mécanisme | Effet |
-|-----------|--------|
-| Balise HTML | `<meta name="robots" content="noindex, nofollow">` sur toutes les pages (`BaseLayout.astro`) |
-| HTTP | En-tête `X-Robots-Tag: noindex, nofollow` sur les réponses (`middleware.ts`) |
-| `robots.txt` | Route dynamique `src/pages/robots.txt.ts` : **`Disallow: /`** pour tous les user-agents |
-| Données structurées | Pas de script JSON-LD « LocalBusiness » (évite d’envoyer un signal SEO contradictoire) |
-
-**Pour autoriser l’indexation** (mise en ligne publique, référencement souhaité) : dans le `.env` de production, définir `PUBLIC_ALLOW_INDEXING=true`, puis redémarrer l’application. Le `robots.txt` passera alors à `Allow: /` et le JSON-LD réapparaîtra.
-
-Référence détaillée des variables : `docs/ENVIRONNEMENT.md`.
+Limite importante : il s’agit d’une **signature simple intégrée au document**, pas d’une signature électronique qualifiée. Pour identité vérifiée, piste d’audit et valeur probante renforcée, il faudra brancher un service spécialisé comme Yousign, DocuSign ou Universign.
 
 ---
 
-## Documentation complémentaire
+## Sécurité, RGPD Et Indexation
+
+Sécurité :
+
+- headers configurés dans `src/lib/security-headers.ts` ;
+- CSP configurable en mode report-only ;
+- rate limiting sur le formulaire ;
+- stockage MongoDB optionnel ;
+- chiffrement optionnel de champs sensibles.
+
+RGPD :
+
+- finalités, bases légales, durées, destinataires et droits détaillés sur `/contact#rgpd` ;
+- documentation dédiée : [`docs/RGPD.md`](docs/RGPD.md).
+
+Indexation :
+
+- sans `PUBLIC_ALLOW_INDEXING=true` ou `1`, le site envoie `noindex, nofollow` ;
+- `robots.txt` bloque tout par défaut ;
+- le JSON-LD LocalBusiness n’est injecté que si l’indexation est autorisée.
+
+---
+
+## Build Et Déploiement
+
+Build :
+
+```bash
+npm run build
+```
+
+Démarrage Node après build :
+
+```bash
+npm run start
+```
+
+Sur Vercel, l’adaptateur Vercel est sélectionné automatiquement par la variable `VERCEL=1`.
+
+Guide complet : [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md).
+
+---
+
+## Documentation Complémentaire
 
 | Document | Contenu |
-|----------|---------|
-| [docs/ENVIRONNEMENT.md](docs/ENVIRONNEMENT.md) | Liste et rôle de chaque variable d’environnement |
-| [docs/SECURITE.md](docs/SECURITE.md) | CSP, rate limiting, bonnes pratiques |
-| [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md) | Mise en production |
-| [docs/RGPD.md](docs/RGPD.md) | Traitement des données du formulaire |
-| [SECURITY.md](SECURITY.md) | Politique de signalement de vulnérabilités |
+| --- | --- |
+| [`docs/ENVIRONNEMENT.md`](docs/ENVIRONNEMENT.md) | Variables d’environnement |
+| [`docs/SECURITE.md`](docs/SECURITE.md) | CSP, headers, rate limiting |
+| [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md) | Mise en production |
+| [`docs/RGPD.md`](docs/RGPD.md) | Données personnelles |
+| [`SECURITY.md`](SECURITY.md) | Signalement de vulnérabilités |
 
 ---
 
