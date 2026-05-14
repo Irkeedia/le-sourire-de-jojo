@@ -1,0 +1,374 @@
+---
+import LegalPrintChrome from "@/components/LegalPrintChrome.astro";
+import SignaturePad from "@/components/SignaturePad.astro";
+
+const title = "Contrat de prestation à signer — Le Sourire de Jojo";
+const description =
+  "Contrat de prestation personnalisable avec signature simple en ligne, à imprimer ou enregistrer en PDF.";
+
+const today = new Intl.DateTimeFormat("fr-FR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+}).format(new Date());
+---
+
+<LegalPrintChrome
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { href: "/legal", label: "Documents juridiques" }, { label: "Contrat à signer" }]}
+>
+  <section class="no-print mx-auto mb-8 max-w-3xl rounded-3xl border border-marine/15 bg-white/95 p-5 text-marine shadow-sm sm:p-6 md:p-8" aria-labelledby="contract-form-title">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-rose-vieux">Signature simple en ligne</p>
+    <h1 id="contract-form-title" class="mt-2 font-display text-3xl text-marine md:text-4xl">Préparer le contrat</h1>
+    <p class="mt-3 leading-relaxed text-marine/75">
+      Remplissez les informations, faites signer le client dans le cadre, puis utilisez
+      <strong>Imprimer / PDF</strong>. La signature sera visible dans le contrat généré.
+    </p>
+    <p class="mt-3 rounded-2xl border border-aquarelle-jaune/40 bg-aquarelle-jaune/15 p-4 text-sm leading-relaxed text-marine/80">
+      Cette version produit une signature simple intégrée au document. Elle ajoute une preuve visuelle, une date et les informations du
+      signataire, mais ne remplace pas une signature électronique qualifiée type Yousign.
+    </p>
+
+    <form id="contract-form" class="mt-8 space-y-8" novalidate>
+      <fieldset class="space-y-4">
+        <legend class="font-display text-xl text-marine">Client ou représentant légal</legend>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="contract-client-name" class="block text-sm font-medium text-marine">Nom et prénom du signataire *</label>
+            <input id="contract-client-name" name="client_name" data-contract-input data-contract-required autocomplete="name" maxlength="120" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-client-email" class="block text-sm font-medium text-marine">E-mail *</label>
+            <input id="contract-client-email" name="client_email" data-contract-input data-contract-required type="email" autocomplete="email" maxlength="254" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-client-phone" class="block text-sm font-medium text-marine">Téléphone</label>
+            <input id="contract-client-phone" name="client_phone" data-contract-input type="tel" autocomplete="tel" maxlength="40" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-relation" class="block text-sm font-medium text-marine">Qualité du signataire</label>
+            <input id="contract-relation" name="relation" data-contract-input placeholder="Ex. bénéficiaire, enfant, tuteur..." maxlength="100" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div class="md:col-span-2">
+            <label for="contract-client-address" class="block text-sm font-medium text-marine">Adresse du client *</label>
+            <textarea id="contract-client-address" name="client_address" data-contract-input data-contract-required rows="2" maxlength="240" autocomplete="street-address" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="space-y-4 border-t border-marine/10 pt-8">
+        <legend class="font-display text-xl text-marine">Prestation</legend>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <label for="contract-beneficiary-name" class="block text-sm font-medium text-marine">Personne accompagnée</label>
+            <input id="contract-beneficiary-name" name="beneficiary_name" data-contract-input maxlength="120" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-service-label" class="block text-sm font-medium text-marine">Formule ou prestation *</label>
+            <input id="contract-service-label" name="service_label" data-contract-input data-contract-required placeholder="Ex. visite de lien social, sortie adaptée..." maxlength="160" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-start-date" class="block text-sm font-medium text-marine">Date de début prévue</label>
+            <input id="contract-start-date" name="start_date" data-contract-input type="date" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-frequency" class="block text-sm font-medium text-marine">Rythme / durée</label>
+            <input id="contract-frequency" name="frequency" data-contract-input placeholder="Ex. 1 visite par semaine, 2h..." maxlength="120" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-price" class="block text-sm font-medium text-marine">Tarif convenu</label>
+            <input id="contract-price" name="price" data-contract-input placeholder="Ex. 35 EUR / heure ou selon devis" maxlength="120" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+          <div>
+            <label for="contract-place" class="block text-sm font-medium text-marine">Fait à *</label>
+            <input id="contract-place" name="place" data-contract-input data-contract-required placeholder="Ex. Corbarieu" maxlength="100" class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine placeholder:text-marine/45 focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30" />
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="space-y-4 border-t border-marine/10 pt-8">
+        <legend class="font-display text-xl text-marine">Signature</legend>
+        <label class="flex gap-3 rounded-2xl border border-marine/15 bg-sauge/10 p-4 text-sm leading-relaxed text-marine">
+          <input id="contract-acceptance" name="acceptance" data-contract-required type="checkbox" class="mt-1 h-4 w-4 shrink-0 rounded border-marine/40 text-marine focus:ring-marine" />
+          <span>
+            Je confirme avoir lu le contrat, agir avec la capacité juridique nécessaire et accepter la signature simple intégrée au
+            document imprimé ou enregistré en PDF.
+          </span>
+        </label>
+        <SignaturePad inputId="contract-signature" inputName="client_signature" />
+      </fieldset>
+
+      <p id="contract-form-error" class="hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"></p>
+
+      <div class="flex flex-wrap gap-3 border-t border-marine/10 pt-6">
+        <button type="button" data-contract-preview class="inline-flex items-center justify-center rounded-full border border-marine/20 bg-white px-5 py-3 text-sm font-semibold text-marine shadow-sm transition hover:bg-marine/[0.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine">
+          Prévisualiser le contrat
+        </button>
+        <button type="button" data-contract-print class="inline-flex items-center justify-center rounded-full bg-marine px-5 py-3 text-sm font-semibold text-ivoire shadow-sm transition hover:bg-aquarelle-bleu focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine">
+          Imprimer / Enregistrer en PDF
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <article id="document-contrat" class="consent-document contract-document">
+    <header class="consent-doc-header">
+      <p class="consent-doc-entity">Le Sourire de Jojo</p>
+      <p class="consent-doc-subentity">Services à la personne — Accompagnement social à domicile</p>
+      <p class="consent-doc-director">Représentée par <strong>Céline Meunier Benneji</strong></p>
+      <div class="consent-doc-rule" aria-hidden="true"></div>
+      <h1 class="consent-doc-title">Contrat de prestation</h1>
+      <p class="consent-doc-ref">Document généré depuis le site — Signature simple du client</p>
+      <p class="consent-doc-warning">
+        Modèle indicatif à adapter à votre statut, vos assurances et vos obligations légales. La prestation décrite reste non médicale.
+      </p>
+    </header>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 1</span> — Parties</h2>
+      <p>
+        <span class="consent-label">Prestataire :</span> Le Sourire de Jojo, représenté par Céline Meunier Benneji, intervenant sur
+        Montauban, Corbarieu et les environs du Tarn-et-Garonne.
+      </p>
+      <p>
+        <span class="consent-label">Client / signataire :</span>
+        <span data-contract-field="client_name" class="contract-field">Nom à compléter</span>,
+        <span data-contract-field="relation" class="contract-field">qualité à compléter</span>,
+        joignable à <span data-contract-field="client_email" class="contract-field">e-mail à compléter</span>
+        <span data-contract-optional="client_phone"> — téléphone : <span data-contract-field="client_phone" class="contract-field"></span></span>.
+      </p>
+      <p>
+        <span class="consent-label">Adresse :</span>
+        <span data-contract-field="client_address" class="contract-field contract-field-multiline">Adresse à compléter</span>
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 2</span> — Objet du contrat</h2>
+      <p>
+        La Prestataire propose une prestation d’accompagnement social, relationnel et ludique, sans acte médical, paramédical ni soin
+        relevant d’une profession réglementée de santé.
+      </p>
+      <p>
+        La prestation convenue concerne
+        <span data-contract-field="beneficiary_name" class="contract-field">la personne accompagnée à compléter</span>
+        et porte sur : <strong><span data-contract-field="service_label" class="contract-field">prestation à compléter</span></strong>.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 3</span> — Organisation et tarif</h2>
+      <p>
+        Date de début prévue :
+        <span data-contract-field="start_date" data-contract-format="date" class="contract-field">à définir</span>.
+        Rythme ou durée :
+        <span data-contract-field="frequency" class="contract-field">à définir</span>.
+      </p>
+      <p>
+        Tarif convenu :
+        <span data-contract-field="price" class="contract-field">selon devis ou accord écrit complémentaire</span>.
+        Les modalités exactes de règlement, d’annulation et de crédit d’impôt éventuel restent encadrées par les CGV et documents
+        commerciaux remis au Client.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 4</span> — Cadre, sécurité et responsabilité</h2>
+      <p>
+        Le Client reconnaît que la prestation est une obligation de moyens : la Prestataire s’engage à agir avec attention, prudence et
+        bienveillance, sans garantir un résultat déterminé ni se substituer aux proches, aux auxiliaires de vie ou aux professionnels de
+        santé lorsque leur intervention est nécessaire.
+      </p>
+      <p>
+        En cas d’urgence ou de danger vital, la priorité est l’appel aux secours compétents (<strong>15</strong>, <strong>18</strong>,
+        <strong>112</strong> ou <strong>114</strong>) avant tout autre contact.
+      </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 5</span> — Données personnelles</h2>
+      <p>
+        Les données renseignées servent à préparer et exécuter la prestation, établir les documents contractuels, gérer la relation
+        client et respecter les obligations administratives applicables. Le Client dispose des droits RGPD rappelés dans les mentions
+        légales du site.
+      </p>
+    </section>
+
+    <section class="consent-sign-block">
+      <h2 class="consent-sign-heading">Acceptation et signature</h2>
+      <p class="consent-place-date">
+        Fait à <span data-contract-field="place" class="contract-field">lieu à compléter</span>, le
+        <span data-contract-field="signed_date" class="contract-field">{today}</span>
+      </p>
+      <div class="consent-sign-grid">
+        <div class="consent-sign-col">
+          <p class="consent-sign-role">La Prestataire</p>
+          <div class="consent-sign-line" aria-hidden="true"></div>
+          <p class="consent-sign-hint">Nom, qualité, signature et cachet le cas échéant</p>
+        </div>
+        <div class="consent-sign-col">
+          <p class="consent-sign-role">Le Client ou représentant légal</p>
+          <div class="contract-signature-preview">
+            <img data-contract-signature-preview alt="Signature du client" />
+            <span data-contract-signature-empty>Signature à compléter</span>
+          </div>
+          <p class="consent-sign-hint">
+            <span data-contract-field="client_name">Nom du signataire</span> — signature simple recueillie sur le site
+          </p>
+        </div>
+      </div>
+      <p class="contract-signature-meta">
+        Signature simple confirmée le <span data-contract-field="signature_timestamp">date et heure à compléter</span>.
+      </p>
+    </section>
+
+    <footer class="consent-doc-footer">
+      <p>
+        Le présent document est généré pour faciliter l’impression ou l’enregistrement PDF. Les clauses doivent être validées ou adaptées
+        avec votre conseil juridique selon votre situation professionnelle.
+      </p>
+    </footer>
+  </article>
+
+  <script is:inline>
+    (function () {
+      var form = document.getElementById("contract-form");
+      var error = document.getElementById("contract-form-error");
+      var previewBtn = document.querySelector("[data-contract-preview]");
+      var printBtn = document.querySelector("[data-contract-print]");
+      var signatureInput = document.getElementById("contract-signature");
+      var signatureImg = document.querySelector("[data-contract-signature-preview]");
+      var signatureEmpty = document.querySelector("[data-contract-signature-empty]");
+      var signatureTimestamp = "";
+
+      function formatDate(value) {
+        if (!value) return "";
+        var parts = value.split("-");
+        if (parts.length !== 3) return value;
+        return parts[2] + "/" + parts[1] + "/" + parts[0];
+      }
+
+      function niceNow() {
+        return new Intl.DateTimeFormat("fr-FR", {
+          dateStyle: "long",
+          timeStyle: "short",
+        }).format(new Date());
+      }
+
+      function setText(name, value) {
+        document.querySelectorAll('[data-contract-field="' + name + '"]').forEach(function (target) {
+          var format = target.getAttribute("data-contract-format");
+          target.textContent = format === "date" ? formatDate(value) || "à définir" : value || target.getAttribute("data-empty") || "à compléter";
+        });
+      }
+
+      function updateOptional(name, value) {
+        document.querySelectorAll('[data-contract-optional="' + name + '"]').forEach(function (target) {
+          target.style.display = value ? "" : "none";
+        });
+      }
+
+      function values() {
+        var out = {};
+        document.querySelectorAll("[data-contract-input]").forEach(function (input) {
+          out[input.name] = input.value.trim();
+        });
+        return out;
+      }
+
+      function updatePreview() {
+        var data = values();
+        Object.keys(data).forEach(function (key) {
+          setText(key, data[key]);
+          updateOptional(key, data[key]);
+        });
+        setText("signed_date", new Intl.DateTimeFormat("fr-FR").format(new Date()));
+
+        if (signatureInput && signatureInput.value) {
+          if (!signatureTimestamp) signatureTimestamp = niceNow();
+          if (signatureImg) {
+            signatureImg.src = signatureInput.value;
+            signatureImg.style.display = "block";
+          }
+          if (signatureEmpty) signatureEmpty.style.display = "none";
+          setText("signature_timestamp", signatureTimestamp);
+        } else {
+          signatureTimestamp = "";
+          if (signatureImg) {
+            signatureImg.removeAttribute("src");
+            signatureImg.style.display = "none";
+          }
+          if (signatureEmpty) signatureEmpty.style.display = "";
+          setText("signature_timestamp", "");
+        }
+      }
+
+      function requiredFields() {
+        return Array.from(document.querySelectorAll("[data-contract-required]"));
+      }
+
+      function validate() {
+        updatePreview();
+        var missing = [];
+        requiredFields().forEach(function (field) {
+          var ok = field.type === "checkbox" ? field.checked : Boolean(field.value && field.value.trim());
+          field.setAttribute("aria-invalid", ok ? "false" : "true");
+          if (!ok) missing.push(field);
+        });
+        if (!signatureInput || !signatureInput.value) missing.push(signatureInput);
+
+        if (missing.length > 0) {
+          if (error) {
+            error.textContent = "Merci de compléter les champs obligatoires, de cocher l’acceptation et d’ajouter la signature avant l’impression.";
+            error.classList.remove("hidden");
+          }
+          var first = missing[0];
+          if (first && typeof first.focus === "function") first.focus();
+          return false;
+        }
+        if (error) {
+          error.textContent = "";
+          error.classList.add("hidden");
+        }
+        return true;
+      }
+
+      document.addEventListener("input", function (event) {
+        if (event.target && (event.target.matches("[data-contract-input]") || event.target.id === "contract-signature")) updatePreview();
+      });
+      document.addEventListener("change", function (event) {
+        if (event.target && event.target.matches("[data-contract-required]")) updatePreview();
+      });
+
+      if (previewBtn) {
+        previewBtn.addEventListener("click", function () {
+          updatePreview();
+          document.getElementById("document-contrat")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+
+      function printContract() {
+        if (!validate()) return;
+        window.print();
+      }
+
+      if (printBtn) printBtn.addEventListener("click", printContract);
+
+      document.addEventListener(
+        "click",
+        function (event) {
+          var target = event.target && event.target.closest && event.target.closest("[data-print-legal]");
+          if (!target) return;
+          if (!validate()) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        },
+        true,
+      );
+
+      updatePreview();
+    })();
+  </script>
+</LegalPrintChrome>

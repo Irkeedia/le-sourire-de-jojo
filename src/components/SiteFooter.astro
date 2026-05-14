@@ -5,8 +5,8 @@ import SealBadge from "./SealBadge.astro";
 <footer class="relative z-10 mt-16 overflow-hidden border-t border-marine/15 bg-gradient-to-br from-sauge/35 via-ivoire to-rose-vieux/20">
   <div class="pointer-events-none absolute -left-16 bottom-0 h-52 w-52 rounded-full bg-aquarelle-jaune/20 blur-3xl" aria-hidden="true"></div>
   <div class="pointer-events-none absolute -right-20 top-0 h-64 w-64 rounded-full bg-aquarelle-mauve/15 blur-3xl" aria-hidden="true"></div>
-  <div class="relative mx-auto max-w-6xl px-4 py-12 md:px-6">
-    <div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+  <div class="relative mx-auto max-w-6xl px-4 py-12 md:px-6" data-reveal data-reveal-delay="0">
+    <div class="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
       <div>
         <div class="flex items-center gap-3">
           <span class="flex h-12 w-12 items-center justify-center rounded-full border border-marine/15 bg-white/75 text-marine shadow-sm">
@@ -18,7 +18,7 @@ import SealBadge from "./SealBadge.astro";
           <p class="font-display text-3xl text-marine">Le Sourire de Jojo</p>
         </div>
         <p class="mt-2 max-w-md text-marine/85">
-          Faire de chaque instant une danse — accompagnement bienveillant à domicile dans le Tarn-et-Garonne.
+          Faire de chaque instant une danse — accompagnement social et bienveillant à domicile dans le Tarn-et-Garonne.
         </p>
         <p class="mt-4 text-sm text-marine/70">
           Zone d’intervention : Montauban, Corbarieu et environs (82).
@@ -26,27 +26,50 @@ import SealBadge from "./SealBadge.astro";
       </div>
       <SealBadge />
     </div>
-    <div class="mt-10 flex flex-wrap gap-6 border-t border-marine/10 pt-8 text-sm">
-      <a href="/legal" class="underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">
-        Documents juridiques
-      </a>
-      <a href="/contact#mentions" class="underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">
-        Mentions légales & RGPD
-      </a>
-      <a href="/cgv" class="underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">
-        CGV
-      </a>
-      <a href="/consentement" class="underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">
-        Consentement (PDF)
-      </a>
-      <a href="/offres" class="underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">
-        Offres &amp; forfaits
-      </a>
-      <a href="/contact" class="underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">
-        Contact
-      </a>
+
+    <div class="mt-10 grid gap-10 border-t border-marine/10 pt-10 text-sm md:grid-cols-3">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-marine/55">Parcourir</p>
+        <ul class="mt-3 space-y-2">
+          <li><a href="/" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Accueil</a></li>
+          <li>
+            <a href="/a-propos#mon-histoire" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Mon histoire</a>
+          </li>
+          <li><a href="/services" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Services</a></li>
+          <li><a href="/carnet" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Carnet</a></li>
+          <li><a href="/offres" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Offres</a></li>
+          <li><a href="/contact" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-marine/55">Organisation</p>
+        <ul class="mt-3 space-y-2">
+          <li>
+            <a href="/plan-du-site" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Plan du site</a>
+          </li>
+          <li>
+            <a href="/legal" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Documents juridiques</a>
+          </li>
+          <li>
+            <a href="/contrat" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Contrat à signer</a>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-marine/55">Légal</p>
+        <ul class="mt-3 space-y-2">
+          <li>
+            <a href="/contact#mentions" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Mentions &amp; RGPD</a>
+          </li>
+          <li><a href="/cgv" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">CGV</a></li>
+          <li>
+            <a href="/consentement" class="text-marine/85 underline decoration-marine/30 underline-offset-2 hover:text-aquarelle-bleu">Consentement (PDF)</a>
+          </li>
+        </ul>
+      </div>
     </div>
-    <p class="mt-6 text-center text-xs text-marine/60">
+
+    <p class="mt-10 text-center text-xs text-marine/60">
       © {new Date().getFullYear()} Le Sourire de Jojo — Site réalisé par Irkeedia Labs — Hébergement Vercel.
     </p>
   </div>

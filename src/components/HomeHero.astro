@@ -1,0 +1,165 @@
+---
+import HomeAudienceCard from "@/components/HomeAudienceCard.astro";
+import SnapCarouselNav from "@/components/SnapCarouselNav.astro";
+
+/** Photo d’accueil — remplacez par une image duo / salon si vous en avez une haute définition. */
+const heroImage = "/images/personneagé.png";
+const heroImageAlt =
+  "Moment de partage chaleureux à domicile : accompagnement bienveillant et lien social.";
+---
+
+<section
+  class="relative z-[1] border-b border-marine/10 bg-cream pb-12 pt-4 md:pb-20 md:pt-8"
+  aria-labelledby="hero-accueil-title"
+  data-reveal-skip
+>
+  <div class="relative mx-auto max-w-5xl px-4 md:px-6">
+    <!-- Médaillon logo chevauchant le haut de la photo -->
+    <div class="relative z-20 flex justify-center" data-reveal data-reveal-delay="0">
+      <div
+        class="flex h-[7.25rem] w-[7.25rem] flex-col items-center justify-center rounded-full border border-rose-vieux/25 bg-white px-3 text-center shadow-[0_12px_40px_rgba(29,53,87,0.12)] md:h-[8rem] md:w-[8rem]"
+      >
+        <div
+          class="pointer-events-none absolute inset-2 rounded-full opacity-50"
+          style="background: radial-gradient(circle at 30% 25%, rgb(233 196 106 / 0.35), transparent 45%), radial-gradient(circle at 70% 30%, rgb(200 141 141 / 0.3), transparent 40%), radial-gradient(circle at 50% 80%, rgb(143 168 146 / 0.35), transparent 50%);"
+          aria-hidden="true"
+        >
+        </div>
+        <p class="relative font-display text-xl font-semibold leading-tight text-marine md:text-2xl">Le Sourire<br />de Jojo</p>
+        <p class="relative mt-1 max-w-[11rem] text-[0.62rem] font-semibold uppercase leading-snug tracking-wide text-marine/70">
+          Compagnie joyeuse<br /><span class="font-normal">&amp; lien social</span>
+        </p>
+        <p class="relative mt-0.5 text-[0.58rem] text-marine/55">Corbarieu &amp; environs</p>
+      </div>
+    </div>
+
+    <div class="-mt-10 relative z-10 md:-mt-12" data-reveal data-reveal-delay="80">
+      <div
+        class="overflow-hidden rounded-[1.75rem] shadow-[0_24px_60px_rgba(29,53,87,0.14)] ring-1 ring-marine/10 md:rounded-[2rem]"
+      >
+        <div class="aspect-[5/4] w-full md:aspect-[16/9]">
+          <img
+            src={heroImage}
+            alt={heroImageAlt}
+            width={1856}
+            height={2298}
+            class="h-full w-full object-cover object-[center_26%] md:object-[center_24%]"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </div>
+
+    <h1
+      id="hero-accueil-title"
+      class="mx-auto mt-8 max-w-[22rem] text-center font-hero text-[1.55rem] font-semibold leading-snug text-marine sm:max-w-2xl sm:text-3xl md:mt-12 md:max-w-3xl md:text-[2.05rem] md:leading-tight lg:text-[2.35rem]"
+      data-reveal
+      data-reveal-delay="140"
+    >
+      Le Sourire de Jojo&nbsp;: accompagnement joyeux &amp; lien social à Corbarieu
+    </h1>
+    <p
+      class="mx-auto mt-3 max-w-2xl text-center text-sm leading-relaxed text-marine/75 md:mt-4 md:text-base"
+      data-reveal
+      data-reveal-delay="200"
+    >
+      Montauban, Corbarieu et le Tarn-et-Garonne — présence attentive, sans soins médicaux.
+    </p>
+
+    <div
+      id="snap-hero-publics"
+      class="mx-auto mt-10 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-12 md:grid md:max-w-none md:grid-cols-3 md:items-stretch md:gap-8 md:overflow-visible"
+      aria-label="Publics accompagnés"
+      data-reveal
+      data-reveal-delay="240"
+    >
+      <div class="flex min-h-[22.5rem] w-full min-w-[84%] snap-start sm:min-w-[68%] md:min-h-0 md:min-w-0">
+        <HomeAudienceCard
+          title="Pour nos aînés"
+          description="Visites, partages, activités, carnet de sourires — rompre l’isolement sans forcer la conversation."
+          href="#missions-aines"
+          variant="rose"
+        >
+          <svg slot="icon" class="h-8 w-8" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+            <path d="M8 22V12a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10" stroke-linecap="round" />
+            <path d="M10 10V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12" stroke-linecap="round" />
+            <path d="M6 24h20" stroke-linecap="round" />
+            <path d="M12 14h4M12 18h8" stroke-linecap="round" />
+            <path d="M20 8v-1a2 2 0 0 1 2-2h0" stroke-linecap="round" />
+          </svg>
+        </HomeAudienceCard>
+      </div>
+
+      <div class="flex min-h-[22.5rem] w-full min-w-[84%] snap-start sm:min-w-[68%] md:min-h-0 md:min-w-0">
+        <HomeAudienceCard
+          title="Pour les personnes immobilisées"
+          description="Soutien enfants &amp; adultes, post-opératoire, maintien du lien — au lit ou au fauteuil, à votre rythme."
+          href="#missions-immobilisation"
+          variant="marine"
+        >
+          <svg slot="icon" class="h-8 w-8" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+            <path stroke-linecap="round" d="M6 20c2.5-5 8-8 14-8s11.5 3 14 8" />
+            <path stroke-linecap="round" d="M16 12v11" />
+            <circle cx="16" cy="10" r="2.5" />
+            <circle cx="23" cy="9" r="3" fill="rgb(200 141 141 / 0.35)" stroke="currentColor" />
+            <path stroke-linecap="round" d="M22 7s1-1.5 2.5-1" />
+          </svg>
+        </HomeAudienceCard>
+      </div>
+
+      <div class="flex min-h-[22.5rem] w-full min-w-[84%] snap-start sm:min-w-[68%] md:min-h-0 md:min-w-0">
+        <HomeAudienceCard
+          title="Pour les personnes PMR"
+          description="Sorties et activités adaptées : fauteuil, déambulateur, pauses, respect du rythme et maintien de l’autonomie."
+          href="#missions-pmr"
+          variant="marine"
+        >
+          <svg slot="icon" class="h-8 w-8" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+            <circle cx="12" cy="8" r="2.5" />
+            <path d="M12 11v6l3 3" stroke-linecap="round" />
+            <circle cx="20.5" cy="22.5" r="4.5" />
+            <path d="M14 17h5.5M20 14l-3 3" stroke-linecap="round" />
+          </svg>
+        </HomeAudienceCard>
+      </div>
+    </div>
+    <SnapCarouselNav forId="snap-hero-publics" label="publics accompagnés" />
+
+    <figure
+      class="mx-auto mt-14 max-w-2xl border-t border-marine/10 pt-10 text-center"
+      data-reveal
+      data-reveal-delay="100"
+    >
+      <blockquote class="font-hero text-lg italic leading-relaxed text-marine/95 md:text-xl">
+        «&nbsp;Dans l’aise ou dans la gêne, dans la maladie ou la santé… Tiens-toi droit et souris.&nbsp;»
+      </blockquote>
+      <figcaption class="mt-4 text-sm font-medium text-marine/60">Notre inspiration — Lanza del Vasto</figcaption>
+    </figure>
+
+    <div
+      class="mx-auto mt-10 flex max-w-xl flex-wrap items-center justify-center gap-3"
+      data-reveal
+      data-reveal-delay="160"
+    >
+      <a
+        href="/contact#formulaire"
+        class="inline-flex items-center justify-center rounded-full bg-marine px-6 py-3 text-sm font-semibold text-ivoire shadow-md transition hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+      >
+        Prendre contact
+      </a>
+      <a
+        href="/offres"
+        class="inline-flex items-center justify-center rounded-full border-2 border-marine/20 bg-white px-6 py-3 text-sm font-semibold text-marine shadow-sm transition hover:border-marine/40 hover:bg-marine/[0.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+      >
+        Tarifs &amp; SAP
+      </a>
+      <a
+        href="/a-propos#mon-histoire"
+        class="inline-flex items-center justify-center rounded-full px-4 py-3 text-sm font-semibold text-aquarelle-bleu underline decoration-2 underline-offset-4 hover:text-marine"
+      >
+        Mon histoire
+      </a>
+    </div>
+  </div>
+</section>

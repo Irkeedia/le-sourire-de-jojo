@@ -25,7 +25,7 @@ const defaultLd = {
   "@type": "LocalBusiness",
   name: "Le Sourire de Jojo",
   description:
-    "Accompagnement à domicile — lecture, sorties, jeux, nature et souvenirs. Montauban, Corbarieu, Tarn-et-Garonne.",
+    "Accompagnement social à domicile (Céline Meunier Benneji) — lien, bienveillance, dignité. Lecture, sorties, jeux, souvenirs. Montauban, Corbarieu, Tarn-et-Garonne.",
   url: siteUrl,
   areaServed: {
     "@type": "AdministrativeArea",
@@ -49,14 +49,17 @@ const structured = jsonLd ?? defaultLd;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="keywords" content="accompagnement à domicile, Montauban, Corbarieu, Tarn-et-Garonne, SAP, crédit d'impôt, seniors, PMR" />
+    <meta
+      name="keywords"
+      content="Céline Meunier Benneji, Le Sourire de Jojo, accompagnement social, lien social, bienveillance, dignité, intergénérationnel, Montauban, Corbarieu, Tarn-et-Garonne, SAP, crédit d'impôt, CESU, seniors, PMR"
+    />
     {!allowIndexing && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Lato:ital,wght@0,400;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400..800;1,400..800&display=swap"
       rel="stylesheet"
     />
     {allowIndexing && <script type="application/ld+json" set:html={JSON.stringify(structured)} />}
@@ -89,5 +92,122 @@ const structured = jsonLd ?? defaultLd;
       <slot />
     </main>
     <SiteFooter />
+    <script is:inline>
+      (function () {
+        function initScrollReveals() {
+          var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          var main = document.querySelector("main");
+          if (!main) return;
+
+          var seen = new WeakSet();
+          var targets = [];
+
+          function add(el) {
+            if (!(el instanceof HTMLElement)) return;
+            if (seen.has(el)) return;
+            seen.add(el);
+            targets.push(el);
+            el.classList.add("reveal-on-scroll");
+            var delay = el.getAttribute("data-reveal-delay");
+            if (delay && !reduce) el.style.setProperty("--reveal-delay", delay + (delay.endsWith("ms") ? "" : "ms"));
+          }
+
+          if (reduce) {
+            Array.from(main.children).forEach(function (el) {
+              if (!(el instanceof HTMLElement)) return;
+              if (el.hasAttribute("data-reveal-skip")) return;
+              el.classList.add("reveal-on-scroll", "is-inview");
+            });
+            Array.from(main.querySelectorAll("[data-reveal]")).forEach(function (el) {
+              if (!(el instanceof HTMLElement)) return;
+              el.classList.add("reveal-on-scroll", "is-inview");
+            });
+            document.querySelectorAll("footer [data-reveal]").forEach(function (el) {
+              if (!(el instanceof HTMLElement)) return;
+              el.classList.add("reveal-on-scroll", "is-inview");
+            });
+            return;
+          }
+
+          Array.from(main.children).forEach(function (el) {
+            if (!(el instanceof HTMLElement)) return;
+            if (el.hasAttribute("data-reveal-skip")) return;
+            add(el);
+          });
+
+          main.querySelectorAll("[data-reveal]").forEach(add);
+          document.querySelectorAll("footer [data-reveal]").forEach(add);
+
+          var io = new IntersectionObserver(
+            function (entries) {
+              for (var i = 0; i < entries.length; i++) {
+                var en = entries[i];
+                var t = en.target;
+                if (!(t instanceof HTMLElement)) continue;
+                if (en.isIntersecting) t.classList.add("is-inview");
+                else t.classList.remove("is-inview");
+              }
+            },
+            { threshold: 0.1, rootMargin: "0px 0px -6% 0px" },
+          );
+
+          for (var j = 0; j < targets.length; j++) io.observe(targets[j]);
+        }
+
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initScrollReveals);
+        else initScrollReveals();
+      })();
+    </script>
+    <script is:inline>
+      (function () {
+        /**
+         * offsetLeft est relatif à offsetParent (souvent un ancêtre positionné), pas au
+         * conteneur overflow — on aligne donc chaque enfant via getBoundingClientRect().
+         */
+        function snapCarouselStep(viewport, direction) {
+          var v = viewport.getBoundingClientRect();
+          var sl = viewport.scrollLeft;
+          var kids = viewport.children;
+          var best = null;
+          var i;
+          if (direction > 0) {
+            for (i = 0; i < kids.length; i++) {
+              var rN = kids[i].getBoundingClientRect();
+              var tsN = sl + (rN.left - v.left);
+              if (tsN > sl + 6) {
+                if (best === null || tsN < best) best = tsN;
+              }
+            }
+            if (best !== null) viewport.scrollTo({ left: best, behavior: "smooth" });
+            else viewport.scrollTo({ left: viewport.scrollWidth - viewport.clientWidth, behavior: "smooth" });
+          } else {
+            for (i = 0; i < kids.length; i++) {
+              var rP = kids[i].getBoundingClientRect();
+              var tsP = sl + (rP.left - v.left);
+              if (tsP < sl - 6) {
+                if (best === null || tsP > best) best = tsP;
+              }
+            }
+            if (best !== null) viewport.scrollTo({ left: Math.max(0, best), behavior: "smooth" });
+            else viewport.scrollTo({ left: 0, behavior: "smooth" });
+          }
+        }
+
+        document.addEventListener(
+          "click",
+          function (e) {
+            var prev = e.target && e.target.closest && e.target.closest("[data-snap-prev]");
+            var next = e.target && e.target.closest && e.target.closest("[data-snap-next]");
+            if (!prev && !next) return;
+            var id = prev ? prev.getAttribute("data-snap-prev") : next.getAttribute("data-snap-next");
+            var viewport = id ? document.getElementById(id) : null;
+            if (!viewport || !viewport.children || !viewport.children.length) return;
+            e.preventDefault();
+            snapCarouselStep(viewport, prev ? -1 : 1);
+          },
+          false,
+        );
+      })();
+    </script>
   </body>
 </html>

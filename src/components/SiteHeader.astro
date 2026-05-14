@@ -3,10 +3,8 @@ import TextSizeToggle from "./TextSizeToggle.astro";
 
 const links = [
   { href: "/", label: "Accueil", shortLabel: "Accueil", desktopLabel: "Accueil" },
-  { href: "/a-propos", label: "À propos", shortLabel: "À propos", desktopLabel: "À propos" },
   { href: "/services", label: "Nos services", shortLabel: "Services", desktopLabel: "Services" },
   { href: "/offres", label: "Offres & forfaits", shortLabel: "Offres", desktopLabel: "Offres" },
-  { href: "/carnet", label: "Le carnet de sourires", shortLabel: "Carnet", desktopLabel: "Carnet" },
   {
     href: "/contact",
     label: "Contact & infos légales",
@@ -19,17 +17,19 @@ const links = [
 const pathname = Astro.url.pathname;
 
 function isActive(href: string): boolean {
-  if (href === "/") return pathname === "/";
-  if (href === "/legal") {
+  const base = href.split("#")[0] ?? href;
+  if (base === "/") return pathname === "/";
+  if (base === "/legal") {
     return (
       pathname.startsWith("/legal") ||
       pathname === "/cgv" ||
       pathname.startsWith("/conditions-annulation") ||
+      pathname.startsWith("/contrat") ||
       pathname.startsWith("/consentement") ||
       pathname.startsWith("/imprimer/")
     );
   }
-  return pathname.startsWith(href);
+  return pathname === base || pathname.startsWith(`${base}/`);
 }
 ---
 
@@ -42,7 +42,7 @@ function isActive(href: string): boolean {
 
 <!-- Barre supérieure uniquement (sans panneau fixed à l'intérieur → évite les bugs iOS / backdrop-blur) -->
 <header
-  class="sticky top-0 z-50 border-b border-marine/10 bg-gradient-to-b from-ivoire/98 via-white/55 to-sauge/15 pt-[env(safe-area-inset-top)] shadow-[0_8px_30px_rgba(29,53,87,0.07)] backdrop-blur-xl"
+  class="sticky top-0 z-50 border-b border-marine/10 bg-cream pt-[env(safe-area-inset-top)] shadow-[0_8px_30px_rgba(29,53,87,0.06)]"
 >
   <div
     class="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-marine/20 to-transparent"
@@ -224,6 +224,30 @@ function isActive(href: string): boolean {
       </nav>
 
       <div class="shrink-0 border-t border-marine/10 bg-white/70 px-4 py-5 sm:px-5">
+        <p class="mb-2 text-center text-xs font-semibold uppercase tracking-wide text-marine/60">Accès rapides</p>
+        <div class="mb-5 flex flex-wrap justify-center gap-2 text-xs">
+          <a
+            href="/a-propos#mon-histoire"
+            data-mobile-nav-link
+            class="rounded-full border border-marine/15 bg-white px-3 py-1.5 font-medium text-marine/80 hover:text-marine"
+          >
+            Mon histoire
+          </a>
+          <a
+            href="/carnet"
+            data-mobile-nav-link
+            class="rounded-full border border-marine/15 bg-white px-3 py-1.5 font-medium text-marine/80 hover:text-marine"
+          >
+            Carnet de sourires
+          </a>
+          <a
+            href="/plan-du-site"
+            data-mobile-nav-link
+            class="rounded-full border border-marine/15 bg-white px-3 py-1.5 font-medium text-marine/80 hover:text-marine"
+          >
+            Plan du site
+          </a>
+        </div>
         <p class="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-marine/60">Accessibilité</p>
         <TextSizeToggle variant="compact" />
       </div>

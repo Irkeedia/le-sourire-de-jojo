@@ -1,0 +1,36 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  variant: "rose" | "marine";
+}
+
+const { title, description, href, variant } = Astro.props;
+
+const btn =
+  variant === "rose"
+    ? "bg-rose-vieux text-ivoire shadow-md hover:bg-rose-vieux/90 focus-visible:outline-rose-vieux"
+    : "bg-marine text-ivoire shadow-md hover:bg-marine/90 focus-visible:outline-marine";
+---
+
+<article
+  class="jojo-card-lift flex h-full min-h-[20.5rem] w-full flex-col rounded-2xl border border-marine/[0.06] bg-white p-7 shadow-[0_14px_48px_rgba(29,53,87,0.09)] transition-[transform,box-shadow,border-color] duration-300 ease-out will-change-transform md:min-h-[22rem] md:p-8"
+>
+  <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-sauge/20 text-marine" aria-hidden="true">
+    <slot name="icon" />
+  </div>
+  <h2 class="font-hero text-lg font-semibold uppercase tracking-[0.12em] text-marine md:text-xl">{title}</h2>
+  <p class="mt-4 flex-1 text-sm leading-relaxed text-marine/85 md:text-base">{description}</p>
+  <p class="mt-8">
+    <a
+      href={href}
+      class:list={[
+        "inline-flex w-full items-center justify-center rounded-2xl px-5 py-3.5 text-center text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+        btn,
+      ]}
+    >
+      En savoir plus
+    </a>
+  </p>
+</article>

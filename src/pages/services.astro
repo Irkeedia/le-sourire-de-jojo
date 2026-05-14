@@ -3,7 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const title = "Nos services — Le Sourire de Jojo";
 const description =
-  "Lecture et discussion, sorties et promenades, jeux et rires, nature et cueillette, photos et souvenirs — exemples par public à Montauban et Tarn-et-Garonne.";
+  "Lecture, sorties, jeux, présence simple, tri de photos et souvenirs — avec possibilité d’apporter du matériel (fauteuil roulant, déambulateur, jeux, perles). Montauban et Tarn-et-Garonne.";
 
 const services = [
   {
@@ -13,7 +13,7 @@ const services = [
     imageAlt:
       "Moment de lecture et d’échange avec une personne âgée, dans un cadre chaleureux et attentionné.",
     text:
-      "Romans, poésie, articles du jour : des moments partagés qui ouvrent la parole. Exemples : pour un senior, relire ensemble une biographie de vie ; pour un jeune en convalescence, histoires courtes à voix haute ; pour une personne PMR, aide à trier le courrier et à comprendre les courriers importants.",
+      "Romans, poésie, articles du jour : des moments partagés qui ouvrent la parole. Exemples : pour un senior, relire ensemble une biographie de vie ; pour un jeune en convalescence ou alité, histoires courtes à voix haute ; pour une personne PMR, aide à trier le courrier et à comprendre les courriers importants.",
   },
   {
     name: "Sorties & promenades",
@@ -22,7 +22,7 @@ const services = [
     imageAlt:
       "Promenade ou sortie en plein air, à son rythme, pour prendre l’air et profiter du quartier.",
     text:
-      "Air du quartier, marché, parc accessible : bouger à son rythme. Senior : sortie digestive et repères du voisinage. Enfant/ado : petites marches ludiques pour retrouver l’énergie. PMR : trajets planifiés avec pauses et accessibilité.",
+      "Air du quartier, marché, parc accessible : bouger à son rythme. Senior : sortie digestive et repères du voisinage. Enfant ou adolescent : petites marches ludiques ou sorties très courtes selon l’avis médical. PMR : trajets planifiés avec pauses et accessibilité — nous pouvons vous accompagner avec votre fauteuil roulant ou votre déambulateur lorsque c’est convenu ensemble.",
   },
   {
     name: "Jeux & rires",
@@ -31,7 +31,7 @@ const services = [
     imageAlt:
       "Enfant souriant lors d’un jeu ou d’une activité ludique partagée à domicile.",
     text:
-      "Jeux de société calmes, énigmes, dessins : le plaisir sans performance. Senior : cartes et mémoire douce. Jeune : aide aux devoirs ludique et défis courts. PMR : activités à la table adaptées à la mobilité.",
+      "Jeux de société calmes, énigmes, dessins, perles ou petites activités manuelles : le plaisir sans performance. Senior : cartes et mémoire douce. Jeune : aide aux devoirs ludique et défis courts. PMR : activités à la table adaptées à la mobilité. Nous pouvons apporter des jeux ou du matériel créatif (perles, etc.) sur demande.",
   },
   {
     name: "Nature & cueillette",
@@ -43,7 +43,13 @@ const services = [
     name: "Photos & souvenirs",
     icon: "camera",
     text:
-      "Albums, tri de photos, récits capturés : consolider la mémoire familiale. Senior : rédiger des légendes pour les petits-enfants. Jeune : création d’un carnet visuel de la convalescence. PMR : organisation numérique simple et sauvegardes.",
+      "Albums, tri de photos, récits capturés : consolider la mémoire familiale. Senior : rédiger des légendes pour les petits-enfants. Jeune : création d’un carnet visuel de la convalescence ou de l’immobilisation. PMR : organisation numérique simple et sauvegardes.",
+  },
+  {
+    name: "Présence & écoute",
+    icon: "presence",
+    text:
+      "Parler, se taire ensemble, rythmer la journée sans exiger de « performance » : une présence humaine pour casser l’isolement ou soulager un temps de convalescence. Adapté aux aînés, aux enfants alités temporairement et à toute personne qui souhaite simplement du lien.",
   },
 ];
 ---
@@ -56,8 +62,8 @@ const services = [
   <div class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
     <h1 class="font-display text-4xl text-marine md:text-5xl">Nos services</h1>
     <p class="mt-6 max-w-3xl text-lg text-marine/90">
-      Cinq manières d’être présent·e : fines lignes d’attention, bleu marine comme sur vos visuels — toujours en
-      lien avec votre réalité du moment.
+      Six manières d’être présent·e : lecture, sorties, jeux, nature, photos et présence simple — toujours en lien avec votre réalité
+      du moment.
     </p>
 
     <ul class="mt-14 space-y-12">
@@ -111,6 +117,12 @@ const services = [
                     <path d="M8 7l1.5-2h5L16 7" />
                   </svg>
                 )}
+                {s.icon === "presence" && (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+                    <path d="M12 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3Z" />
+                    <path d="M4 20c1.5-4 6.5-6 8-6s6.5 2 8 6" stroke-linecap="round" />
+                  </svg>
+                )}
               </span>
               )}
             </div>
@@ -122,5 +134,16 @@ const services = [
         ))
       }
     </ul>
+
+    <section class="mt-16 max-w-3xl rounded-2xl border border-marine/15 bg-sauge/15 p-6 md:p-8" aria-labelledby="materiel-title">
+      <h2 id="materiel-title" class="font-display text-2xl text-marine">Matériel &amp; logistique</h2>
+      <p class="mt-4 text-marine/90 leading-relaxed">
+        Nous précisons avec vous <strong class="text-marine">qui apporte quoi</strong> : utilisation de votre{' '}
+        <strong class="text-marine">fauteuil roulant</strong> ou de votre <strong class="text-marine">déambulateur</strong> pour une
+        sortie planifiée ; apport par la prestataire de <strong class="text-marine">jeux de société</strong>, de{' '}
+        <strong class="text-marine">perles</strong> ou d’autre petit matériel ludique lorsque cela a été convenu à l’avance. Objectif :
+        éviter toute ambiguïté et sécuriser le déroulement de la séance.
+      </p>
+    </section>
   </div>
 </BaseLayout>

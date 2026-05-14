@@ -1,0 +1,77 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const title = "Plan du site — Le Sourire de Jojo";
+const description =
+  "Toutes les pages du site : services, offres, carnet, contact, documents juridiques et consentement — Montauban, Tarn-et-Garonne.";
+
+const groups: { title: string; links: { href: string; label: string; hint?: string }[] }[] = [
+  {
+    title: "Découvrir",
+    links: [
+      { href: "/", label: "Accueil" },
+      { href: "/a-propos#mon-histoire", label: "À propos — Mon histoire" },
+      { href: "/services", label: "Nos services" },
+      { href: "/carnet", label: "Le carnet de sourires" },
+    ],
+  },
+  {
+    title: "Réserver & échanger",
+    links: [
+      { href: "/offres", label: "Offres & forfaits", hint: "tarifs, SAP, simulateur" },
+      { href: "/contact#formulaire", label: "Contact — formulaire" },
+      { href: "/contact#mentions", label: "Mentions légales & RGPD", hint: "bas de page Contact" },
+    ],
+  },
+  {
+    title: "Cadre juridique",
+    links: [
+      { href: "/legal", label: "Hub documents juridiques" },
+      { href: "/contrat", label: "Contrat à signer", hint: "signature simple et PDF" },
+      { href: "/cgv", label: "Conditions générales (CGV)" },
+      { href: "/conditions-annulation", label: "Annulation & résiliation" },
+      { href: "/consentement", label: "Consentement (PDF / imprimable)" },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Plan du site" }]}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Plan du site</h1>
+    <p class="mt-6 leading-relaxed text-marine/85">
+      Une vue d’ensemble pour retrouver rapidement une information. Les pages détaillées restent accessibles depuis le menu du haut de
+      chaque page.
+    </p>
+
+    <div class="mt-14 space-y-12">
+      {
+        groups.map((g, i) => (
+          <section aria-labelledby={`plan-g-${i}`}>
+            <h2 id={`plan-g-${i}`} class="font-hero text-xl font-semibold text-marine">
+              {g.title}
+            </h2>
+            <ul class="mt-4 space-y-3 border-l-2 border-rose-vieux/40 pl-5">
+              {g.links.map((l) => (
+                <li>
+                  <a href={l.href} class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">
+                    {l.label}
+                  </a>
+                  {l.hint && <span class="ml-2 text-sm text-marine/65">— {l.hint}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+
+    <p class="mt-14 text-sm text-marine/70">
+      <a href="/" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">← Retour à l’accueil</a>
+    </p>
+  </article>
+</BaseLayout>

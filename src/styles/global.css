@@ -168,4 +168,37 @@
     background-position: center;
     opacity: 0.85;
   }
+
+  /* Apparition au scroll (rejouée quand l’élément quitte puis réentre le viewport) */
+  .reveal-on-scroll {
+    --reveal-delay: 0ms;
+    opacity: 0;
+    transform: translate3d(0, 1.1rem, 0);
+    transition:
+      opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay);
+    will-change: opacity, transform;
+  }
+
+  .reveal-on-scroll.is-inview {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-on-scroll {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .jojo-card-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 22px 55px rgb(29 53 87 / 0.14);
+      border-color: rgb(29 53 87 / 0.12);
+    }
+  }
 }

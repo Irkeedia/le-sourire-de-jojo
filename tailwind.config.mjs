@@ -4,6 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        cream: "#F9F8F5",
         marine: "#1D3557",
         ivoire: "#F5F3E7",
         "rose-vieux": "#C88D8D",
@@ -15,6 +16,7 @@ export default {
       },
       fontFamily: {
         display: ["'Dancing Script'", "cursive"],
+        hero: ["'Playfair Display'", "Georgia", "ui-serif", "serif"],
         sans: ["'Lato'", "system-ui", "sans-serif"],
       },
       backgroundImage: {

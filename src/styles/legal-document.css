@@ -208,6 +208,49 @@
   font-style: italic;
 }
 
+.contract-field {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.contract-field-multiline {
+  white-space: pre-line;
+}
+
+.contract-signature-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.5rem;
+  margin-top: 1rem;
+  border-bottom: 1px solid #0f172a;
+}
+
+.contract-signature-preview img {
+  display: none;
+  max-width: 100%;
+  max-height: 4.25rem;
+  object-fit: contain;
+}
+
+.contract-signature-preview span {
+  color: #64748b;
+  font-size: 8.5pt;
+  font-style: italic;
+}
+
+.contract-signature-meta {
+  margin-top: 1rem;
+  font-size: 8.5pt;
+  color: #475569;
+  text-align: center;
+}
+
+[aria-invalid="true"] {
+  border-color: #991b1b !important;
+  box-shadow: 0 0 0 2px rgb(153 27 27 / 0.16);
+}
+
 .consent-doc-footer {
   margin-top: 1.75rem;
   padding-top: 0.85rem;
@@ -310,6 +353,15 @@
 
   .consent-sign-block {
     background: white !important;
+    border-color: #000 !important;
+  }
+
+  .contract-field,
+  .contract-signature-meta {
+    color: #000 !important;
+  }
+
+  .contract-signature-preview {
     border-color: #000 !important;
   }
 }

@@ -1,0 +1,43 @@
+---
+/**
+ * Flèches « style Google » sous un carrousel horizontal (mobile uniquement).
+ * Le conteneur scrollable doit avoir l’attribut id correspondant à `forId`.
+ */
+interface Props {
+  forId: string;
+  /** Libellé pour lecteurs d’écran (ex. « publics accompagnés ») */
+  label: string;
+  class?: string;
+}
+
+const { forId, label, class: className } = Astro.props;
+const navLabel = `Faire défiler le carrousel : ${label}`;
+---
+
+<nav
+  class:list={["mt-4 flex justify-center gap-2 md:hidden", className]}
+  aria-label={navLabel}
+>
+  <button
+    type="button"
+    class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-marine/12 bg-white text-marine shadow-[0_1px_3px_rgba(29,53,87,0.12)] transition hover:bg-marine/[0.04] hover:shadow-[0_2px_8px_rgba(29,53,87,0.14)] active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+    data-snap-prev={forId}
+    aria-controls={forId}
+    aria-label="Élément précédent"
+  >
+    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M14 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+  <button
+    type="button"
+    class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-marine/12 bg-white text-marine shadow-[0_1px_3px_rgba(29,53,87,0.12)] transition hover:bg-marine/[0.04] hover:shadow-[0_2px_8px_rgba(29,53,87,0.14)] active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+    data-snap-next={forId}
+    aria-controls={forId}
+    aria-label="Élément suivant"
+  >
+    <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M10 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+</nav>
