@@ -13,6 +13,7 @@ const links = [
 ];
 
 const pathname = Astro.url.pathname;
+const logoSrc = "/images/logo-sourire-de-jojo.png";
 
 function isActive(href: string): boolean {
   const base = href.split("#")[0] ?? href;
@@ -53,12 +54,15 @@ function isActive(href: string): boolean {
       class="group flex min-w-0 flex-1 items-center gap-3 py-1 lg:flex-none"
       aria-label="Le Sourire de Jojo — Accueil"
     >
-      <span class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full border border-marine/15 bg-white/75 text-marine shadow-sm sm:flex">
-        <svg viewBox="0 0 48 48" class="h-8 w-8" fill="none" aria-hidden="true">
-          <path d="M14 27c5 7 16 7 21 0" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
-          <path d="M16 20c2-2 5-2 7 0M27 20c2-2 5-2 7 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          <path d="M35 12c5-6 10-3 11 2-5 0-8 3-11-2Z" fill="#8FA892" opacity="0.85" />
-        </svg>
+      <span class="hidden h-12 w-12 shrink-0 items-center justify-center rounded-full border border-marine/15 bg-white/85 p-0.5 shadow-sm sm:flex">
+        <img
+          src={logoSrc}
+          alt=""
+          width="512"
+          height="512"
+          class="h-full w-full rounded-full object-cover"
+          decoding="async"
+        />
       </span>
       <span class="min-w-0">
         <span
