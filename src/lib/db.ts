@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
+import { getMongoUri } from "@/lib/db-config";
+
+export { getMongoUri } from "@/lib/db-config";
 
 let conn: Promise<typeof mongoose> | null = null;
-
-export function getMongoUri(): string | undefined {
-  return import.meta.env.MONGODB_URI;
-}
 
 export async function connectDb(): Promise<typeof mongoose | null> {
   const uri = getMongoUri();

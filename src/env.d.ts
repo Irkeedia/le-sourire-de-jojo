@@ -1,5 +1,16 @@
 /// <reference types="astro/client" />
 
+declare namespace App {
+  interface Locals {
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      role: "family" | "admin";
+    } | null;
+  }
+}
+
 interface ImportMetaEnv {
   readonly PUBLIC_SITE_URL?: string;
   /** Si "true" / "1" : autorise l’indexation (meta robots, robots.txt, JSON-LD). Sinon : noindex. */
@@ -19,6 +30,13 @@ interface ImportMetaEnv {
   readonly SMTP_USER?: string;
   readonly SMTP_PASS?: string;
   readonly MONGODB_URI?: string;
+  /** Code d’invitation obligatoire pour créer un compte (après le premier admin). */
+  readonly REGISTRATION_INVITE_CODE?: string;
+  /** Durée de session en jours (défaut 30). */
+  readonly SESSION_TTL_DAYS?: string;
+  /** Max tentatives login/register par IP par fenêtre (défaut 8). */
+  readonly AUTH_RATE_LIMIT?: string;
+  readonly AUTH_RATE_WINDOW_MS?: string;
   /** Active HSTS (HTTPS uniquement, derrière proxy qui envoie X-Forwarded-Proto). */
   readonly HSTS_ENABLE?: string;
   /** URI de rapport CSP (optionnel). */

@@ -1,11 +1,19 @@
 ---
 import LogoMark from "@/components/LogoMark.astro";
 
+const user = Astro.locals.user;
+
 const links = [
   { href: "/", label: "Accueil", shortLabel: "Accueil", desktopLabel: "Accueil" },
   { href: "/services", label: "Nos services", shortLabel: "Services", desktopLabel: "Services" },
   { href: "/offres", label: "Offres & forfaits", shortLabel: "Offres", desktopLabel: "Offres" },
   { href: "/partenaires", label: "Partenaires de confiance", shortLabel: "Partenaires", desktopLabel: "Partenaires" },
+  {
+    href: user ? "/compte" : "/compte/connexion",
+    label: user ? "Mon compte" : "Connexion",
+    shortLabel: user ? "Compte" : "Connexion",
+    desktopLabel: user ? "Mon compte" : "Connexion",
+  },
   {
     href: "/contact",
     label: "Contact & infos légales",
@@ -20,6 +28,9 @@ const pathname = Astro.url.pathname;
 function isActive(href: string): boolean {
   const base = href.split("#")[0] ?? href;
   if (base === "/") return pathname === "/";
+  if (base === "/compte" || base === "/compte/connexion") {
+    return pathname === "/compte" || pathname.startsWith("/compte/");
+  }
   if (base === "/legal") {
     return (
       pathname.startsWith("/legal") ||

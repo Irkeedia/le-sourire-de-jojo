@@ -7,9 +7,48 @@ const CONTACT_POST_LIMIT = Number(import.meta.env.CONTACT_RATE_LIMIT ?? "12");
 const CONTACT_POST_WINDOW_MS = Number(
   import.meta.env.CONTACT_RATE_WINDOW_MS ?? String(15 * 60 * 1000),
 );
+const AUTH_POST_LIMIT = Number(import.meta.env.AUTH_RATE_LIMIT ?? "8");
+const AUTH_POST_WINDOW_MS = Number(import.meta.env.AUTH_RATE_WINDOW_MS ?? String(15 * 60 * 1000));
+
+const PUBLIC_ACCOUNT_PATHS = new Set(["/compte/connexion", "/compte/inscription"]);
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const { request, url } = context;
+  const { request, url, cookies, redirect } = context;
+
+  context.locals.user = null;
+  try {
+    const { getSessionUser } = await import("@/lib/auth-session");
+    context.locals.user = (await getSessionUser(cookies)) ?? null;
+  } catch (e) {
+    console.error("Session middleware:", e);
+  }
+
+  if (url.pathname.startsWith("/compte")) {
+    const isPublic = PUBLIC_ACCOUNT_PATHS.has(url.pathname);
+    if (!isPublic && !context.locals.user) {
+      const nextPath = encodeURIComponent(url.pathname);
+      return redirect(`/compte/connexion?next=${nextPath}`);
+    }
+    if (isPublic && context.locals.user) {
+      return redirect("/compte");
+    }
+  }
+
+  if (url.pathname.startsWith("/api/auth/") && request.method === "POST") {
+    const ip = getClientIp(request);
+    const rl = rateLimit(`auth:${ip}`, AUTH_POST_LIMIT, AUTH_POST_WINDOW_MS);
+    if (!rl.ok) {
+      const headers = new Headers({
+        "Content-Type": "application/json",
+        "Retry-After": String(rl.retryAfterSec),
+      });
+      applySecurityHeaders(request, headers);
+      return new Response(JSON.stringify({ ok: false, error: "Trop de tentatives. Réessayez plus tard." }), {
+        status: 429,
+        headers,
+      });
+    }
+  }
 
   if (url.pathname === "/api/contact" && request.method === "POST") {
     const ip = getClientIp(request);
@@ -34,6 +73,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const allowIndexing =
     import.meta.env.PUBLIC_ALLOW_INDEXING === "true" || import.meta.env.PUBLIC_ALLOW_INDEXING === "1";
   if (!allowIndexing) {
+    out.set("X-Robots-Tag", "noindex, nofollow");
+  }
+  if (url.pathname.startsWith("/compte") || url.pathname.startsWith("/api/auth") || url.pathname.startsWith("/api/carnet")) {
     out.set("X-Robots-Tag", "noindex, nofollow");
   }
 

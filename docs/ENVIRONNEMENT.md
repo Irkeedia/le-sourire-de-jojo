@@ -35,7 +35,16 @@ La carte est **toujours affichée dans une iframe** sur le site (pas de simple l
 
 | Variable | Obligatoire | Description |
 |----------|-------------|-------------|
-| `MONGODB_URI` | Non | Si défini, les messages peuvent être enregistrés en base (voir code API). |
+| `MONGODB_URI` | Non | Messages contact, comptes utilisateurs, sessions et carnet en ligne (MongoDB Atlas recommandé sur Vercel). |
+
+## Comptes utilisateurs (espace famille)
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `REGISTRATION_INVITE_CODE` | vide | Après le premier compte admin, code obligatoire pour toute nouvelle inscription. |
+| `SESSION_TTL_DAYS` | `30` | Durée de la session (cookie) en jours. |
+| `AUTH_RATE_LIMIT` | `8` | Tentatives max login/inscription par IP par fenêtre. |
+| `AUTH_RATE_WINDOW_MS` | `900000` | Fenêtre anti-abus auth (15 min). |
 
 ## Sécurité
 

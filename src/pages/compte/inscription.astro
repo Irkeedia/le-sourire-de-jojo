@@ -1,0 +1,155 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { isDbConfigured } from "@/lib/db-config";
+
+const title = "Inscription — Mon compte";
+const description = "Créer un compte famille pour accéder au carnet de sourires en ligne.";
+const dbReady = isDbConfigured();
+const inviteRequired = Boolean(import.meta.env.REGISTRATION_INVITE_CODE?.trim());
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { href: "/compte", label: "Mon compte" }, { label: "Inscription" }]}
+>
+  <div class="mx-auto max-w-md px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
+    <h1 class="font-display text-4xl text-marine">Créer un compte</h1>
+    <p class="mt-4 text-marine/85 leading-relaxed">
+      Espace réservé aux familles accompagnées. Un code d’invitation peut être demandé à Céline lors de la mise en place du
+      carnet en ligne.
+    </p>
+
+    {
+      !dbReady && (
+        <div class="mt-8 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-5 text-sm text-marine/85">
+          Inscription indisponible : la base de données n’est pas configurée sur ce serveur.
+        </div>
+      )
+    }
+
+    <form id="register-form" class="mt-8 space-y-5 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm" novalidate>
+      <div>
+        <label for="reg-name" class="block text-sm font-medium text-marine">Nom et prénom</label>
+        <input
+          id="reg-name"
+          name="name"
+          type="text"
+          required
+          autocomplete="name"
+          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        />
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="name"></p>
+      </div>
+      <div>
+        <label for="reg-email" class="block text-sm font-medium text-marine">E-mail</label>
+        <input
+          id="reg-email"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        />
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="email"></p>
+      </div>
+      <div>
+        <label for="reg-password" class="block text-sm font-medium text-marine">Mot de passe</label>
+        <input
+          id="reg-password"
+          name="password"
+          type="password"
+          required
+          autocomplete="new-password"
+          minlength="8"
+          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+        />
+        <p class="mt-1 text-xs text-marine/60">8 caractères minimum, avec au moins une lettre et un chiffre.</p>
+        <p class="mt-1 hidden text-sm text-red-800" data-error-for="password"></p>
+      </div>
+      {
+        inviteRequired && (
+          <div>
+            <label for="reg-invite" class="block text-sm font-medium text-marine">
+              Code d’invitation
+            </label>
+            <input
+              id="reg-invite"
+              name="invite_code"
+              type="text"
+              required
+              autocomplete="off"
+              class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+            />
+            <p class="mt-1 hidden text-sm text-red-800" data-error-for="invite_code"></p>
+          </div>
+        )
+      }
+      <button
+        type="submit"
+        class="w-full rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60"
+        disabled={!dbReady}
+      >
+        Créer mon compte
+      </button>
+      <p id="register-status" class="text-sm text-marine/80" role="status"></p>
+    </form>
+
+    <p class="mt-8 text-center text-sm text-marine/75">
+      Déjà inscrit·e ?
+      <a href="/compte/connexion" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">
+        Se connecter
+      </a>
+    </p>
+  </div>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById("register-form") as HTMLFormElement | null;
+  const status = document.getElementById("register-status");
+
+  function showErrors(errors: Record<string, string[] | undefined>) {
+    document.querySelectorAll("[data-error-for]").forEach((el) => {
+      el.classList.add("hidden");
+      (el as HTMLElement).textContent = "";
+    });
+    for (const [key, msgs] of Object.entries(errors)) {
+      const target = document.querySelector(`[data-error-for="${key}"]`);
+      if (target && msgs?.[0]) {
+        target.classList.remove("hidden");
+        target.textContent = msgs[0];
+      }
+    }
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!form || !status) return;
+    status.textContent = "Création du compte…";
+    const fd = new FormData(form);
+    const payload: Record<string, string> = {
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      password: String(fd.get("password") ?? ""),
+    };
+    const invite = fd.get("invite_code");
+    if (invite) payload.invite_code = String(invite);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data.errors) showErrors(data.errors);
+        status.textContent = data.error ?? "Inscription impossible.";
+        return;
+      }
+      window.location.href = "/compte";
+    } catch {
+      status.textContent = "Erreur réseau.";
+    }
+  });
+</script>

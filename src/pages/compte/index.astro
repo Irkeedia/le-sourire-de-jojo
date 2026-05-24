@@ -1,0 +1,65 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const user = Astro.locals.user!;
+const title = `Mon compte — ${user.name}`;
+const description = "Espace famille Le Sourire de Jojo — carnet de sourires en ligne.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Mon compte" }]}
+>
+  <div class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Bonjour, {user.name}</h1>
+    <p class="mt-4 text-marine/85 leading-relaxed">
+      Bienvenue dans votre espace famille. Ici vous pourrez consulter et enrichir le{' '}
+      <strong class="text-marine">carnet de sourires en ligne</strong> — journal de liaison entre les séances.
+    </p>
+
+    <div class="mt-10 grid gap-5 sm:grid-cols-2">
+      <a
+        href="/compte/carnet"
+        class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm transition hover:border-marine/30 hover:shadow-md"
+      >
+        <h2 class="font-display text-xl text-marine">Carnet de sourires</h2>
+        <p class="mt-2 text-sm leading-relaxed text-marine/80">
+          Lire et ajouter des entrées — souvenirs, préférences, messages pour la famille.
+        </p>
+      </a>
+      <div class="rounded-2xl border border-dashed border-marine/25 bg-cream/80 p-6">
+        <h2 class="font-display text-xl text-marine">Profil</h2>
+        <p class="mt-2 text-sm text-marine/75">{user.email}</p>
+        {
+          user.role === "admin" && (
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-aquarelle-bleu">Compte administrateur</p>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-4">
+      <button
+        type="button"
+        id="logout-btn"
+        class="rounded-xl border-2 border-marine/20 px-6 py-3 font-semibold text-marine hover:bg-marine/5"
+      >
+        Se déconnecter
+      </button>
+      <a
+        href="/carnet"
+        class="rounded-xl border-2 border-marine/20 px-6 py-3 font-semibold text-marine hover:bg-marine/5"
+      >
+        Page publique du carnet
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  document.getElementById("logout-btn")?.addEventListener("click", async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    window.location.href = "/compte/connexion";
+  });
+</script>
