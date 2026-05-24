@@ -199,4 +199,29 @@
       border-color: rgb(29 53 87 / 0.12);
     }
   }
+
+  .logo-mark__img {
+    transform: scale(1.14);
+  }
+
+  /* Carrousels horizontaux mobile : scroll natif + page toujours scrollable au doigt */
+  .hero-carousel {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x pan-y;
+  }
+
+  @media (max-width: 767px) {
+    .hero-carousel {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .hero-carousel__slide {
+      flex: 0 0 100%;
+      width: 100%;
+      max-width: 100%;
+      scroll-snap-align: center;
+    }
+  }
 }

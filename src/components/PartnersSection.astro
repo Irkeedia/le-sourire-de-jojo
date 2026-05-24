@@ -1,0 +1,75 @@
+---
+/** Encart partenaires — structure prête ; logos et liens à compléter au fur et à mesure. */
+interface Props {
+  /** true sur la page /partenaires (titre h1) */
+  asPage?: boolean;
+}
+
+const { asPage = false } = Astro.props;
+
+const partnerCategories = [
+  {
+    label: "Santé & soins",
+    examples: "Cabinets d’infirmier·es, kinésithérapeutes, podologues, pharmacies",
+  },
+  {
+    label: "Institutions & accompagnement",
+    examples: "Mairies, psychologues, structures locales",
+  },
+  {
+    label: "Réseau en construction",
+    examples: "Partenariats en cours de développement — revenez bientôt",
+  },
+];
+---
+
+<section
+  class:list={[
+    "border-y border-marine/10 bg-white/60 scroll-mt-28",
+    asPage && "border-t-0",
+  ]}
+  aria-labelledby="partenaires-title"
+  id="partenaires"
+  {...(asPage ? { "data-reveal-skip": true } : {})}
+>
+  <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
+    {
+      asPage ? (
+        <h1 id="partenaires-title" class="font-display text-4xl text-marine md:text-5xl">
+          Partenaires de confiance
+        </h1>
+      ) : (
+        <h2 id="partenaires-title" class="font-display text-3xl text-marine md:text-4xl">
+          Partenaires de confiance
+        </h2>
+      )
+    }
+    <p class="mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
+      Un réseau local de professionnels et d’acteurs du territoire pour orienter, compléter et sécuriser l’accompagnement —
+      sans jamais remplacer les soins médicaux ou paramédicaux.
+    </p>
+    <ul class="mt-10 grid gap-5 md:grid-cols-3">
+      {
+        partnerCategories.map((cat) => (
+          <li class="flex flex-col rounded-2xl border border-dashed border-marine/25 bg-cream/80 p-6">
+            <h3 class="font-display text-xl text-marine">{cat.label}</h3>
+            <p class="mt-3 flex-1 text-sm leading-relaxed text-marine/75">{cat.examples}</p>
+            <div
+              class="mt-6 flex min-h-[4.5rem] items-center justify-center rounded-xl border border-marine/10 bg-white/70 px-4 text-center text-xs font-medium uppercase tracking-wider text-marine/45"
+              aria-hidden="true"
+            >
+              Logos à venir
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-8 text-sm leading-relaxed text-marine/70">
+      Vous êtes professionnel·le ou structure intéressé·e par un partenariat ?{' '}
+      <a href="/contact?objet=partenariat#formulaire" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">
+        Contactez-nous
+      </a>
+      .
+    </p>
+  </div>
+</section>

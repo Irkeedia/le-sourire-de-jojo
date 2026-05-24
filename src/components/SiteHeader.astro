@@ -1,8 +1,11 @@
 ---
+import LogoMark from "@/components/LogoMark.astro";
+
 const links = [
   { href: "/", label: "Accueil", shortLabel: "Accueil", desktopLabel: "Accueil" },
   { href: "/services", label: "Nos services", shortLabel: "Services", desktopLabel: "Services" },
   { href: "/offres", label: "Offres & forfaits", shortLabel: "Offres", desktopLabel: "Offres" },
+  { href: "/partenaires", label: "Partenaires de confiance", shortLabel: "Partenaires", desktopLabel: "Partenaires" },
   {
     href: "/contact",
     label: "Contact & infos légales",
@@ -13,7 +16,6 @@ const links = [
 ];
 
 const pathname = Astro.url.pathname;
-const logoSrc = "/images/logo-sourire-de-jojo.png";
 
 function isActive(href: string): boolean {
   const base = href.split("#")[0] ?? href;
@@ -54,16 +56,7 @@ function isActive(href: string): boolean {
       class="group flex min-w-0 flex-1 items-center gap-3 py-1 lg:flex-none"
       aria-label="Le Sourire de Jojo — Accueil"
     >
-      <span class="hidden h-12 w-12 shrink-0 items-center justify-center rounded-full border border-marine/15 bg-white/85 p-0.5 shadow-sm sm:flex">
-        <img
-          src={logoSrc}
-          alt=""
-          width="512"
-          height="512"
-          class="h-full w-full rounded-full object-cover"
-          decoding="async"
-        />
-      </span>
+      <LogoMark size="sm" variant="header" alt="" class="hidden sm:inline-flex" />
       <span class="min-w-0">
         <span
           class="block truncate font-display text-2xl font-semibold leading-tight text-marine transition group-hover:text-aquarelle-bleu sm:text-3xl lg:text-4xl"
@@ -271,6 +264,16 @@ function isActive(href: string): boolean {
         return window.matchMedia("(min-width: 1024px)").matches;
       }
 
+      function unlockBodyScroll() {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+        delete document.body.dataset.scrollLock;
+        document.documentElement.style.overflow = "";
+      }
+
       function setOpen(open) {
         if (isLargeViewport()) {
           open = false;
@@ -306,13 +309,7 @@ function isActive(href: string): boolean {
           panel.setAttribute("aria-hidden", "true");
 
           var savedScroll = document.body.dataset.scrollLock;
-          document.body.style.position = "";
-          document.body.style.top = "";
-          document.body.style.left = "";
-          document.body.style.right = "";
-          document.body.style.width = "";
-          delete document.body.dataset.scrollLock;
-          document.documentElement.style.overflow = "";
+          unlockBodyScroll();
 
           if (iconHam) iconHam.classList.remove("hidden");
           if (iconCloseT) iconCloseT.classList.add("hidden");
@@ -377,6 +374,8 @@ function isActive(href: string): boolean {
         },
         { passive: true },
       );
+
+      window.addEventListener("pageshow", unlockBodyScroll);
     });
   })();
 </script>

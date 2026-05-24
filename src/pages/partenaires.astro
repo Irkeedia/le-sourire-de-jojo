@@ -1,0 +1,16 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PartnersSection from "@/components/PartnersSection.astro";
+
+const title = "Partenaires de confiance — Le Sourire de Jojo";
+const description =
+  "Réseau local en construction : infirmier·es, kinésithérapeutes, podologues, pharmacies, mairies, psychologues — Montauban et Tarn-et-Garonne.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Partenaires" }]}
+>
+  <PartnersSection asPage />
+</BaseLayout>

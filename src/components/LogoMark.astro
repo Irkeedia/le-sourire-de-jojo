@@ -1,0 +1,47 @@
+---
+import { LOGO_SRC } from "@/lib/brand";
+
+interface Props {
+  /** sm = header · md = hero mobile · lg = hero desktop · xl = hero desktop large */
+  size?: "sm" | "md" | "lg" | "xl";
+  variant?: "header" | "hero";
+  alt?: string;
+  class?: string;
+}
+
+const {
+  size = "md",
+  variant = "header",
+  alt = "Le Sourire de Jojo — Présence, Écoute & Sourires",
+  class: className = "",
+} = Astro.props;
+
+const dimensions = {
+  sm: "h-12 w-12",
+  md: "h-28 w-28",
+  lg: "h-36 w-36",
+  xl: "h-[11.5rem] w-[11.5rem]",
+};
+---
+
+<span
+  class:list={[
+    "logo-mark inline-flex shrink-0 items-center justify-center rounded-full bg-white p-[3px]",
+    dimensions[size],
+    variant === "hero"
+      ? "shadow-[0_18px_42px_rgba(29,53,87,0.22)] ring-[7px] ring-cream"
+      : "border border-marine/15 shadow-sm ring-2 ring-cream/90",
+    className,
+  ]}
+>
+  <span class="logo-mark__inner flex h-full w-full overflow-hidden rounded-full border border-marine/10 bg-white">
+    <img
+      src={LOGO_SRC}
+      alt={alt}
+      width="400"
+      height="520"
+      class="logo-mark__img h-full w-full object-cover object-[center_38%]"
+      decoding="async"
+    />
+  </span>
+</span>

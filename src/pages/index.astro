@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import HomeHero from "@/components/HomeHero.astro";
+import MaterialHighlight from "@/components/MaterialHighlight.astro";
 import FloralAccent from "@/components/FloralAccent.astro";
 import GoogleMapEmbed from "@/components/GoogleMapEmbed.astro";
 import SnapCarouselNav from "@/components/SnapCarouselNav.astro";
@@ -13,6 +14,8 @@ const description =
 <BaseLayout title={title} description={description}>
   <HomeHero />
 
+  <MaterialHighlight />
+
   <nav
     class="border-b border-marine/10 bg-white/80 py-4 shadow-sm backdrop-blur md:bg-cream md:py-5 md:backdrop-blur-0"
     aria-label="Sections de la page d’accueil"
@@ -20,6 +23,13 @@ const description =
     <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 md:flex-row md:items-center md:justify-center md:gap-4 md:px-6">
       <span class="text-center text-[0.68rem] font-bold uppercase tracking-[0.22em] text-marine/55 md:sr-only">Sur cette page</span>
       <ul class="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-2xl border border-marine/10 bg-cream/80 p-2 text-sm shadow-inner [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:justify-center md:gap-2.5 md:overflow-visible md:border-0 md:bg-transparent md:p-0 md:shadow-none">
+        <li>
+          <a
+            href="#materiel-apporte"
+            class="block snap-start whitespace-nowrap rounded-full border border-marine/10 bg-white px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:border-marine/30 hover:bg-white md:bg-cream md:py-2 md:font-medium"
+            >Matériel</a
+          >
+        </li>
         <li>
           <a
             href="#detail-services"
@@ -55,13 +65,6 @@ const description =
             >FAQ</a
           >
         </li>
-        <li>
-          <a
-            href="/plan-du-site"
-            class="block snap-start whitespace-nowrap rounded-full border border-rose-vieux/25 bg-rose-vieux/10 px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:bg-rose-vieux/20 md:py-2 md:font-medium"
-            >Plan du site</a
-          >
-        </li>
       </ul>
     </div>
   </nav>
@@ -70,8 +73,9 @@ const description =
   <section class="mx-auto max-w-6xl scroll-mt-28 px-4 py-16 md:px-6 md:py-20" aria-labelledby="axes-title" id="detail-services">
     <h2 id="axes-title" class="font-display text-3xl text-marine md:text-4xl">Ce que nous proposons</h2>
     <p class="mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
-      Le détail des six axes ci-dessous complète les deux entrées du bandeau d’accueil. Pour les fiches complètes par activité et le
-      matériel (sorties, jeux, perles…), voir aussi la page <a class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine" href="/services">Nos services</a>.
+      Lecture, sorties, biographie de vie, numérique, créations, visites duo avec Lili… le détail ci-dessous complète les
+      entrées du bandeau d’accueil. Matériel apporté sur place (fauteuil, déambulateur Georgette, jeux, perles). Voir aussi la
+      page <a class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine" href="/services">Nos services</a>.
     </p>
     <ul
       id="snap-home-services"
@@ -200,7 +204,8 @@ const description =
           <h3 class="font-display text-2xl text-marine">Personnes à mobilité réduite (PMR)</h3>
           <p class="mt-4 leading-relaxed text-marine/85">
             L’autonomie ne se mesure pas à la vitesse : nous planifions avec vous les trajets, les temps de repos et les
-            aides matérielles pour que chaque sortie reste un succès.
+            aides matérielles — fauteuil roulant, déambulateur Georgette, jeux et perles apportés — pour que chaque sortie
+            reste un succès.
           </p>
           <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
             <li class="flex gap-2">
@@ -239,7 +244,8 @@ const description =
         <h3 class="mt-2 font-display text-xl text-marine">Écoute et cadrage</h3>
         <p class="mt-3 text-marine/85 leading-relaxed">
           Premier échange pour comprendre vos attentes, vos contraintes médicales déclarées, vos envies — sans promesse
-          irréaliste. Nous adaptons la durée et le type d’activités à votre forme du moment.
+          irréaliste. Un <strong class="text-marine">audit gratuit</strong> est réalisé avec la famille pour cadrer les
+          besoins, les priorités et le type d’activités adapté à votre forme du moment.
         </p>
       </li>
       <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8 min-w-[86%] snap-start sm:min-w-[70%] md:min-w-0">
@@ -255,7 +261,9 @@ const description =
         <h3 class="mt-2 font-display text-xl text-marine">Carnet &amp; continuité</h3>
         <p class="mt-3 text-marine/85 leading-relaxed">
           Le carnet de sourires relie les séances : préférences, inside jokes, objectifs atteints — pour que la prochaine
-          personne aidante (famille, professionnel·le) comprenne vite ce qui compte pour vous.
+          personne aidante (famille, professionnel·le) comprenne vite ce qui compte pour vous. Il sera également
+          <strong class="text-marine">mis en ligne sur un intranet sécurisé</strong>, accessible via un{' '}
+          <strong class="text-marine">compte personnel</strong> dédié à chaque famille.
         </p>
       </li>
       <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8 min-w-[86%] snap-start sm:min-w-[70%] md:min-w-0">
@@ -277,7 +285,8 @@ const description =
       <h2 id="difference-title" class="relative font-display text-3xl text-marine md:text-4xl">Ce qui nous différencie</h2>
       <ul class="relative mt-8 grid gap-4 text-sm leading-relaxed text-marine/85 md:grid-cols-3 md:text-base">
         <li class="rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <strong class="text-marine">Présence</strong> avant performance — pas de liste de tâches à cocher à tout prix.
+          <strong class="text-marine">Dame de compagnie moderne</strong> — présence humaine, matériel apporté (fauteuil,
+          déambulateur Georgette, jeux, perles…).
         </li>
         <li class="rounded-2xl border border-marine/15 bg-white/90 p-5">
           <strong class="text-marine">Lien social</strong> au centre — pas seulement « faire les courses ».
@@ -305,10 +314,11 @@ const description =
         Notre outil phare : un <strong class="text-marine">journal de liaison et de souvenirs</strong> entre les séances — préférences,
         petits faits marquants, messages pour la famille — pour que personne ne se sente « hors boucle ».
       </p>
-      <p class="mt-4 max-w-3xl leading-relaxed text-marine/85">
-        Pages écrites, photos collées, petits dessins ou citations : le carnet devient une mémoire partagée, tangible et
-        bienveillante — pas un dossier médical, mais une histoire à plusieurs voix.
-      </p>
+          <p class="mt-4 max-w-3xl leading-relaxed text-marine/85">
+            Pages écrites, photos collées, petits dessins ou citations : le carnet devient une mémoire partagée, tangible et
+            bienveillante — pas un dossier médical, mais une histoire à plusieurs voix. À terme, un accès en ligne sur
+            intranet avec compte personnel permettra aux proches de suivre les sourires du quotidien.
+          </p>
       <p class="mt-10">
         <a
           href="/carnet"
