@@ -1,0 +1,32 @@
+---
+import "../styles/global.css";
+import { LOGO_SRC } from "@/lib/brand";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Présentation Le Sourire de Jojo" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href={LOGO_SRC} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400..800;1,400..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-cream text-marine antialiased">
+    <slot />
+  </body>
+</html>
