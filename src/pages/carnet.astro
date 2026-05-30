@@ -98,62 +98,97 @@ const contenuCarnet = [
         Un objet soigné, pensé pour durer : reliure, pages à remplir, détails qui reflètent l’identité du Sourire de Jojo.
       </p>
 
-      <div class="mt-10 grid gap-8 md:grid-cols-3">
-        <figure class="overflow-hidden rounded-2xl border border-marine/15 bg-white shadow-sm">
-          <img
-            src="/images/carnet-placeholder.svg"
-            data-photo="/images/carnet-ferme.webp"
-            alt="Carnet fermé, reliure et détails du Sourire de Jojo"
-            width="800"
-            height="600"
-            loading="lazy"
-            decoding="async"
-            class="photo-replace h-auto w-full object-cover"
-          />
-          <figcaption class="px-4 py-3 text-center text-sm text-marine/75">Fermé — première impression</figcaption>
+      <div class="carnet-gallery mt-10">
+        <figure class="carnet-gallery__item">
+          <div class="carnet-gallery__frame">
+            <div class="carnet-gallery__media">
+              <img
+                src="/images/carnet.png"
+                alt="Carnet de Sourires fermé, reliure fleurie et ruban rose — Le Sourire de Jojo"
+                width="1200"
+                height="900"
+                loading="lazy"
+                decoding="async"
+                class="carnet-gallery__img"
+              />
+            </div>
+          </div>
+          <figcaption class="carnet-gallery__caption">Fermé — reliure &amp; identité du carnet</figcaption>
         </figure>
-        <figure class="overflow-hidden rounded-2xl border border-marine/15 bg-white shadow-sm">
-          <img
-            src="/images/carnet-placeholder.svg"
-            data-photo="/images/carnet-ouvert.webp"
-            alt="Carnet ouvert sur une séance récente"
-            width="800"
-            height="600"
-            loading="lazy"
-            decoding="async"
-            class="photo-replace h-auto w-full object-cover"
-          />
-          <figcaption class="px-4 py-3 text-center text-sm text-marine/75">Ouvert — dialogue avec les pages</figcaption>
-        </figure>
-        <figure class="overflow-hidden rounded-2xl border border-marine/15 bg-white shadow-sm">
-          <img
-            src="/images/carnet-placeholder.svg"
-            data-photo="/images/carnet-pages.webp"
-            alt="Exemples de pages intérieures remplies"
-            width="800"
-            height="600"
-            loading="lazy"
-            decoding="async"
-            class="photo-replace h-auto w-full object-cover"
-          />
-          <figcaption class="px-4 py-3 text-center text-sm text-marine/75">Pages intérieures — souvenirs écrits et collés</figcaption>
+
+        <figure class="carnet-gallery__item">
+          <div class="carnet-gallery__frame">
+            <div class="carnet-gallery__media">
+              <img
+                src="/images/carnet2.jpg"
+                alt="Carnet de Sourires ouvert sur la page de titre et une page lignée"
+                width="900"
+                height="1200"
+                loading="lazy"
+                decoding="async"
+                class="carnet-gallery__img"
+              />
+            </div>
+          </div>
+          <figcaption class="carnet-gallery__caption">Ouvert — page de titre &amp; pages à remplir</figcaption>
         </figure>
       </div>
-
-      <script>
-        document.querySelectorAll("img.photo-replace").forEach((img) => {
-          const el = img;
-          const hi = el.dataset.photo;
-          if (!hi) return;
-          const probe = new window.Image();
-          probe.onload = () => {
-            el.src = hi;
-          };
-          probe.onerror = () => {};
-          probe.src = hi;
-        });
-      </script>
     </section>
+
+    <style>
+      .carnet-gallery {
+        display: grid;
+        gap: 1.5rem;
+        align-items: start;
+      }
+
+      @media (min-width: 768px) {
+        .carnet-gallery {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 2rem;
+        }
+      }
+
+      .carnet-gallery__item {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .carnet-gallery__frame {
+        padding: 0.6rem;
+        border-radius: 1.25rem;
+        background: linear-gradient(145deg, #ffffff 0%, #f5f3e7 55%, #ffffff 100%);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.95) inset,
+          0 16px 36px -20px rgba(29, 53, 87, 0.32);
+      }
+
+      .carnet-gallery__media {
+        overflow: hidden;
+        border-radius: 0.85rem;
+        background: #f5f3e7;
+        line-height: 0;
+        isolation: isolate;
+        transform: translateZ(0);
+      }
+
+      .carnet-gallery__img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 0.85rem;
+      }
+
+      .carnet-gallery__caption {
+        margin-top: 0.85rem;
+        padding-inline: 0.25rem;
+        text-align: center;
+        font-family: "Dancing Script", cursive;
+        font-size: 1.15rem;
+        color: #1d3557;
+      }
+    </style>
 
     <section class="mt-16 rounded-2xl border border-marine/15 bg-rose-vieux/15 p-8 text-center md:p-10" aria-labelledby="carnet-cta-title">
       <h2 id="carnet-cta-title" class="font-display text-2xl text-marine md:text-3xl">Envie d’en savoir plus ?</h2>
