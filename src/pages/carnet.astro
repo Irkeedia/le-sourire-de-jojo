@@ -1,9 +1,29 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import FloralAccent from "@/components/FloralAccent.astro";
 
 const title = "Le carnet de sourires — Le Sourire de Jojo";
 const description =
   "Le carnet de sourires : journal de liaison entre les séances et livre de souvenirs partagé — Montauban, Tarn-et-Garonne.";
+
+const contenuCarnet = [
+  {
+    title: "Préférences & habitudes",
+    detail: "Chansons, goûts, rythme du jour, ce qui apaise ou stimule — pour que chaque séance reprenne là où la précédente s’est arrêtée.",
+  },
+  {
+    title: "Souvenirs & photos",
+    detail: "Pages écrites, images collées, petits dessins ou citations : une mémoire tangible, bienveillante, pas un dossier médical.",
+  },
+  {
+    title: "Messages pour la famille",
+    detail: "Un mot pour les proches absents, un compte-rendu doux de la séance, les petits faits marquants de la semaine.",
+  },
+  {
+    title: "Continuité entre les séances",
+    detail: "Inside jokes, objectifs atteints, promesses pour la prochaine fois — pour que personne ne se sente « hors boucle ».",
+  },
+];
 ---
 
 <BaseLayout
@@ -13,11 +33,16 @@ const description =
 >
   <article class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
     <h1 class="font-display text-4xl text-marine md:text-5xl">Le carnet de sourires</h1>
+    <p class="mt-6 max-w-3xl text-lg leading-relaxed text-marine/85">
+      Notre <strong class="text-marine">outil phare</strong> : un journal de liaison et de souvenirs entre les séances — pour la personne
+      accompagnée, la famille et toute personne de confiance.
+    </p>
 
-    <section class="mt-10 max-w-3xl space-y-5 text-marine/90 leading-relaxed" aria-labelledby="concept-carnet">
+    <section class="mt-12 max-w-3xl space-y-5 text-marine/90 leading-relaxed" aria-labelledby="concept-carnet">
       <h2 id="concept-carnet" class="font-display text-2xl text-marine md:text-3xl">Journal de liaison &amp; souvenirs</h2>
       <p class="text-lg">
-        Le carnet est notre <strong class="text-marine">outil phare</strong> : un <strong class="text-marine">journal de liaison</strong> entre les séances pour la personne accompagnée, la famille et toute personne de confiance — et en même temps un{' '}
+        Le carnet n’est pas un gadget : c’est le fil conducteur entre nos rencontres. Un{' '}
+        <strong class="text-marine">journal de liaison</strong> et en même temps un{' '}
         <strong class="text-marine">livre de souvenirs</strong> où s’inscrivent ce qui compte vraiment.
       </p>
       <p>
@@ -25,25 +50,52 @@ const description =
         semaine suivante, un mot pour les proches qui ne sont pas là ce jour-là.
       </p>
       <p>
-        Pour les familles, il trace une mémoire partagée ; pour la personne accompagnée, il restitue la continuité
-        lorsque les journées se ressemblent. C’est un objet tangible de dignité et de joie.
+        Pour les familles, il trace une mémoire partagée ; pour la personne accompagnée, il restitue la continuité lorsque les journées se
+        ressemblent. C’est un objet tangible de dignité et de joie.
       </p>
-      <p class="rounded-2xl border border-marine/15 bg-sauge/15 p-5 text-sm leading-relaxed text-marine/85">
-        <strong class="text-marine">Carnet en ligne :</strong> les familles peuvent aussi accéder à un espace privé pour relire et
-        ajouter des entrées —
-        <a href="/compte/connexion" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">
-          connexion à mon compte
+    </section>
+
+    <section class="relative mt-14 overflow-hidden rounded-3xl border border-marine/15 bg-gradient-to-br from-white to-sauge/20 p-8 md:p-10" aria-labelledby="contenu-carnet-title">
+      <FloralAccent position="top" />
+      <h2 id="contenu-carnet-title" class="relative font-display text-2xl text-marine md:text-3xl">Que trouve-t-on dans le carnet ?</h2>
+      <ul class="relative mt-8 grid gap-4 sm:grid-cols-2">
+        {
+          contenuCarnet.map((item) => (
+            <li class="rounded-2xl border border-marine/12 bg-white/90 p-5 shadow-sm">
+              <h3 class="font-display text-xl text-marine">{item.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-marine/85">{item.detail}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="mt-14 rounded-2xl border border-marine/15 bg-sauge/15 p-6 md:p-8" aria-labelledby="carnet-en-ligne-title">
+      <h2 id="carnet-en-ligne-title" class="font-display text-2xl text-marine">Carnet en ligne (espace famille)</h2>
+      <p class="mt-4 max-w-3xl leading-relaxed text-marine/85">
+        Les familles peuvent aussi accéder à un <strong class="text-marine">espace privé</strong> pour relire et ajouter des entrées entre
+        les séances — le même esprit de liaison, accessible depuis un compte personnel sécurisé.
+      </p>
+      <p class="mt-6 flex flex-wrap gap-3">
+        <a
+          href="/compte/connexion"
+          class="inline-flex items-center justify-center rounded-xl bg-marine px-5 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+        >
+          Connexion à mon compte
         </a>
-        .
+        <a
+          href="/compte/inscription"
+          class="inline-flex items-center justify-center rounded-xl border-2 border-marine bg-white/90 px-5 py-3 font-semibold text-marine hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+        >
+          Créer un compte famille
+        </a>
       </p>
     </section>
 
     <section class="mt-14" aria-labelledby="galerie-carnet">
       <h2 id="galerie-carnet" class="font-display text-3xl text-marine">Visuels du carnet</h2>
       <p class="mt-4 max-w-3xl text-marine/85">
-        Placez vos clichés haute définition dans <code class="rounded bg-marine/10 px-1.5 py-0.5 text-sm">public/images/</code>
-        (par ex. <span class="whitespace-nowrap">carnet-ferme.webp</span>, <span class="whitespace-nowrap">carnet-ouvert.webp</span>,
-        <span class="whitespace-nowrap">carnet-pages.webp</span>) pour remplacer les emplacements ci-dessous — les alt restent adaptés au contenu réel.
+        Un objet soigné, pensé pour durer : reliure, pages à remplir, détails qui reflètent l’identité du Sourire de Jojo.
       </p>
 
       <div class="mt-10 grid gap-8 md:grid-cols-3">
@@ -101,6 +153,22 @@ const description =
           probe.src = hi;
         });
       </script>
+    </section>
+
+    <section class="mt-16 rounded-2xl border border-marine/15 bg-rose-vieux/15 p-8 text-center md:p-10" aria-labelledby="carnet-cta-title">
+      <h2 id="carnet-cta-title" class="font-display text-2xl text-marine md:text-3xl">Envie d’en savoir plus ?</h2>
+      <p class="mx-auto mt-4 max-w-2xl leading-relaxed text-marine/85">
+        Le carnet s’intègre naturellement à nos formules — forfait mensuel, pack famille ou accompagnement sur-mesure. Parlons-en lors
+        d’un premier échange.
+      </p>
+      <p class="mt-8">
+        <a
+          href="/contact#formulaire"
+          class="inline-flex items-center justify-center rounded-xl bg-marine px-8 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+        >
+          Nous contacter
+        </a>
+      </p>
     </section>
   </article>
 </BaseLayout>
