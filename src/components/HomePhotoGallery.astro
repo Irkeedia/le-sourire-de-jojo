@@ -1,0 +1,254 @@
+---
+const photos = [
+  {
+    src: "/images/image%20index/Unknown-5.jpg",
+    alt: "Femme souriante avec des lunettes roses, un moment de joie et de complicité",
+    caption: "Joie & présence",
+    featured: true,
+    accent: "rose",
+  },
+  {
+    src: "/images/image%20index/Unknown-4.jpg",
+    alt: "Accompagnement en pleine nature, dans un jardin fleuri",
+    caption: "Nature & douceur",
+    accent: "sauge",
+  },
+  {
+    src: "/images/image%20index/Unknown-3.jpg",
+    alt: "Personne âgée en extérieur, accompagnée avec bienveillance",
+    caption: "Dehors, à son rythme",
+    accent: "bleu",
+  },
+  {
+    src: "/images/image%20index/Unknown-2.jpg",
+    alt: "Promenade avec un chien en laisse dans un parc ensoleillé",
+    caption: "Balades & compagnie",
+    accent: "jaune",
+  },
+];
+---
+
+<section
+  class="home-gallery scroll-mt-28 border-y border-marine/10 bg-gradient-to-b from-cream via-ivoire/60 to-cream"
+  aria-labelledby="home-gallery-title"
+  id="moments-sourires"
+>
+  <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
+    <div class="max-w-3xl">
+      <p class="text-xs font-bold uppercase tracking-[0.22em] text-marine/55">En images</p>
+      <h2 id="home-gallery-title" class="mt-3 font-display text-3xl text-marine md:text-4xl">
+        Des moments de vie, des sourires partagés
+      </h2>
+      <p class="mt-5 text-lg leading-relaxed text-marine/85">
+        Promenades, jardin, présence à domicile ou dehors : chaque accompagnement est unique. Voici quelques instants qui
+        reflètent l’esprit du Sourire de Jojo — lien, douceur et respect du rythme de chacun.
+      </p>
+    </div>
+
+    <ul class="home-gallery__grid mt-12 list-none p-0" aria-label="Galerie photos d’accompagnement">
+      {
+        photos.map((photo) => (
+          <li
+            class:list={[
+              "home-gallery__item",
+              photo.featured && "home-gallery__item--featured",
+              photo.accent && `home-gallery__item--${photo.accent}`,
+            ]}
+          >
+            <figure class="home-gallery__frame">
+              <div class="home-gallery__mat">
+                <div class="home-gallery__image-wrap">
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    width={800}
+                    height={800}
+                    loading="lazy"
+                    decoding="async"
+                    class="home-gallery__image"
+                  />
+                </div>
+              </div>
+              {photo.caption && <figcaption class="home-gallery__caption">{photo.caption}</figcaption>}
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .home-gallery__grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 768px) {
+    .home-gallery__grid {
+      gap: 1.5rem;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-auto-rows: minmax(11rem, auto);
+    }
+
+    .home-gallery__item {
+      grid-column: span 4;
+    }
+
+    .home-gallery__item--featured {
+      grid-column: span 5;
+      grid-row: span 2;
+    }
+
+    .home-gallery__item:nth-child(2) {
+      grid-column: span 4;
+    }
+
+    .home-gallery__item:nth-child(3) {
+      grid-column: span 3;
+    }
+
+    .home-gallery__item:nth-child(4) {
+      grid-column: span 7;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .home-gallery__grid {
+      grid-auto-rows: minmax(12.5rem, auto);
+    }
+  }
+
+  .home-gallery__frame {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-gallery__item:hover .home-gallery__frame,
+  .home-gallery__item:focus-within .home-gallery__frame {
+    transform: translateY(-4px);
+  }
+
+  .home-gallery__mat {
+    position: relative;
+    flex: 1;
+    padding: 0.65rem;
+    border-radius: 1.35rem;
+    background: linear-gradient(145deg, #ffffff 0%, #f5f3e7 55%, #ffffff 100%);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.95) inset,
+      0 18px 40px -22px rgba(29, 53, 87, 0.35),
+      0 8px 16px -10px rgba(29, 53, 87, 0.18);
+    transition:
+      box-shadow 0.45s ease,
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-gallery__mat::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(29, 53, 87, 0.22), rgba(143, 168, 146, 0.35), rgba(200, 141, 141, 0.28));
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .home-gallery__item--rose .home-gallery__mat::before {
+    background: linear-gradient(135deg, rgba(200, 141, 141, 0.55), rgba(231, 111, 81, 0.35), rgba(29, 53, 87, 0.2));
+  }
+
+  .home-gallery__item--sauge .home-gallery__mat::before {
+    background: linear-gradient(135deg, rgba(143, 168, 146, 0.55), rgba(69, 123, 157, 0.25), rgba(29, 53, 87, 0.15));
+  }
+
+  .home-gallery__item--bleu .home-gallery__mat::before {
+    background: linear-gradient(135deg, rgba(69, 123, 157, 0.5), rgba(29, 53, 87, 0.35), rgba(143, 168, 146, 0.25));
+  }
+
+  .home-gallery__item--jaune .home-gallery__mat::before {
+    background: linear-gradient(135deg, rgba(233, 196, 106, 0.55), rgba(143, 168, 146, 0.35), rgba(29, 53, 87, 0.18));
+  }
+
+  .home-gallery__item:hover .home-gallery__mat {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.95) inset,
+      0 28px 50px -24px rgba(29, 53, 87, 0.42),
+      0 12px 22px -12px rgba(29, 53, 87, 0.22);
+  }
+
+  .home-gallery__image-wrap {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.95rem;
+    aspect-ratio: 1 / 1;
+    background: rgba(29, 53, 87, 0.06);
+  }
+
+  .home-gallery__item--featured .home-gallery__image-wrap {
+    aspect-ratio: 4 / 5;
+  }
+
+  .home-gallery__item:nth-child(4) .home-gallery__image-wrap {
+    aspect-ratio: 16 / 10;
+  }
+
+  @media (min-width: 768px) {
+    .home-gallery__item--featured .home-gallery__image-wrap {
+      min-height: 100%;
+      aspect-ratio: auto;
+      height: 100%;
+    }
+  }
+
+  .home-gallery__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.01);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-gallery__item:hover .home-gallery__image {
+    transform: scale(1.06);
+  }
+
+  .home-gallery__caption {
+    margin-top: 0.75rem;
+    padding-left: 0.35rem;
+    font-family: "Dancing Script", cursive;
+    font-size: 1.15rem;
+    color: #1d3557;
+    letter-spacing: 0.01em;
+  }
+
+  .home-gallery__item--featured .home-gallery__caption {
+    font-size: 1.35rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-gallery__frame,
+    .home-gallery__mat,
+    .home-gallery__image {
+      transition: none;
+    }
+
+    .home-gallery__item:hover .home-gallery__frame,
+    .home-gallery__item:hover .home-gallery__image {
+      transform: none;
+    }
+  }
+</style>

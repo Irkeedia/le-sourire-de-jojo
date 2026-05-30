@@ -7,7 +7,25 @@ import { TARIF_HORAIRE_BRUT_EUR } from "@/lib/tarif";
 
 const title = "Offres & forfaits — Le Sourire de Jojo";
 const description =
-  "Tarifs indicatifs (SAP), crédit d'impôt 50 %, CESU préfinancés, simulateur, forfaits — Montauban, Tarn-et-Garonne. Devis personnalisé.";
+  "Tarifs indicatifs (SAP), crédit d'impôt 50 %, APA, PCH, CESU, simulateur, forfaits — Montauban, Tarn-et-Garonne. Devis personnalisé.";
+
+const aidesFinancement = [
+  {
+    id: "apa",
+    title: "L’APA (Allocation Personnalisée d’Autonomie)",
+    body: "Versée par le Conseil départemental du Tarn-et-Garonne pour les personnes de plus de 60 ans en perte d’autonomie. Le bénéficiaire peut utiliser son enveloppe APA pour financer des prestations de dame de compagnie, dans le cadre de son plan d’aide.",
+  },
+  {
+    id: "pch",
+    title: "La PCH (Prestation de Compensation du Handicap)",
+    body: "L’équivalent de l’APA pour les personnes en situation de handicap, sans limite d’âge, gérée par la MDPH. L’enveloppe PCH peut couvrir une partie des prestations d’accompagnement à domicile, selon le projet de vie et les besoins validés.",
+  },
+  {
+    id: "retraite",
+    title: "Les caisses de retraite (Agirc-Arrco, CARSAT, MSA…)",
+    body: "Certaines caisses accordent à leurs retraités des budgets annuels ou des chèques CESU pour financer de la compagnie à domicile ou de l’aide aux sorties. Vous pouvez régler vos prestations avec ces titres lorsque le contrat le prévoit.",
+  },
+];
 
 const packs: {
   id: PackId;
@@ -147,10 +165,15 @@ const packs: {
         <div class="max-w-3xl">
           <h2 id="ci-title" class="font-display text-3xl text-marine">Crédit d’impôt 50&nbsp;% (SAP)</h2>
           <p class="mt-4 text-marine/90 leading-relaxed">
-            Les <strong class="text-marine">services à la personne (SAP)</strong> éligibles peuvent ouvrir droit à un crédit d’impôt de
-            50&nbsp;% sur les montants admissibles, dans les limites fixées par la loi. Les <strong class="text-marine">CESU préfinancés</strong> et
-            chèques emploi service universel sont acceptés lorsque le devis ou le contrat le prévoit et que les conditions légales sont
-            réunies. Conservez vos justificatifs et renseignez-vous sur les plafonds annuels et votre situation fiscale.
+            C’est <strong class="text-marine">automatique</strong> : dès que la micro-entreprise est déclarée <strong class="text-marine">service à la personne</strong>,
+            vos factures éligibles ouvrent droit à un crédit d’impôt de <strong class="text-marine">50&nbsp;%</strong> sur les montants admissibles,
+            dans les limites fixées par la loi. Vous déduisez la moitié de vos dépenses de vos impôts, ou l’URSSAF vous l’avance
+            directement via l’<strong class="text-marine">Avance immédiate</strong> (selon votre situation). C’est valable pour vous comme pour la personne
+            accompagnée lorsque les conditions légales sont réunies.
+          </p>
+          <p class="mt-4 text-marine/90 leading-relaxed">
+            Les <strong class="text-marine">CESU préfinancés</strong> et chèques emploi service universel sont acceptés lorsque le devis ou le contrat le
+            prévoit. Conservez vos justificatifs et renseignez-vous sur les plafonds annuels et votre situation fiscale.
           </p>
           <p class="mt-4 text-sm text-marine/75">
             Information générale : elle ne remplace pas un conseil comptable ou fiscal personnalisé.
@@ -158,6 +181,33 @@ const packs: {
         </div>
         <SealBadge />
       </div>
+    </section>
+
+    <section
+      class="mt-12 scroll-mt-24 rounded-2xl border border-marine/15 bg-sauge/15 p-8 shadow-sm md:p-10"
+      id="aides-financement"
+      aria-labelledby="aides-title"
+    >
+      <h2 id="aides-title" class="font-display text-3xl text-marine">Les aides pour financer l’accompagnement</h2>
+      <p class="mt-4 max-w-3xl leading-relaxed text-marine/90">
+        Outre le crédit d’impôt SAP, les personnes accompagnées peuvent mobiliser d’autres dispositifs pour régler tout ou partie des
+        prestations de dame de compagnie. Les montants, conditions d’éligibilité et démarches relèvent des organismes concernés — nous
+        vous aidons à y voir clair lors du premier échange.
+      </p>
+      <ul class="mt-8 grid gap-6 md:grid-cols-3">
+        {
+          aidesFinancement.map((aide) => (
+            <li class="flex flex-col rounded-2xl border border-marine/12 bg-white/90 p-6 shadow-sm">
+              <h3 id={aide.id} class="font-display text-xl text-marine">{aide.title}</h3>
+              <p class="mt-3 flex-1 text-sm leading-relaxed text-marine/85">{aide.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6 text-sm text-marine/75">
+        Ces informations sont données à titre indicatif. Seuls les organismes payeurs (département, MDPH, caisses de retraite, URSSAF,
+        administration fiscale…) confirment vos droits et les modalités de prise en charge.
+      </p>
     </section>
 
     <div class="mt-12 scroll-mt-28" id="simulateur-cout">
