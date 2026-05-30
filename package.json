@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "start": "node ./dist/server/entry.mjs",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "generate:presentation-pdf": "node scripts/generate-presentation-pdf.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^9.2.0",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "playwright": "^1.49.1",
     "typescript": "^5.8.3"
   }
 }

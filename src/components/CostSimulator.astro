@@ -75,8 +75,8 @@ function fmtEuro(n: number) {
 
     function bind(root) {
       if (!root || root.getAttribute("data-sim-bound") === "1") return;
-      var rate = parseFloat(root.getAttribute("data-hourly-rate") || "35");
-      if (Number.isNaN(rate)) rate = 35;
+      var rate = parseFloat(root.getAttribute("data-hourly-rate") || "38");
+      if (Number.isNaN(rate)) rate = 38;
       var select = root.querySelector("[data-sim-duree]");
       var brutOut = root.querySelector("[data-sim-brut]");
       var netOut = root.querySelector("[data-sim-net]");

@@ -5,9 +5,17 @@ import { LOGO_SRC } from "@/lib/brand";
 interface Props {
   title: string;
   description?: string;
+  canonicalPath?: string;
 }
 
-const { title, description = "Présentation Le Sourire de Jojo" } = Astro.props;
+const {
+  title,
+  description = "Présentation Le Sourire de Jojo",
+  canonicalPath = "/presentation",
+} = Astro.props;
+
+const siteOrigin = Astro.url.origin;
+const shareUrl = new URL(canonicalPath, siteOrigin).href;
 ---
 
 <!doctype html>
@@ -17,6 +25,13 @@ const { title, description = "Présentation Le Sourire de Jojo" } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={shareUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <link rel="icon" type="image/png" href={LOGO_SRC} />
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

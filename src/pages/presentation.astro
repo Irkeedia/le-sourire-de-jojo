@@ -5,20 +5,72 @@ import {
   PRESENTATION_PPTX_HREF,
   presentationSlides as slides,
 } from "@/lib/presentation-slides";
+import {
+  PRESENTATION_PDF_FILENAME,
+  PRESENTATION_PDF_HREF,
+} from "@/lib/presentation-pdf-export";
 
 const title = "Présentation — Le Sourire de Jojo";
+const description =
+  "Présentation Le Sourire de JoJo — dame de compagnie moderne à Montauban et Corbarieu. 10 slides à partager ou imprimer en PDF.";
 ---
 
-<SlideLayout title={title}>
+<SlideLayout title={title} description={description}>
   <div class="deck" id="slide-deck" data-total={slides.length}>
     <header class="deck__chrome">
       <a href="/" class="deck__exit" title="Quitter la présentation">← Site</a>
       <span class="deck__counter" id="slide-counter" aria-live="polite">1 / {slides.length}</span>
       <div class="deck__chrome-actions">
-        <a href={PRESENTATION_PPTX_HREF} class="deck__dl" download title="Télécharger le PowerPoint original">PPTX</a>
+        <div class="deck__export">
+          <button
+            type="button"
+            class="deck__export-toggle"
+            id="slide-export-toggle"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="slide-export-menu"
+          >
+            Partager / Export
+          </button>
+          <div class="deck__export-menu" id="slide-export-menu" role="menu" hidden>
+            <a
+              href={PRESENTATION_PDF_HREF}
+              class="deck__export-item deck__export-item--primary deck__export-item--link"
+              role="menuitem"
+              download={PRESENTATION_PDF_FILENAME}
+            >
+              Télécharger PDF (10 slides)
+            </a>
+            <a href={PRESENTATION_PPTX_HREF} class="deck__export-item deck__export-item--link" role="menuitem" download>
+              Télécharger PowerPoint (PPTX)
+            </a>
+            <button type="button" class="deck__export-item" id="slide-share" role="menuitem">
+              Partager la présentation
+            </button>
+            <button type="button" class="deck__export-item" id="slide-copy-link" role="menuitem">
+              Copier le lien
+            </button>
+            <button type="button" class="deck__export-item" id="slide-print" role="menuitem">
+              Imprimer…
+            </button>
+          </div>
+        </div>
+        <a
+          href={PRESENTATION_PDF_HREF}
+          class="deck__dl deck__dl--compact"
+          download={PRESENTATION_PDF_FILENAME}
+          title="Télécharger la présentation en PDF"
+        >
+          PDF
+        </a>
+        <a href={PRESENTATION_PPTX_HREF} class="deck__dl deck__dl--compact" download title="Télécharger le PowerPoint original">
+          PPTX
+        </a>
         <button type="button" class="deck__fs" id="slide-fullscreen" aria-label="Plein écran">⛶</button>
       </div>
     </header>
+
+    <p class="deck__toast" id="slide-toast" role="status" aria-live="polite" hidden></p>
 
     <div class="deck__stage" id="slide-stage">
       {
@@ -33,7 +85,14 @@ const title = "Présentation — Le Sourire de Jojo";
             {slide.kind === "hero" && (
               <div class:list={["slide__inner", "slide__inner--hero", slide.image && "slide__inner--hero-photo"]}>
                 {slide.image ? (
-                  <img src={slide.image} alt={slide.imageAlt ?? ""} class="slide__hero-bg" loading="eager" decoding="async" />
+                  <img
+                    src={slide.image.src}
+                    alt={slide.image.alt}
+                    class="slide__hero-bg"
+                    style={`object-fit: ${slide.image.fit ?? "cover"}; object-position: ${slide.image.position ?? "center center"};`}
+                    loading="eager"
+                    decoding="async"
+                  />
                 ) : (
                   <img src={LOGO_SRC} alt="" class="slide__logo" width="160" height="160" />
                 )}
@@ -46,28 +105,15 @@ const title = "Présentation — Le Sourire de Jojo";
             )}
 
             {slide.kind === "bullets" && (
-              <div
-                class:list={[
-                  "slide__inner",
-                  slide.accent && `slide__inner--${slide.accent}`,
-                  slide.image && "slide__inner--bullets-photo",
-                ]}
-              >
-                <div class="slide__bullets-main">
-                  <p class="slide__kicker">Diapositive {index + 1}</p>
-                  <h2 class="slide__title">{slide.title}</h2>
-                  {slide.intro && <p class="slide__intro">{slide.intro}</p>}
-                  <ul class="slide__list">
-                    {slide.items.map((item) => (
-                      <li>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-                {slide.image && (
-                  <div class="slide__bullets-media">
-                    <img src={slide.image} alt={slide.imageAlt ?? ""} loading="lazy" decoding="async" />
-                  </div>
-                )}
+              <div class:list={["slide__inner", slide.accent && `slide__inner--${slide.accent}`]}>
+                <p class="slide__kicker">Diapositive {index + 1}</p>
+                <h2 class="slide__title">{slide.title}</h2>
+                {slide.intro && <p class="slide__intro">{slide.intro}</p>}
+                <ul class="slide__list">
+                  {slide.items.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
               </div>
             )}
 
@@ -78,34 +124,77 @@ const title = "Présentation — Le Sourire de Jojo";
                   <h2 class="slide__title">{slide.title}</h2>
                   <p class="slide__intro">{slide.text}</p>
                 </div>
-                <div class="slide__split-media">
-                  <img src={slide.image} alt={slide.imageAlt} loading="lazy" decoding="async" />
+                <div class:list={["slide__media", slide.image.fit === "contain" && "slide__media--contain"]}>
+                  <img
+                    src={slide.image.src}
+                    alt={slide.image.alt}
+                    loading="lazy"
+                    decoding="async"
+                    style={`object-fit: ${slide.image.fit ?? "cover"}; object-position: ${slide.image.position ?? "center center"};`}
+                  />
                 </div>
               </div>
             )}
 
-            {slide.kind === "compare" && (
-              <div class="slide__inner slide__inner--compare">
-                <p class="slide__kicker">Diapositive {index + 1}</p>
-                <h2 class="slide__title">{slide.title}</h2>
-                <div class="slide__compare-grid">
-                  <div class="slide__compare-col slide__compare-col--before">
-                    <h3>{slide.leftTitle}</h3>
-                    <ul>
-                      {slide.leftItems.map((item) => (
-                        <li>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div class="slide__compare-col slide__compare-col--after">
-                    <h3>{slide.rightTitle}</h3>
-                    <ul>
-                      {slide.rightItems.map((item) => (
-                        <li>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
+            {slide.kind === "mosaic" && (
+              <div class:list={["slide__inner", "slide__inner--mosaic", slide.accent && `slide__inner--${slide.accent}`]}>
+                <div class="slide__mosaic-head">
+                  <p class="slide__kicker">Diapositive {index + 1}</p>
+                  <h2 class="slide__title">{slide.title}</h2>
+                  {slide.intro && <p class="slide__intro">{slide.intro}</p>}
                 </div>
+                <ul class="slide__mosaic-grid">
+                  {slide.tiles.map((tile) => (
+                    <li class="slide__mosaic-tile">
+                      <div class:list={["slide__media", "slide__media--tile", tile.image.fit === "contain" && "slide__media--contain"]}>
+                        <img
+                          src={tile.image.src}
+                          alt={tile.image.alt}
+                          loading="lazy"
+                          decoding="async"
+                          style={`object-fit: ${tile.image.fit ?? "cover"}; object-position: ${tile.image.position ?? "center center"};`}
+                        />
+                      </div>
+                      <h3 class="slide__mosaic-title">{tile.title}</h3>
+                      <p class="slide__mosaic-text">{tile.text}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {slide.kind === "compare" && (
+              <div class:list={["slide__inner", "slide__inner--compare", slide.accent && `slide__inner--${slide.accent}`]}>
+                <header class="slide__compare-head">
+                  <p class="slide__kicker">Diapositive {index + 1}</p>
+                  <h2 class="slide__title slide__title--center">{slide.title}</h2>
+                  {slide.headline && <p class="slide__compare-headline">{slide.headline}</p>}
+                  {slide.intro && <p class="slide__compare-intro">{slide.intro}</p>}
+                </header>
+
+                <div class="slide__compare-table" role="table" aria-label="Comparaison des services">
+                  <div class="slide__compare-table-head" role="row">
+                    <div class="slide__compare-table-th slide__compare-table-th--before" role="columnheader">
+                      {slide.leftTitle}
+                    </div>
+                    <div class="slide__compare-table-th slide__compare-table-th--after" role="columnheader">
+                      {slide.rightTitle}
+                    </div>
+                  </div>
+                  {slide.leftItems.map((left, rowIndex) => (
+                    <div class="slide__compare-table-row" role="row">
+                      <div class="slide__compare-table-cell slide__compare-table-cell--before" role="cell">
+                        <span class="slide__compare-mark slide__compare-mark--before" aria-hidden="true">✕</span>
+                        <span>{left}</span>
+                      </div>
+                      <div class="slide__compare-table-cell slide__compare-table-cell--after" role="cell">
+                        <span class="slide__compare-mark slide__compare-mark--after" aria-hidden="true">✓</span>
+                        <span>{slide.rightItems[rowIndex]}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 {slide.footer && <p class="slide__compare-footer">{slide.footer}</p>}
               </div>
             )}
@@ -140,27 +229,41 @@ const title = "Présentation — Le Sourire de Jojo";
             )}
 
             {slide.kind === "contact" && (
-              <div class="slide__inner slide__inner--cta">
-                <h2 class="slide__title">{slide.title}</h2>
-                <p class="slide__intro">{slide.text}</p>
-                <ul class="slide__contact-list">
-                  <li>
-                    <span class="slide__contact-label">Téléphone</span>
-                    <a href={`tel:${slide.phone.replace(/\s/g, "")}`} class="slide__contact-value">{slide.phone}</a>
-                  </li>
-                  <li>
-                    <span class="slide__contact-label">Site web</span>
-                    <a href={slide.siteHref} class="slide__contact-value">{slide.siteLabel}</a>
-                  </li>
-                  <li>
-                    <span class="slide__contact-label">Zone</span>
-                    <span class="slide__contact-value">{slide.location}</span>
-                  </li>
-                </ul>
-                <div class="slide__cta-row">
-                  <a href="/contact#formulaire" class="slide__btn slide__btn--primary">Nous contacter</a>
-                  <a href="/offres" class="slide__btn slide__btn--ghost">Voir les offres</a>
+              <div class="slide__inner slide__inner--split slide__inner--contact">
+                <div class="slide__split-text slide__contact-copy">
+                  <p class="slide__kicker">Diapositive {index + 1}</p>
+                  <h2 class="slide__title">{slide.title}</h2>
+                  <p class="slide__intro">{slide.text}</p>
+                  <ul class="slide__contact-list">
+                    <li>
+                      <span class="slide__contact-label">Téléphone</span>
+                      <a href={`tel:${slide.phone.replace(/\s/g, "")}`} class="slide__contact-value">{slide.phone}</a>
+                    </li>
+                    <li>
+                      <span class="slide__contact-label">Site web</span>
+                      <a href={slide.siteHref} class="slide__contact-value">{slide.siteLabel}</a>
+                    </li>
+                    <li>
+                      <span class="slide__contact-label">Zone</span>
+                      <span class="slide__contact-value">{slide.location}</span>
+                    </li>
+                  </ul>
+                  <div class="slide__cta-row slide__cta-row--left">
+                    <a href="/contact#formulaire" class="slide__btn slide__btn--primary">Nous contacter</a>
+                    <a href="/offres" class="slide__btn slide__btn--ghost">Voir les offres</a>
+                  </div>
                 </div>
+                {slide.image && (
+                  <div class:list={["slide__media", slide.image.fit === "contain" && "slide__media--contain"]}>
+                    <img
+                      src={slide.image.src}
+                      alt={slide.image.alt}
+                      loading="lazy"
+                      decoding="async"
+                      style={`object-fit: ${slide.image.fit ?? "cover"}; object-position: ${slide.image.position ?? "center center"};`}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </section>
@@ -220,7 +323,8 @@ const title = "Présentation — Le Sourire de Jojo";
 
     .deck__exit,
     .deck__fs,
-    .deck__dl {
+    .deck__dl,
+    .deck__export-toggle {
       font-size: 0.8125rem;
       font-weight: 600;
       color: #1d3557;
@@ -229,6 +333,106 @@ const title = "Présentation — Le Sourire de Jojo";
       border-radius: 9999px;
       padding: 0.45rem 0.85rem;
       transition: background 0.2s;
+    }
+
+    .deck__export {
+      position: relative;
+    }
+
+    .deck__export-toggle[aria-expanded="true"] {
+      background: #fff;
+      border-color: rgba(29, 53, 87, 0.25);
+    }
+
+    .deck__export-menu {
+      position: absolute;
+      top: calc(100% + 0.35rem);
+      right: 0;
+      z-index: 40;
+      min-width: 15.5rem;
+      padding: 0.35rem;
+      border-radius: 0.85rem;
+      border: 1px solid rgba(29, 53, 87, 0.12);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 16px 40px -20px rgba(29, 53, 87, 0.45);
+    }
+
+    .deck__export-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      border-radius: 0.55rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #1d3557;
+      background: transparent;
+      border: none;
+      transition: background 0.15s;
+    }
+
+    .deck__export-item:hover,
+    .deck__export-item:focus-visible {
+      background: rgba(143, 168, 146, 0.2);
+      outline: none;
+    }
+
+    .deck__export-item--link {
+      text-decoration: none;
+    }
+
+    .deck__export-item--primary {
+      color: #1d3557;
+      background: rgba(143, 168, 146, 0.15);
+    }
+
+    .deck__export-item--primary:hover,
+    .deck__export-item--primary:focus-visible {
+      background: rgba(143, 168, 146, 0.28);
+    }
+
+    .deck__export-item:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+
+    .deck__toast {
+      position: fixed;
+      left: 50%;
+      bottom: max(5rem, calc(env(safe-area-inset-bottom) + 4.5rem));
+      z-index: 50;
+      transform: translateX(-50%) translateY(0.5rem);
+      opacity: 0;
+      pointer-events: none;
+      padding: 0.55rem 1rem;
+      border-radius: 9999px;
+      background: rgba(29, 53, 87, 0.92);
+      color: #f5f3e7;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .deck__toast.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 640px) {
+      .deck__export-toggle {
+        padding: 0.45rem 0.65rem;
+        font-size: 0.75rem;
+      }
+
+      .deck__dl--compact {
+        display: none;
+      }
+    }
+
+    @media (min-width: 641px) {
+      .deck__export-menu .deck__export-item--link:nth-of-type(1) {
+        display: none;
+      }
     }
 
     .deck__chrome-actions {
@@ -255,7 +459,8 @@ const title = "Présentation — Le Sourire de Jojo";
     }
 
     .deck__exit:hover,
-    .deck__fs:hover {
+    .deck__fs:hover,
+    .deck__export-toggle:hover {
       background: #fff;
     }
 
@@ -370,113 +575,315 @@ const title = "Présentation — Le Sourire de Jojo";
     .slide__inner--split {
       display: grid;
       gap: 1.25rem;
-      align-items: center;
-    }
-
-    .slide__inner--bullets-photo {
-      display: grid;
-      gap: 1.25rem;
-      align-items: center;
+      align-items: stretch;
+      min-height: 0;
     }
 
     @media (min-width: 768px) {
-      .slide__inner--split,
-      .slide__inner--bullets-photo {
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
+      .slide__inner--split {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: clamp(1.5rem, 3vw, 2.5rem);
       }
     }
 
-    .slide__bullets-media {
+    .slide__split-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .slide__media {
       overflow: hidden;
       border-radius: 1rem;
       border: 1px solid rgba(29, 53, 87, 0.1);
       line-height: 0;
-      max-height: min(38vh, 18rem);
+      min-height: clamp(14rem, 40vh, 24rem);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
     }
 
-    .slide__bullets-media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .slide__inner--compare {
-      justify-content: flex-start;
-    }
-
-    .slide__compare-grid {
-      margin-top: 1rem;
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    @media (min-width: 640px) {
-      .slide__compare-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+    @media (min-width: 768px) {
+      .slide__media {
+        min-height: 0;
+        height: 100%;
+        max-height: none;
       }
     }
 
-    .slide__compare-col {
-      border-radius: 1rem;
-      padding: 0.85rem 1rem;
-      border: 1px solid rgba(29, 53, 87, 0.1);
+    .slide__media img {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      display: block;
     }
 
-    .slide__compare-col h3 {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 0.5rem;
+    .slide__media--contain {
+      background: rgba(255, 255, 255, 0.65);
     }
 
-    .slide__compare-col ul {
+    .slide__media--tile {
+      min-height: clamp(8.5rem, 20vh, 12rem);
+      aspect-ratio: 4 / 3;
+    }
+
+    @media (min-width: 640px) {
+      .slide__media--tile {
+        min-height: 0;
+        flex: 1;
+      }
+    }
+
+    .slide__inner--mosaic {
+      justify-content: flex-start;
+      gap: clamp(0.75rem, 2vw, 1.25rem);
+      overflow: auto;
+    }
+
+    .slide__mosaic-head {
+      flex-shrink: 0;
+    }
+
+    .slide__mosaic-grid {
       list-style: none;
       padding: 0;
       margin: 0;
       display: grid;
+      gap: 0.85rem;
+      flex: 1;
+      min-height: 0;
+    }
+
+    @media (min-width: 640px) {
+      .slide__mosaic-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(0.85rem, 2vw, 1.25rem);
+        align-items: stretch;
+      }
+    }
+
+    .slide__mosaic-tile {
+      display: flex;
+      flex-direction: column;
       gap: 0.45rem;
+      min-width: 0;
+      height: 100%;
     }
 
-    .slide__compare-col li {
-      font-size: 0.78rem;
+    .slide__mosaic-title {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(0.9rem, 2.2vw, 1rem);
+      font-weight: 700;
+      color: #1d3557;
+      line-height: 1.25;
+    }
+
+    .slide__mosaic-text {
+      font-size: clamp(0.72rem, 1.8vw, 0.82rem);
       line-height: 1.4;
-      color: rgba(29, 53, 87, 0.88);
-      padding-left: 0.9rem;
-      position: relative;
+      color: rgba(29, 53, 87, 0.78);
     }
 
-    .slide__compare-col li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
+    .slide__inner--contact .slide__contact-list {
+      max-width: none;
     }
 
-    .slide__compare-col--before {
-      background: rgba(200, 141, 141, 0.1);
+    .slide__inner--contact .slide__contact-list li {
+      text-align: left;
     }
 
-    .slide__compare-col--after {
-      background: rgba(143, 168, 146, 0.18);
+    .slide__cta-row--left {
+      justify-content: flex-start;
     }
 
-    .slide__compare-col--before h3 {
+    .slide__inner--compare {
+      justify-content: center;
+      gap: clamp(0.85rem, 2vw, 1.35rem);
+      overflow: auto;
+    }
+
+    .slide__compare-head {
+      flex-shrink: 0;
+      text-align: center;
+    }
+
+    .slide__title--center {
+      text-align: center;
+    }
+
+    .slide__compare-headline {
+      margin: 0.75rem auto 0;
+      max-width: 40rem;
+      padding: clamp(0.85rem, 2vw, 1.1rem) clamp(1rem, 3vw, 1.5rem);
+      border-radius: 1rem;
+      background: rgba(29, 53, 87, 0.06);
+      border-left: 4px solid #8fa892;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(0.95rem, 2.4vw, 1.15rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.45;
+      color: #1d3557;
+      text-align: left;
+    }
+
+    .slide__compare-intro {
+      margin: 0.65rem auto 0;
+      max-width: 36rem;
+      font-size: clamp(0.85rem, 2vw, 0.98rem);
+      line-height: 1.5;
+      color: rgba(29, 53, 87, 0.72);
+      text-align: center;
+    }
+
+    .slide__compare-table {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border-radius: 1rem;
+      border: 1px solid rgba(29, 53, 87, 0.12);
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .slide__compare-table-head,
+    .slide__compare-table-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .slide__compare-table-th {
+      padding: clamp(0.55rem, 1.4vw, 0.75rem) clamp(0.65rem, 1.8vw, 1rem);
+      font-size: clamp(0.62rem, 1.5vw, 0.72rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      text-align: center;
+    }
+
+    .slide__compare-table-th--before {
+      background: rgba(200, 141, 141, 0.2);
+      color: #a86b6b;
+      border-right: 1px solid rgba(29, 53, 87, 0.08);
+    }
+
+    .slide__compare-table-th--after {
+      background: rgba(143, 168, 146, 0.28);
+      color: #5a7a5e;
+    }
+
+    .slide__compare-table-row {
+      flex: 1;
+      border-top: 1px solid rgba(29, 53, 87, 0.08);
+    }
+
+    .slide__compare-table-row:nth-child(even) .slide__compare-table-cell--before {
+      background: rgba(200, 141, 141, 0.06);
+    }
+
+    .slide__compare-table-row:nth-child(even) .slide__compare-table-cell--after {
+      background: rgba(143, 168, 146, 0.08);
+    }
+
+    .slide__compare-table-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: clamp(0.5rem, 1.3vw, 0.7rem) clamp(0.65rem, 1.8vw, 1rem);
+      font-size: clamp(0.72rem, 1.7vw, 0.84rem);
+      line-height: 1.38;
+      color: rgba(29, 53, 87, 0.92);
+    }
+
+    .slide__compare-table-cell--before {
+      border-right: 1px solid rgba(29, 53, 87, 0.08);
+    }
+
+    .slide__compare-mark {
+      flex-shrink: 0;
+      width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 9999px;
+      display: grid;
+      place-items: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+    }
+
+    .slide__compare-mark--before {
+      background: rgba(200, 141, 141, 0.25);
       color: #c88d8d;
     }
 
-    .slide__compare-col--after h3 {
+    .slide__compare-mark--after {
+      background: rgba(143, 168, 146, 0.35);
       color: #457b9d;
     }
 
     .slide__compare-footer {
-      margin-top: 0.85rem;
-      font-size: 0.85rem;
+      flex-shrink: 0;
+      text-align: center;
+      font-size: 0.82rem;
       font-weight: 600;
-      color: rgba(29, 53, 87, 0.82);
+      color: rgba(29, 53, 87, 0.72);
       line-height: 1.45;
+    }
+
+    @media (max-width: 560px) {
+      .slide__compare-table-head {
+        display: none;
+      }
+
+      .slide__compare-table-row {
+        grid-template-columns: 1fr;
+      }
+
+      .slide__compare-table-cell--before {
+        border-right: none;
+        border-bottom: 1px dashed rgba(200, 141, 141, 0.35);
+        background: rgba(200, 141, 141, 0.08);
+      }
+
+      .slide__compare-table-cell--after {
+        background: rgba(143, 168, 146, 0.12);
+      }
+
+      .slide__compare-table-cell--before::before {
+        content: "Habituellement";
+        display: block;
+        width: 100%;
+        font-size: 0.58rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #a86b6b;
+        margin-bottom: 0.15rem;
+      }
+
+      .slide__compare-table-cell--after::before {
+        content: "Avec Le Sourire de JoJo";
+        display: block;
+        width: 100%;
+        font-size: 0.58rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #5a7a5e;
+        margin-bottom: 0.15rem;
+      }
+
+      .slide__compare-table-cell {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+      }
+
+      .slide__compare-mark {
+        display: none;
+      }
     }
 
     .slide__inner--table {
@@ -573,6 +980,10 @@ const title = "Présentation — Le Sourire de Jojo";
       background: linear-gradient(160deg, rgba(200, 141, 141, 0.15) 0%, #fff 55%, rgba(143, 168, 146, 0.12) 100%);
     }
 
+    .slide__inner--contact {
+      background: linear-gradient(160deg, rgba(200, 141, 141, 0.12) 0%, #fff 55%, rgba(143, 168, 146, 0.1) 100%);
+    }
+
     .slide__logo {
       width: clamp(5rem, 18vw, 8.5rem);
       height: auto;
@@ -654,21 +1065,6 @@ const title = "Présentation — Le Sourire de Jojo";
     .slide__list--compact {
       margin-top: 1rem;
       justify-items: center;
-    }
-
-    .slide__split-media {
-      overflow: hidden;
-      border-radius: 1rem;
-      border: 1px solid rgba(29, 53, 87, 0.1);
-      line-height: 0;
-      max-height: min(42vh, 22rem);
-    }
-
-    .slide__split-media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
     }
 
     .slide__cta-row {
@@ -786,6 +1182,71 @@ const title = "Présentation — Le Sourire de Jojo";
         transform: none;
       }
     }
+
+    @media print {
+      @page {
+        size: landscape;
+        margin: 8mm;
+      }
+
+      html,
+      body {
+        height: auto !important;
+        overflow: visible !important;
+        background: #fff !important;
+      }
+
+      .deck__chrome,
+      .deck__nav,
+      .deck__hint,
+      .deck__toast {
+        display: none !important;
+      }
+
+      .deck {
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+        padding: 0 !important;
+      }
+
+      .deck__stage {
+        position: static !important;
+        height: auto !important;
+      }
+
+      .slide {
+        position: relative !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        page-break-after: always;
+        break-after: page;
+        height: auto !important;
+        min-height: 185mm;
+        margin: 0 0 0.5rem;
+      }
+
+      .slide:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      .slide__inner {
+        box-shadow: none !important;
+        overflow: visible !important;
+        min-height: 175mm;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .slide__hero-bg,
+      .slide__media img {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
   </style>
 
   <script>
@@ -801,10 +1262,77 @@ const title = "Présentation — Le Sourire de Jojo";
       const nextBtn = document.getElementById("slide-next") as HTMLButtonElement | null;
       const dots = Array.from(document.querySelectorAll<HTMLButtonElement>(".deck__dot"));
       const fsBtn = document.getElementById("slide-fullscreen");
+      const exportToggle = document.getElementById("slide-export-toggle");
+      const exportMenu = document.getElementById("slide-export-menu");
+      const shareBtn = document.getElementById("slide-share");
+      const copyBtn = document.getElementById("slide-copy-link");
+      const printBtn = document.getElementById("slide-print");
+      const toast = document.getElementById("slide-toast");
 
       let current = 0;
       let touchStartX = 0;
       let touchStartY = 0;
+      let toastTimer: ReturnType<typeof setTimeout> | undefined;
+
+      function presentationUrl() {
+        const url = new URL("/presentation", window.location.origin);
+        url.hash = `#slide-${current + 1}`;
+        return url.href;
+      }
+
+      function showToast(message: string) {
+        if (!toast) return;
+        toast.textContent = message;
+        toast.hidden = false;
+        toast.classList.add("is-visible");
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove("is-visible");
+          window.setTimeout(() => {
+            toast.hidden = true;
+          }, 200);
+        }, 2600);
+      }
+
+      function setExportMenuOpen(open: boolean) {
+        if (!exportToggle || !exportMenu) return;
+        exportToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        exportMenu.hidden = !open;
+      }
+
+      async function copyPresentationLink() {
+        const url = presentationUrl();
+        try {
+          await navigator.clipboard.writeText(url);
+          showToast("Lien copié dans le presse-papiers");
+        } catch {
+          showToast(url);
+        }
+      }
+
+      async function sharePresentation() {
+        const url = presentationUrl();
+        const shareData = {
+          title: "Le Sourire de JoJo — Présentation",
+          text: "Découvrez la présentation du projet Le Sourire de JoJo (10 slides).",
+          url,
+        };
+        if (navigator.share) {
+          try {
+            await navigator.share(shareData);
+            setExportMenuOpen(false);
+            return;
+          } catch (err) {
+            if (err instanceof DOMException && err.name === "AbortError") return;
+          }
+        }
+        await copyPresentationLink();
+      }
+
+      function printPresentation() {
+        setExportMenuOpen(false);
+        window.print();
+      }
 
       function parseHash(): number {
         const m = window.location.hash.match(/^#slide-(\d+)$/);
@@ -869,7 +1397,12 @@ const title = "Présentation — Le Sourire de Jojo";
           e.preventDefault();
           goTo(total - 1);
         } else if (e.key === "Escape") {
-          window.location.href = "/";
+          if (exportMenu && !exportMenu.hidden) {
+            setExportMenuOpen(false);
+            exportToggle?.focus();
+          } else {
+            window.location.href = "/";
+          }
         }
       });
 
@@ -905,6 +1438,34 @@ const title = "Présentation — Le Sourire de Jojo";
         } catch {
           /* ignore */
         }
+      });
+
+      exportToggle?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const open = exportToggle.getAttribute("aria-expanded") !== "true";
+        setExportMenuOpen(open);
+      });
+
+      shareBtn?.addEventListener("click", () => {
+        void sharePresentation();
+      });
+
+      copyBtn?.addEventListener("click", () => {
+        setExportMenuOpen(false);
+        void copyPresentationLink();
+      });
+
+      printBtn?.addEventListener("click", printPresentation);
+
+      document.addEventListener("click", (e) => {
+        if (!exportMenu || exportMenu.hidden) return;
+        const target = e.target as Node | null;
+        if (target && (exportMenu.contains(target) || exportToggle?.contains(target))) return;
+        setExportMenuOpen(false);
+      });
+
+      exportMenu?.querySelectorAll(".deck__export-item").forEach((item) => {
+        item.addEventListener("click", () => setExportMenuOpen(false));
       });
 
       window.addEventListener("hashchange", () => {

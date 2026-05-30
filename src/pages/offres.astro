@@ -3,7 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import CostSimulator from "@/components/CostSimulator.astro";
 import SealBadge from "@/components/SealBadge.astro";
 import type { PackId } from "@/lib/packs";
-import { TARIF_HORAIRE_BRUT_EUR } from "@/lib/tarif";
+import { FORFAITS_ACTIVITES, TARIF_HORAIRE_BRUT_EUR, tarifNetApresCredit } from "@/lib/tarif";
 
 const title = "Offres & forfaits — Le Sourire de Jojo";
 const description =
@@ -154,6 +154,43 @@ const packs: {
           </dd>
         </div>
       </dl>
+    </section>
+
+    <section
+      id="forfaits-activites"
+      class="mt-10 scroll-mt-24 rounded-2xl border border-marine/15 bg-white/80 p-6 shadow-sm md:p-8"
+      aria-labelledby="forfaits-title"
+    >
+      <h2 id="forfaits-title" class="font-display text-2xl text-marine md:text-3xl">Forfaits activités</h2>
+      <p class="mt-4 max-w-3xl text-marine/90 leading-relaxed">
+        Grille alignée sur la présentation du projet — tarif horaire de référence
+        <strong class="text-marine">{TARIF_HORAIRE_BRUT_EUR}&nbsp;€ brut / h</strong>, forfaits par thème. Toutes les activités
+        peuvent aussi se faire à l’heure. Hors zone : sur devis.
+      </p>
+      <div class="mt-6 overflow-x-auto rounded-xl border border-marine/12">
+        <table class="w-full min-w-[28rem] border-collapse text-sm">
+          <thead>
+            <tr class="bg-marine/8 text-left">
+              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Thème</th>
+              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Durée</th>
+              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Coût brut</th>
+              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Après impôt (50&nbsp;%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              FORFAITS_ACTIVITES.map((f, i) => (
+                <tr class:list={[i % 2 === 1 && "bg-sauge/10"]}>
+                  <td class="px-4 py-2.5 font-medium text-marine">{f.label}</td>
+                  <td class="px-4 py-2.5 text-marine/85">{f.duree}</td>
+                  <td class="px-4 py-2.5 font-semibold text-marine">{f.brutEur}&nbsp;€</td>
+                  <td class="px-4 py-2.5 font-medium text-aquarelle-bleu">{tarifNetApresCredit(f.brutEur)}&nbsp;€</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section

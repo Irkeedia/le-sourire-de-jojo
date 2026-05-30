@@ -1,13 +1,25 @@
 /** Contenu inspiré de « Présentation Céline 18.05.pptx » */
 
+import {
+  TARIF_HORAIRE_BRUT_EUR,
+  forfaitTableRows,
+  tarifNetApresCredit,
+} from "@/lib/tarif";
+
+export type SlideImage = {
+  src: string;
+  alt: string;
+  fit?: "cover" | "contain";
+  position?: string;
+};
+
 export type PresentationSlide =
   | {
       kind: "hero";
       title: string;
       subtitle: string;
       tagline?: string;
-      image?: string;
-      imageAlt?: string;
+      image?: SlideImage;
     }
   | {
       kind: "bullets";
@@ -15,24 +27,35 @@ export type PresentationSlide =
       intro?: string;
       items: string[];
       accent?: "rose" | "sauge" | "bleu" | "jaune";
-      image?: string;
-      imageAlt?: string;
     }
   | {
       kind: "split";
       title: string;
       text: string;
-      image: string;
-      imageAlt: string;
+      image: SlideImage;
+    }
+  | {
+      kind: "mosaic";
+      title: string;
+      intro?: string;
+      accent?: "rose" | "sauge" | "bleu" | "jaune";
+      tiles: {
+        title: string;
+        text: string;
+        image: SlideImage;
+      }[];
     }
   | {
       kind: "compare";
       title: string;
+      headline?: string;
+      intro?: string;
       leftTitle: string;
       leftItems: string[];
       rightTitle: string;
       rightItems: string[];
       footer?: string;
+      accent?: "rose" | "sauge" | "bleu" | "jaune";
     }
   | {
       kind: "table";
@@ -50,10 +73,9 @@ export type PresentationSlide =
       siteLabel: string;
       siteHref: string;
       location: string;
+      image?: SlideImage;
     };
 
-/** Tarif horaire brut indiqué dans la présentation PowerPoint (18.05). */
-export const PRESENTATION_TARIF_HORAIRE_EUR = 38;
 
 export const presentationSlides: PresentationSlide[] = [
   {
@@ -62,117 +84,163 @@ export const presentationSlides: PresentationSlide[] = [
     subtitle: "Illuminer le quotidien à domicile",
     tagline:
       "Le sourire de JoJo a vu le jour pour illuminer le quotidien à domicile. Parce que le lien social est essentiel, mon accompagnement intervient pour rompre la solitude — privilégier la rencontre, partager un sourire.",
-    image: "/presentation/assets/image1.jpg",
-    imageAlt: "Le Sourire de JoJo — accompagnement bienveillant",
+    image: {
+      src: "/presentation/assets/image1.jpg",
+      alt: "Arc-en-ciel au-dessus du Tarn-et-Garonne — symbole d’espoir",
+      fit: "cover",
+      position: "center 40%",
+    },
   },
   {
-    kind: "bullets",
+    kind: "split",
     title: "Mon histoire, mon projet",
-    intro:
-      "Né d’une épreuve personnelle : accompagner ma maman aux séances de chimiothérapie m’a révélé l’importance vitale d’une présence et d’un sourire.",
-    items: [
-      "Maman, « mamie Jo » — Jojo pour mon papa : la joie incarnée malgré les épreuves",
-      "Un livre de Lanza Del Vasto : « Tiens-toi droit et souris » — une révélation",
-      "Porter cet héritage de bienveillance auprès de ceux qui vivent l’isolement ou l’immobilisation",
-      "Le Sourire de JoJo : une mission de dignité partagée",
-    ],
-    accent: "rose",
+    text: "Né d’une épreuve personnelle : accompagner ma maman aux séances de chimiothérapie m’a révélé l’importance vitale d’une présence et d’un sourire. Maman, « mamie Jo » — Jojo pour mon papa : la joie incarnée. Un livre de Lanza Del Vasto : « Tiens-toi droit et souris » — une révélation. Porter cet héritage de bienveillance auprès de ceux qui vivent l’isolement ou l’immobilisation.",
+    image: {
+      src: "/presentation/assets/image19.jpeg",
+      alt: "Portrait bienveillant — l’esprit mamie Jo",
+      fit: "contain",
+      position: "center center",
+    },
   },
   {
-    kind: "bullets",
+    kind: "split",
     title: "Pourquoi ce projet ?",
-    intro: "Après une carrière de cadre, j’ai choisi de revenir à l’essentiel : l’humain. Le Sourire de JoJo, c’est ma promesse.",
-    items: [
-      "Bien plus qu’une simple présence — pour aînés, convalescents ou enfants momentanément empêchés",
-      "Un regard attentif qui reconnaît leur valeur et leur histoire",
-      "Une écoute complice : lectures, souvenirs ou silences partagés",
-      "Une joie de vivre pour transformer les « boiteries » du quotidien en une forme de danse",
-    ],
-    accent: "sauge",
+    text: "Après une carrière de cadre, j’ai choisi de revenir à l’essentiel : l’humain. Le Sourire de JoJo, c’est ma promesse : un regard attentif, une écoute complice, une joie de vivre pour transformer les « boiteries » du quotidien en une forme de danse — pour aînés, convalescents ou enfants momentanément empêchés.",
+    image: {
+      src: "/images/image%20index/Unknown-4.jpg",
+      alt: "Céline Meunier Benneji en extérieur, dans un jardin",
+      fit: "cover",
+      position: "center 25%",
+    },
   },
   {
-    kind: "bullets",
+    kind: "mosaic",
     title: "Un sourire pour tous",
-    items: [
-      "Nos aînés — maintenir le lien social et l’autonomie par la joie de vivre",
-      "Convalescents — soutenir les adultes immobilisés suite à un accident de la vie",
-      "Enfants — accompagner les plus jeunes momentanément empêchés",
-    ],
     accent: "bleu",
-    image: "/presentation/assets/image10.jpg",
-    imageAlt: "Accompagnement intergénérationnel bienveillant",
+    tiles: [
+      {
+        title: "Nos aînés",
+        text: "Maintenir le lien social et l’autonomie par la joie de vivre.",
+        image: {
+          src: "/images/personneagé.png",
+          alt: "Moment de lecture avec une personne âgée",
+          fit: "cover",
+          position: "center 20%",
+        },
+      },
+      {
+        title: "Convalescents",
+        text: "Soutenir les adultes immobilisés suite à un accident de la vie.",
+        image: {
+          src: "/presentation/assets/image15.jpg",
+          alt: "Lecture partagée et présence bienveillante",
+          fit: "cover",
+          position: "center center",
+        },
+      },
+      {
+        title: "Enfants",
+        text: "Accompagner les plus jeunes momentanément empêchés.",
+        image: {
+          src: "/images/enfant.png",
+          alt: "Enfant souriant lors d’une activité à domicile",
+          fit: "cover",
+          position: "center 15%",
+        },
+      },
+    ],
   },
   {
     kind: "split",
     title: "Le carnet des sourires",
-    text: "Au cœur de la philosophie : l’accompagnement n’est jamais une simple prestation technique. Le Carnet rend visible l’invisible — photos, pétale pressé, citations, victoires du jour. Approche humaine et chaleureuse, pas clinique. Il relie les séances, valorise les progrès et rassure la famille. Numérisé sur un intranet sécurisé.",
-    image: "/images/carnet.png",
-    imageAlt: "Carnet de Sourires Le Sourire de JoJo",
+    text: "Au cœur de la philosophie : l’accompagnement n’est jamais une simple prestation technique. Le Carnet rend visible l’invisible — photos, pétale pressé, citations, victoires du jour. Il relie les séances, valorise les progrès et rassure la famille. Numérisé sur un intranet sécurisé.",
+    image: {
+      src: "/images/carnet2.jpg",
+      alt: "Carnet de Sourires ouvert — Le Sourire de JoJo",
+      fit: "contain",
+      position: "center center",
+    },
   },
   {
-    kind: "bullets",
+    kind: "mosaic",
     title: "Loisirs & confort",
     intro: "Un service clé en main : je me déplace avec mon matériel de soutien à la marche et mes ateliers ludiques.",
-    items: [
-      "Biographie de vie · Atelier créatif · Escapade sensorielle",
-      "Jeux de société · Promenades et courses · Lecture et album photo",
-      "La visite duo avec Lili · Le pont numérique",
-      "Petit moment plaisir et détente · On se raconte nos vies",
-    ],
     accent: "jaune",
-    image: "/presentation/assets/image11.png",
-    imageAlt: "Activités loisirs et confort à domicile",
+    tiles: [
+      {
+        title: "Lecture & album",
+        text: "Biographie de vie, récits et souvenirs partagés.",
+        image: {
+          src: "/presentation/assets/image12.jpg",
+          alt: "Lecture et roses — moment de douceur",
+          fit: "cover",
+          position: "center center",
+        },
+      },
+      {
+        title: "Jeux de société",
+        text: "Plaisir sans performance, à la maison ou en sortie.",
+        image: {
+          src: "/presentation/assets/image25.jpg",
+          alt: "Jeux de société apportés pour l’accompagnement",
+          fit: "cover",
+          position: "center center",
+        },
+      },
+      {
+        title: "Promenades",
+        text: "Sorties, courses et escapades sensorielles à son rythme.",
+        image: {
+          src: "/images/balade.png",
+          alt: "Promenade bienveillante en plein air",
+          fit: "cover",
+          position: "center 35%",
+        },
+      },
+    ],
   },
   {
     kind: "compare",
     title: "Qu’est-ce qui me différencie ?",
+    headline: "Être une « dame de compagnie moderne » — lever tous les freins logistiques pour les familles.",
+    intro:
+      "Je transforme votre domicile en un espace de vie dynamique, sans contrainte pour vous.",
+    accent: "sauge",
     leftTitle: "Ce que vous connaissez",
     leftItems: [
       "Simple présence, surveillance, télévision",
       "Dépendance au matériel présent dans le foyer",
-      "Peu de transmission structurée à la famille",
-      "Forfaits avec minimum d’heures obligatoires",
-      "Grande structure, salarié disponible sur le moment",
+      "Pas ou peu de transmission structurée à la famille",
+      "Forfait avec minimum d’heures obligatoires",
+      "Grande structure : salarié du moment, sans lien personnalisé",
     ],
     rightTitle: "Ce que je propose",
     rightItems: [
-      "Posture active : stimulation, jeux, perles, sorties",
+      "Posture active : stimulation, jeux, perles et sorties",
       "Autonomie technique : fauteuil, déambulateur Georgette",
       "Carnet de Sourires : traçabilité vivante et rassurante",
       "Flexibilité — même 1 h 30 pour rompre la solitude",
       "Local & personnalisé : Céline, pas une administration",
     ],
-    footer: "Être une « dame de compagnie moderne », c’est lever les freins logistiques pour les familles.",
   },
   {
     kind: "table",
     title: "Offres & forfaits",
-    intro: `Tarif horaire ${PRESENTATION_TARIF_HORAIRE_EUR} € brut · ${PRESENTATION_TARIF_HORAIRE_EUR / 2} € après crédit d’impôt 50 % (SAP).`,
+    intro: `Tarif horaire ${TARIF_HORAIRE_BRUT_EUR} € brut · ${tarifNetApresCredit(TARIF_HORAIRE_BRUT_EUR)} € après crédit d’impôt 50 % (SAP).`,
     headers: ["Thème", "Heures", "Coût brut", "Après impôt"],
-    rows: [
-      ["Le pont numérique", "1 h", "38 €", "19 €"],
-      ["Biographie de vie", "2 h", "74 €", "38 €"],
-      ["Atelier créatif", "2 h", "74 €", "38 €"],
-      ["Escapade sensorielle", "2 h", "74 €", "38 €"],
-      ["Jeux de société", "2 h", "74 €", "38 €"],
-      ["Visite duo avec Lili", "2 h", "74 €", "38 €"],
-      ["Moment de détente", "2 h", "74 €", "38 €"],
-      ["On se raconte nos vies", "3 h", "108 €", "54 €"],
-      ["Lecture & album photo", "3 h", "108 €", "54 €"],
-      ["Promenade & courses", "3 h", "108 €", "54 €"],
-    ],
+    rows: forfaitTableRows(),
     note: "Toutes les activités peuvent aussi se faire à l’heure. Hors zone : sur devis.",
   },
   {
-    kind: "bullets",
+    kind: "split",
     title: "Les aides possibles",
-    items: [
-      "Crédit d’impôt de 50 % — automatique (service à la personne)",
-      "APA — Conseil départemental du Tarn-et-Garonne (dès 60 ans) pour la dame de compagnie",
-      "PCH — MDPH, sans limite d’âge, équivalent pour le handicap",
-      "Caisses de retraite (Agirc-Arrco, CARSAT, MSA…) — budgets ou chèques CESU",
-    ],
-    accent: "sauge",
+    text: "Crédit d’impôt de 50 % automatique (service à la personne) · APA via le Conseil départemental du Tarn-et-Garonne (dès 60 ans) · PCH via la MDPH (sans limite d’âge) · Chèques CESU des caisses de retraite (Agirc-Arrco, CARSAT, MSA…).",
+    image: {
+      src: "/presentation/assets/image26.png",
+      alt: "Zone d’intervention — Montauban, Corbarieu, Tarn-et-Garonne",
+      fit: "contain",
+      position: "center center",
+    },
   },
   {
     kind: "contact",
@@ -182,6 +250,12 @@ export const presentationSlides: PresentationSlide[] = [
     siteLabel: "le-sourire-de-jojo.fr",
     siteHref: "/",
     location: "Basée à Corbarieu et environs — Montauban, Tarn-et-Garonne (82)",
+    image: {
+      src: "/images/carnet.png",
+      alt: "Carnet de Sourires — Le Sourire de JoJo",
+      fit: "contain",
+      position: "center center",
+    },
   },
 ];
 
