@@ -1,9 +1,12 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { buildServiceList, resolveSiteUrl } from "@/lib/seo";
 
 const title = "Nos services — Le Sourire de Jojo";
 const description =
   "La dame de compagnie moderne — lecture, sorties, jeux, biographie de vie, numérique, créations et visites duo. Matériel apporté : fauteuil roulant, déambulateur Georgette, jeux, perles. Montauban et Tarn-et-Garonne.";
+
+const siteUrl = resolveSiteUrl(Astro.site?.href, Astro.url.origin);
 
 const services = [
   {
@@ -82,6 +85,7 @@ const services = [
   title={title}
   description={description}
   breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Nos services" }]}
+  jsonLd={buildServiceList(siteUrl)}
 >
   <div class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
     <h1 class="font-display text-4xl text-marine md:text-5xl">Nos services</h1>

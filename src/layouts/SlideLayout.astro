@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { LOGO_SRC } from "@/lib/brand";
+import { absoluteUrl, DEFAULT_LOCALE, DEFAULT_OG_IMAGE, resolveSiteUrl, SITE_NAME } from "@/lib/seo";
 
 interface Props {
   title: string;
@@ -14,8 +15,9 @@ const {
   canonicalPath = "/presentation",
 } = Astro.props;
 
-const siteOrigin = Astro.url.origin;
-const shareUrl = new URL(canonicalPath, siteOrigin).href;
+const siteUrl = resolveSiteUrl(undefined, Astro.url.origin);
+const shareUrl = absoluteUrl(canonicalPath, siteUrl);
+const ogImageUrl = absoluteUrl(DEFAULT_OG_IMAGE, siteUrl);
 ---
 
 <!doctype html>
@@ -26,12 +28,16 @@ const shareUrl = new URL(canonicalPath, siteOrigin).href;
     <meta name="robots" content="noindex, nofollow" />
     <meta name="description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={DEFAULT_LOCALE} />
+    <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={shareUrl} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="icon" type="image/png" href={LOGO_SRC} />
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

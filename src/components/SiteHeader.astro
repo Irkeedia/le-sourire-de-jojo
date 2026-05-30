@@ -8,6 +8,7 @@ const links = [
   { href: "/services", label: "Nos services", shortLabel: "Services", desktopLabel: "Services", icon: "heart" },
   { href: "/offres", label: "Offres & forfaits", shortLabel: "Offres", desktopLabel: "Offres", icon: "tag" },
   { href: "/carnet", label: "Le carnet de sourires", shortLabel: "Carnet", desktopLabel: "Carnet", icon: "book" },
+  { href: "/a-propos", label: "À propos", shortLabel: "À propos", desktopLabel: "À propos", icon: "heart" },
   {
     href: "/presentation",
     label: "Présentation rapide",
@@ -424,7 +425,7 @@ function isActive(href: string): boolean {
   }
 </style>
 
-<script is:inline>
+<script is:inline nonce={Astro.locals.cspNonce}>
   (function () {
     function ready(fn) {
       if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);

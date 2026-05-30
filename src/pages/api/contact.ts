@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { contactSchema } from "@/lib/zod-contact";
+import { jsonBodyTooLarge } from "@/lib/request-body";
 import { connectDb } from "@/lib/db";
 import { ContactMessage } from "@/models/ContactMessage";
 import { sendContactNotification } from "@/lib/mail";
@@ -15,11 +16,8 @@ import { encryptAtRest, parseEncryptionKeyFromBase64 } from "@/lib/crypto-at-res
 
 export const prerender = false;
 
-const MAX_BODY_BYTES = 65536;
-
 export const POST: APIRoute = async ({ request }) => {
-  const len = request.headers.get("content-length");
-  if (len && Number(len) > MAX_BODY_BYTES) {
+  if (jsonBodyTooLarge(request)) {
     return new Response(JSON.stringify({ ok: false, error: "Message trop volumineux." }), {
       status: 413,
       headers: { "Content-Type": "application/json" },
@@ -63,6 +61,11 @@ export const POST: APIRoute = async ({ request }) => {
 
   const confirmedAt = new Date();
   const encKey = parseEncryptionKeyFromBase64(import.meta.env.ENCRYPTION_KEY);
+  if (import.meta.env.PROD && import.meta.env.MONGODB_URI && !encKey) {
+    console.warn(
+      "[contact] ENCRYPTION_KEY absent en production : les champs sensibles ne sont pas chiffrés en base.",
+    );
+  }
   const alertTrimmed = alertPlain?.trim() || undefined;
 
   const mongoPayload = {

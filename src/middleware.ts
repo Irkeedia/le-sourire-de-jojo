@@ -1,7 +1,8 @@
 import { defineMiddleware } from "astro/middleware";
-import { rateLimit } from "@/lib/rate-limit";
+import { createCspNonce } from "@/lib/csp-nonce";
+import { rateLimitAsync } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/request-ip";
-import { applySecurityHeaders } from "@/lib/security-headers";
+import { applySecurityHeaders, hasForbiddenAstroPathHeaders } from "@/lib/security-headers";
 
 const CONTACT_POST_LIMIT = Number(import.meta.env.CONTACT_RATE_LIMIT ?? "12");
 const CONTACT_POST_WINDOW_MS = Number(
@@ -12,9 +13,20 @@ const AUTH_POST_WINDOW_MS = Number(import.meta.env.AUTH_RATE_WINDOW_MS ?? String
 
 const PUBLIC_ACCOUNT_PATHS = new Set(["/compte/connexion", "/compte/inscription"]);
 
+function forbiddenResponse(request: Request, message: string, status = 403) {
+  const headers = new Headers({ "Content-Type": "application/json" });
+  applySecurityHeaders(request, headers);
+  return new Response(JSON.stringify({ ok: false, error: message }), { status, headers });
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url, cookies, redirect } = context;
 
+  if (hasForbiddenAstroPathHeaders(request)) {
+    return forbiddenResponse(request, "Requête refusée.", 403);
+  }
+
+  context.locals.cspNonce = createCspNonce();
   context.locals.user = null;
   try {
     const { getSessionUser } = await import("@/lib/auth-session");
@@ -36,13 +48,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (url.pathname.startsWith("/api/auth/") && request.method === "POST") {
     const ip = getClientIp(request);
-    const rl = rateLimit(`auth:${ip}`, AUTH_POST_LIMIT, AUTH_POST_WINDOW_MS);
+    const rl = await rateLimitAsync(`auth:${ip}`, AUTH_POST_LIMIT, AUTH_POST_WINDOW_MS, "auth");
     if (!rl.ok) {
       const headers = new Headers({
         "Content-Type": "application/json",
         "Retry-After": String(rl.retryAfterSec),
       });
-      applySecurityHeaders(request, headers);
+      applySecurityHeaders(request, headers, { cspNonce: context.locals.cspNonce });
       return new Response(JSON.stringify({ ok: false, error: "Trop de tentatives. Réessayez plus tard." }), {
         status: 429,
         headers,
@@ -52,13 +64,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (url.pathname === "/api/contact" && request.method === "POST") {
     const ip = getClientIp(request);
-    const rl = rateLimit(`contact:${ip}`, CONTACT_POST_LIMIT, CONTACT_POST_WINDOW_MS);
+    const rl = await rateLimitAsync(
+      `contact:${ip}`,
+      CONTACT_POST_LIMIT,
+      CONTACT_POST_WINDOW_MS,
+      "contact",
+    );
     if (!rl.ok) {
       const headers = new Headers({
         "Content-Type": "application/json",
         "Retry-After": String(rl.retryAfterSec),
       });
-      applySecurityHeaders(request, headers);
+      applySecurityHeaders(request, headers, { cspNonce: context.locals.cspNonce });
       return new Response(JSON.stringify({ ok: false, error: "Trop de demandes. Réessayez plus tard." }), {
         status: 429,
         headers,
@@ -68,7 +85,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const response = await next();
   const out = new Headers(response.headers);
-  applySecurityHeaders(request, out);
+  applySecurityHeaders(request, out, { cspNonce: context.locals.cspNonce });
 
   const allowIndexing =
     import.meta.env.PUBLIC_ALLOW_INDEXING === "true" || import.meta.env.PUBLIC_ALLOW_INDEXING === "1";

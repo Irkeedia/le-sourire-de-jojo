@@ -7,22 +7,25 @@
     "start": "node ./dist/server/entry.mjs",
     "build": "astro build",
     "preview": "astro preview",
-    "generate:presentation-pdf": "node scripts/generate-presentation-pdf.mjs"
+    "generate:presentation-pdf": "node scripts/generate-presentation-pdf.mjs",
+    "generate:encryption-key": "node scripts/generate-encryption-key.mjs"
   },
   "dependencies": {
-    "@astrojs/node": "^9.2.0",
+    "@astrojs/node": "^9.5.5",
     "@astrojs/tailwind": "^6.0.0",
     "@astrojs/vercel": "^8.2.11",
-    "astro": "^5.7.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
+    "astro": "^5.18.2",
     "bcryptjs": "^3.0.3",
     "mongoose": "^8.14.0",
-    "nodemailer": "^7.0.3",
+    "nodemailer": "^8.0.10",
     "tailwindcss": "^3.4.17",
     "zod": "^3.24.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "playwright": "^1.49.1",
+    "playwright": "^1.60.0",
     "typescript": "^5.8.3"
   }
 }

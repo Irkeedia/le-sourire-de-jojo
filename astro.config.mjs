@@ -15,6 +15,9 @@ export default defineConfig({
   output: "server",
   adapter: useVercel ? vercel() : node({ mode: "standalone" }),
   integrations: [tailwind()],
+  security: {
+    checkOrigin: true,
+  },
   vite: {
     resolve: {
       alias: {

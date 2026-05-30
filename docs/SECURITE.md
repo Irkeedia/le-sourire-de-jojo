@@ -14,8 +14,10 @@ Sur **toutes** les réponses, ajout d’en-têtes de durcissement (via `src/lib/
 | `X-Content-Type-Options: nosniff` | Limite le MIME-sniffing. |
 | `Referrer-Policy: strict-origin-when-cross-origin` | Contrôle les fuites d’URL vers des tiers. |
 | `Permissions-Policy` | Désactive par défaut caméra, micro, géoloc. etc. |
-| **CSP** (`Content-Security-Policy`) | En **production** uniquement (`astro build` / `preview`), pas pendant `astro dev` pour ne pas bloquer le flux de dev. Inclut `script-src 'unsafe-inline'` car le site utilise des scripts inline (menu, formulaire). Pour durcir : externaliser ces scripts et retirer `unsafe-inline`. Inclut `frame-src https://www.google.com https://maps.google.com` pour les iframes **Google Maps** (carte intégrée). |
-| **HSTS** | Optionnel via `HSTS_ENABLE=true` **uniquement** si le site est réellement servi en **HTTPS** et si le proxy envoie `X-Forwarded-Proto: https`. Sinon risque de comportements incorrects. |
+| **CSP** (`Content-Security-Policy`) | En **production** : `script-src 'self' 'nonce-…'` (sans `unsafe-inline` pour les scripts). Nonces injectés par le middleware. `style-src` conserve `unsafe-inline` (Tailwind / styles composants). |
+| **HSTS** | **Activé par défaut** en production derrière HTTPS (`X-Forwarded-Proto: https`). Désactivable avec `HSTS_ENABLE=false`. Renforcé aussi via `vercel.json`. |
+| **Contournement chemin Astro** | Requêtes avec en-têtes `x-astro-path` / `x_astro_path` **rejetées (403)** en attendant migration Astro 6. |
+| **Origine** | `security.checkOrigin: true` dans `astro.config.mjs`. |
 
 Paramètres optionnels :
 
@@ -31,11 +33,14 @@ Paramètres optionnels :
 | **Limite de taille** | Corps JSON refusé au-delà de **64 Ko** (`413`). |
 | **Rate limiting** | Par adresse IP dérivée de `X-Forwarded-For` / `X-Real-Ip` (`src/lib/request-ip.ts`). Défaut : **12** requêtes par **15 minutes** par IP (`CONTACT_RATE_LIMIT`, `CONTACT_RATE_WINDOW_MS`). Réponse **429** avec `Retry-After`. |
 
-**Limites connues** : le compteur est **en mémoire** dans le process Node. Il est réinitialisé au redémarrage et n’est pas partagé entre plusieurs instances (Kubernetes, plusieurs VM). En multi-instance : utiliser un **reverse proxy** (Traefik, nginx, Cloudflare) avec rate limit, ou **Redis**, ou un **WAF** managé.
+**Rate limiting distribué (recommandé sur Vercel)** : si `UPSTASH_REDIS_REST_URL` et `UPSTASH_REDIS_REST_TOKEN` sont définis, le compteur est partagé via **Upstash Redis** (`@upstash/ratelimit`). Sinon repli en mémoire (instance unique).
+
+**Limites connues** : sans Upstash, le compteur mémoire est réinitialisé au redémarrage et n’est pas partagé entre instances.
 
 ### 1.3 Secrets et transport
 
 - Les mots de passe SMTP et URI MongoDB ne doivent **jamais** être commités : uniquement dans `.env` (voir `.gitignore`).
+- **`ENCRYPTION_KEY`** (32 octets base64) : recommandé en production si MongoDB stocke des données sensibles du formulaire. Génération : `npm run generate:encryption-key`.
 - Préférer **SMTP TLS** (`SMTP_SECURE` selon fournisseur) et secrets injectés par l’orchestrateur (Kubernetes Secrets, variables chiffrées hébergeur).
 
 ### 1.4 Dépendances
@@ -79,11 +84,13 @@ Voir [SECURITY.md](../SECURITY.md) à la racine du dépôt (contact responsable 
 ## 5. Checklist avant mise en ligne
 
 - [ ] `.env` production renseigné, secrets hors Git  
+- [ ] `ENCRYPTION_KEY` défini en prod (`npm run generate:encryption-key`)
+- [ ] `UPSTASH_REDIS_REST_*` configuré sur Vercel (rate limit multi-instance)
 - [ ] HTTPS actif + redirection  
 - [ ] Proxy : en-têtes forwarded corrects  
 - [ ] `PUBLIC_SITE_URL` en **https**  
 - [ ] SMTP fonctionnel et test du formulaire  
-- [ ] `HSTS_ENABLE` activé seulement si HTTPS réel  
+- [ ] `REGISTRATION_INVITE_CODE` défini après le 1er admin
 - [ ] Tester CSP avec `CSP_REPORT_ONLY=true` si doute  
 - [ ] `npm audit` traité dans la mesure du raisonnable  
 

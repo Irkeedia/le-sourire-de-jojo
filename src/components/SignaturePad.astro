@@ -40,7 +40,7 @@ const canvasId = `${inputId}-canvas`;
   </div>
 </div>
 
-<script is:inline>
+<script is:inline nonce={Astro.locals.cspNonce}>
   (function () {
     function setupSignaturePad(root) {
       if (root.dataset.signatureReady === "true") return;

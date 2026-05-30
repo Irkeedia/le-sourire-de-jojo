@@ -6,12 +6,20 @@ interface Props {
   title: string;
   description: string;
   breadcrumb: { href?: string; label: string }[];
+  noindex?: boolean;
+  canonicalPath?: string;
 }
 
-const { title, description, breadcrumb } = Astro.props;
+const { title, description, breadcrumb, noindex = false, canonicalPath } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description} breadcrumb={breadcrumb}>
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumb={breadcrumb}
+  noindex={noindex}
+  canonicalPath={canonicalPath}
+>
   <div class="consent-shell">
     <div class="no-print consent-toolbar mx-auto max-w-3xl px-3 pt-8 sm:px-4 sm:pt-10 md:px-6">
       <div class="rounded border border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-700 shadow-sm">
@@ -40,7 +48,7 @@ const { title, description, breadcrumb } = Astro.props;
     </div>
   </div>
 
-  <script is:inline>
+  <script is:inline nonce={Astro.locals.cspNonce}>
     document.querySelector("[data-print-legal]")?.addEventListener("click", () => window.print());
   </script>
 </BaseLayout>

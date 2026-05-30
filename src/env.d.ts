@@ -2,6 +2,8 @@
 
 declare namespace App {
   interface Locals {
+    /** Nonce CSP injecté par le middleware (scripts inline). */
+    cspNonce?: string;
     user: {
       id: string;
       email: string;
@@ -47,7 +49,10 @@ interface ImportMetaEnv {
   readonly CONTACT_RATE_LIMIT?: string;
   /** Fenêtre rate-limit en ms (défaut 900000 = 15 min). */
   readonly CONTACT_RATE_WINDOW_MS?: string;
-  /** Base64 de 32 octets — chiffrement AES-256-GCM des champs sensibles en base (optionnel). */
+  /** Upstash Redis REST — rate limiting partagé (Vercel multi-instance). */
+  readonly UPSTASH_REDIS_REST_URL?: string;
+  readonly UPSTASH_REDIS_REST_TOKEN?: string;
+  /** Base64 de 32 octets — chiffrement AES-256-GCM des champs sensibles en base (recommandé en prod). */
   readonly ENCRYPTION_KEY?: string;
   /** Intégration future signature électronique (ex. Yousign). */
   readonly YOUSIGN_API_KEY?: string;

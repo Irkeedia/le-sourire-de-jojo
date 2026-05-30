@@ -164,7 +164,7 @@ const generatedAt = new Intl.DateTimeFormat("fr-FR", {
       <p class="consent-doc-subentity">Services à la personne — Accompagnement social à domicile</p>
       <p class="consent-doc-director">Représentée par <strong>Céline Meunier Benneji</strong></p>
       <div class="consent-doc-rule" aria-hidden="true"></div>
-      <h1 class="consent-doc-title">Contrat de prestation</h1>
+      <h2 class="consent-doc-title">Contrat de prestation</h2>
       <p class="consent-doc-ref">Document généré depuis le site — Double signature simple et horodatée</p>
       <p class="consent-doc-warning">
         Contrat renforcé par les clauses déjà présentes dans les CGV, le consentement, l’annulation/résiliation et les mentions RGPD.
@@ -398,7 +398,7 @@ const generatedAt = new Intl.DateTimeFormat("fr-FR", {
     </footer>
   </article>
 
-  <script is:inline>
+  <script is:inline nonce={Astro.locals.cspNonce}>
     (function () {
       var form = document.getElementById("contract-form");
       var error = document.getElementById("contract-form-error");

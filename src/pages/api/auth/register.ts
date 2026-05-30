@@ -3,6 +3,7 @@ import { connectDb, getMongoUri } from "@/lib/db";
 import { hashPassword, verifyPassword } from "@/lib/auth-crypto";
 import { createUserSession } from "@/lib/auth-session";
 import { registerSchema } from "@/lib/zod-auth";
+import { jsonBodyTooLarge } from "@/lib/request-body";
 import { User } from "@/models/User";
 
 export const prerender = false;
@@ -10,6 +11,10 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, cookies }) => {
   if (!getMongoUri()) {
     return json({ ok: false, error: "Comptes non configurés (MONGODB_URI manquant)." }, 503);
+  }
+
+  if (jsonBodyTooLarge(request)) {
+    return json({ ok: false, error: "Corps trop volumineux." }, 413);
   }
 
   let body: unknown;

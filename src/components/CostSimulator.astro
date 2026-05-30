@@ -67,7 +67,7 @@ function fmtEuro(n: number) {
   </div>
 </section>
 
-<script is:inline>
+<script is:inline nonce={Astro.locals.cspNonce}>
   (function () {
     function fmt(n) {
       return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);

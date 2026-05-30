@@ -5,43 +5,62 @@ import SiteFooter from "@/components/SiteFooter.astro";
 import BrandBackdrop from "@/components/BrandBackdrop.astro";
 import CursorTracker from "@/components/CursorTracker.astro";
 import { LOGO_SRC } from "@/lib/brand";
+import {
+  allowIndexing,
+  absoluteUrl,
+  buildBreadcrumbList,
+  buildLocalBusiness,
+  buildWebPage,
+  buildWebSite,
+  DEFAULT_LOCALE,
+  DEFAULT_OG_IMAGE,
+  mergeJsonLd,
+  resolveSiteUrl,
+  SITE_NAME,
+  type JsonLd,
+} from "@/lib/seo";
 
 interface Props {
   title: string;
   description: string;
   breadcrumb?: { href?: string; label: string }[];
-  jsonLd?: Record<string, unknown>;
+  jsonLd?: JsonLd | JsonLd[];
+  ogImage?: string;
+  ogType?: string;
+  noindex?: boolean;
+  /** Chemin canonique alternatif (ex. /cgv pour les versions imprimables). */
+  canonicalPath?: string;
 }
 
-const { title, description, breadcrumb, jsonLd } = Astro.props;
+const {
+  title,
+  description,
+  breadcrumb,
+  jsonLd,
+  ogImage = DEFAULT_OG_IMAGE,
+  ogType = "website",
+  noindex = false,
+  canonicalPath,
+} = Astro.props;
+const cspNonce = Astro.locals.cspNonce;
 
-const allowIndexing =
-  import.meta.env.PUBLIC_ALLOW_INDEXING === "true" || import.meta.env.PUBLIC_ALLOW_INDEXING === "1";
+const siteUrl = resolveSiteUrl(Astro.site?.href, Astro.url.origin);
+const pathname = canonicalPath ?? Astro.url.pathname;
+const canonical = absoluteUrl(pathname, siteUrl);
+const ogImageUrl = absoluteUrl(ogImage, siteUrl);
+const shouldIndex = allowIndexing && !noindex;
+const isHome = pathname === "/" || pathname === "";
 
-const siteUrl = Astro.site?.href ?? Astro.url.origin;
-const canonical = new URL(Astro.url.pathname, siteUrl).href;
+const extraSchemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const schemas: JsonLd[] = isHome
+  ? [buildWebSite(siteUrl), buildLocalBusiness(siteUrl), ...extraSchemas]
+  : [buildWebPage({ siteUrl, canonical, title, description }), buildLocalBusiness(siteUrl), ...extraSchemas];
 
-const defaultLd = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  name: "Le Sourire de Jojo",
-  description:
-    "Accompagnement social à domicile (Céline Meunier Benneji) — lien, bienveillance, dignité. Lecture, sorties, jeux, souvenirs. Montauban, Corbarieu, Tarn-et-Garonne.",
-  url: siteUrl,
-  areaServed: {
-    "@type": "AdministrativeArea",
-    name: "Tarn-et-Garonne",
-  },
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Montauban",
-    addressRegion: "Occitanie",
-    addressCountry: "FR",
-  },
-  priceRange: "$$",
-};
+if (breadcrumb?.length) {
+  schemas.push(buildBreadcrumbList(breadcrumb, siteUrl, canonical));
+}
 
-const structured = jsonLd ?? defaultLd;
+const structured = mergeJsonLd(schemas);
 ---
 
 <!doctype html>
@@ -50,22 +69,35 @@ const structured = jsonLd ?? defaultLd;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta
-      name="keywords"
-      content="Céline Meunier Benneji, Le Sourire de Jojo, accompagnement social, lien social, bienveillance, dignité, intergénérationnel, Montauban, Corbarieu, Tarn-et-Garonne, SAP, crédit d'impôt, CESU, seniors, PMR"
-    />
-    {!allowIndexing && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="author" content="Céline Meunier Benneji" />
+    <meta name="theme-color" content="#1d3557" />
+    {!shouldIndex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="fr" href={canonical} />
     <link rel="icon" type="image/png" href={LOGO_SRC} />
     <link rel="apple-touch-icon" href={LOGO_SRC} />
     <title>{title}</title>
+    <meta property="og:locale" content={DEFAULT_LOCALE} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:alt" content={`${SITE_NAME} — accompagnement social à domicile`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400..800;1,400..800&display=swap"
       rel="stylesheet"
     />
-    {allowIndexing && <script type="application/ld+json" set:html={JSON.stringify(structured)} />}
+    {shouldIndex && Object.keys(structured).length > 0 && (
+      <script type="application/ld+json" set:html={JSON.stringify(structured)} />
+    )}
   </head>
   <body class="min-h-screen flex flex-col">
     <BrandBackdrop />
@@ -95,7 +127,7 @@ const structured = jsonLd ?? defaultLd;
       <slot />
     </main>
     <SiteFooter />
-    <script is:inline>
+    <script is:inline nonce={cspNonce}>
       (function () {
         function initScrollReveals() {
           var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -170,7 +202,7 @@ const structured = jsonLd ?? defaultLd;
         else initScrollReveals();
       })();
     </script>
-    <script is:inline>
+    <script is:inline nonce={cspNonce}>
       (function () {
         /**
          * offsetLeft est relatif à offsetParent (souvent un ancêtre positionné), pas au

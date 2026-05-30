@@ -6,13 +6,17 @@ import FloralAccent from "@/components/FloralAccent.astro";
 import GoogleMapEmbed from "@/components/GoogleMapEmbed.astro";
 import HomePhotoGallery from "@/components/HomePhotoGallery.astro";
 import SnapCarouselNav from "@/components/SnapCarouselNav.astro";
+import { absoluteUrl, buildFaqPage, HOME_FAQ, resolveSiteUrl } from "@/lib/seo";
 
 const title = "Le Sourire de Jojo — Rayon de soleil à domicile";
 const description =
   "Accompagnement social et bienveillant (Céline Meunier Benneji) — lien, dignité, intergénérationnel : aînés, convalescents, enfants temporairement immobilisés. Montauban, Corbarieu, Tarn-et-Garonne.";
+
+const siteUrl = resolveSiteUrl(Astro.site?.href, Astro.url.origin);
+const homeUrl = absoluteUrl("/", siteUrl);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} jsonLd={buildFaqPage(HOME_FAQ, homeUrl)}>
   <HomeHero />
 
   <MaterialHighlight />
