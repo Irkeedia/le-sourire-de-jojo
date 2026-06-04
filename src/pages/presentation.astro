@@ -1400,18 +1400,18 @@ const description =
     }
   </style>
 
-  <script>
+  <script is:inline nonce={Astro.locals.cspNonce}>
     (function () {
       const deck = document.getElementById("slide-deck");
       const stage = document.getElementById("slide-stage");
       if (!deck || !stage) return;
 
-      const slides = Array.from(stage.querySelectorAll<HTMLElement>("[data-slide]"));
+      const slides = Array.from(stage.querySelectorAll("[data-slide]"));
       const total = slides.length;
       const counter = document.getElementById("slide-counter");
-      const prevBtn = document.getElementById("slide-prev") as HTMLButtonElement | null;
-      const nextBtn = document.getElementById("slide-next") as HTMLButtonElement | null;
-      const dots = Array.from(document.querySelectorAll<HTMLButtonElement>(".deck__dot"));
+      const prevBtn = document.getElementById("slide-prev");
+      const nextBtn = document.getElementById("slide-next");
+      const dots = Array.from(document.querySelectorAll(".deck__dot"));
       const fsBtn = document.getElementById("slide-fullscreen");
       const exportToggle = document.getElementById("slide-export-toggle");
       const exportMenu = document.getElementById("slide-export-menu");
@@ -1423,7 +1423,7 @@ const description =
       let current = 0;
       let touchStartX = 0;
       let touchStartY = 0;
-      let toastTimer: ReturnType<typeof setTimeout> | undefined;
+      let toastTimer;
 
       function presentationUrl() {
         const url = new URL("/presentation", window.location.origin);
@@ -1488,7 +1488,7 @@ const description =
       function parseHash(): number {
         const m = window.location.hash.match(/^#slide-(\d+)$/);
         if (!m) return 0;
-        const n = parseInt(m[1]!, 10) - 1;
+        const n = parseInt(m[1], 10) - 1;
         return Number.isFinite(n) ? Math.max(0, Math.min(n, total - 1)) : 0;
       }
 
@@ -1610,7 +1610,7 @@ const description =
 
       document.addEventListener("click", (e) => {
         if (!exportMenu || exportMenu.hidden) return;
-        const target = e.target as Node | null;
+        const target = e.target;
         if (target && (exportMenu.contains(target) || exportToggle?.contains(target))) return;
         setExportMenuOpen(false);
       });
