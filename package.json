@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "node ./dist/server/entry.mjs",
-    "build": "astro build",
+    "build:presentation-deck": "esbuild src/scripts/presentation-deck.ts --outfile=public/scripts/presentation-deck.js --format=iife --target=es2020",
+    "build": "npm run build:presentation-deck && astro build",
     "preview": "astro preview",
     "generate:presentation-pdf": "node scripts/generate-presentation-pdf.mjs",
     "generate:encryption-key": "node scripts/generate-encryption-key.mjs"
