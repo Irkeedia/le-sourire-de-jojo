@@ -51,6 +51,60 @@ const secondaryLinks = [
   { href: "/plan-du-site", label: "Plan du site" },
 ];
 
+type NavLink = (typeof links)[number];
+
+type DesktopNavGroup = {
+  kind: "group";
+  label: string;
+  title: string;
+  items: NavLink[];
+  /** Alignement du panneau déroulant */
+  menuAlign?: "center" | "end";
+};
+
+type DesktopNavEntry = { kind: "link"; link: NavLink } | DesktopNavGroup;
+
+const desktopNav: DesktopNavEntry[] = [
+  { kind: "link", link: links[0] },
+  {
+    kind: "group",
+    label: "Prestations",
+    title: "Services, offres et carnet",
+    items: [links[1], links[2], links[3]],
+  },
+  {
+    kind: "group",
+    label: "Découvrir",
+    title: "À propos, présentation et partenaires",
+    items: [links[4], links[5], links[6]],
+  },
+  { kind: "link", link: links[7] },
+  { kind: "link", link: links[8] },
+  {
+    kind: "group",
+    label: "Infos",
+    title: "Documents juridiques et accès rapides",
+    menuAlign: "end",
+    items: [
+      links[9],
+      {
+        href: secondaryLinks[0].href,
+        label: secondaryLinks[0].label,
+        shortLabel: secondaryLinks[0].label,
+        desktopLabel: secondaryLinks[0].label,
+        icon: "heart",
+      },
+      {
+        href: secondaryLinks[1].href,
+        label: secondaryLinks[1].label,
+        shortLabel: secondaryLinks[1].label,
+        desktopLabel: secondaryLinks[1].label,
+        icon: "doc",
+      },
+    ],
+  },
+];
+
 const pathname = Astro.url.pathname;
 
 function isActive(href: string): boolean {
@@ -71,6 +125,17 @@ function isActive(href: string): boolean {
   }
   return pathname === base || pathname.startsWith(`${base}/`);
 }
+
+function groupIsActive(items: NavLink[]): boolean {
+  return items.some((item) => isActive(item.href));
+}
+
+const desktopLinkClass =
+  "block whitespace-nowrap rounded-xl px-3 py-2 text-[0.8125rem] font-semibold leading-tight tracking-tight ring-1 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine xl:px-3.5";
+
+const desktopLinkActive = "bg-marine text-ivoire shadow-md ring-marine/40";
+const desktopLinkIdle =
+  "text-marine/88 ring-transparent hover:bg-sauge/35 hover:text-marine hover:ring-marine/10";
 ---
 
 <a
@@ -108,29 +173,107 @@ function isActive(href: string): boolean {
     </a>
 
     <div class="hidden min-w-0 flex-1 items-center justify-end gap-3 lg:flex xl:gap-4">
-      <nav aria-label="Navigation principale" class="min-w-0">
+      <nav aria-label="Navigation principale" class="desktop-nav min-w-0">
         <ul
           class="flex flex-nowrap items-center justify-end gap-0.5 rounded-2xl border border-marine/10 bg-white/45 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] backdrop-blur-sm"
         >
           {
-            links.map((l) => {
-              const active = isActive(l.href);
-              const shown = l.desktopLabel ?? l.label;
+            desktopNav.map((entry) => {
+              if (entry.kind === "link") {
+                const l = entry.link;
+                const active = isActive(l.href);
+                const shown = l.desktopLabel ?? l.label;
+                return (
+                  <li>
+                    <a
+                      href={l.href}
+                      title={l.label}
+                      class:list={[desktopLinkClass, active ? desktopLinkActive : desktopLinkIdle]}
+                      aria-current={active ? "page" : undefined}
+                    >
+                      {shown}
+                    </a>
+                  </li>
+                );
+              }
+
+              const groupActive = groupIsActive(entry.items);
+              const menuAlign = entry.menuAlign ?? "center";
+
               return (
-                <li>
-                  <a
-                    href={l.href}
-                    title={l.label}
+                <li
+                  class:list={[
+                    "desktop-nav__group group relative",
+                    menuAlign === "end" && "desktop-nav__group--end",
+                  ]}
+                >
+                  <button
+                    type="button"
                     class:list={[
-                      "block whitespace-nowrap rounded-xl px-3 py-2 text-[0.8125rem] font-semibold leading-tight tracking-tight ring-1 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine xl:px-3.5",
-                      active
-                        ? "bg-marine text-ivoire shadow-md ring-marine/40"
-                        : "text-marine/88 ring-transparent hover:bg-sauge/35 hover:text-marine hover:ring-marine/10",
+                      desktopLinkClass,
+                      "desktop-nav__trigger inline-flex items-center gap-1",
+                      groupActive ? desktopLinkActive : desktopLinkIdle,
                     ]}
-                    aria-current={active ? "page" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    title={entry.title}
                   >
-                    {shown}
-                  </a>
+                    {entry.label}
+                    <svg
+                      class="desktop-nav__chevron h-3.5 w-3.5 shrink-0 opacity-70"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M6 9l6 6 6-6"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </button>
+                  <div
+                    class:list={[
+                      "desktop-nav__menu absolute top-full z-[60] min-w-[12.5rem] pt-1.5",
+                      menuAlign === "end" ? "right-0" : "left-1/2 desktop-nav__menu--center",
+                    ]}
+                  >
+                    <ul
+                      class="overflow-hidden rounded-xl border border-marine/12 bg-ivoire py-1 shadow-[0_12px_40px_rgba(29,53,87,0.14)]"
+                      role="menu"
+                      aria-label={entry.title}
+                    >
+                      {
+                        entry.items.map((l) => {
+                          const active = isActive(l.href);
+                          const shown = l.desktopLabel ?? l.label;
+                          return (
+                            <li role="none">
+                              <a
+                                href={l.href}
+                                role="menuitem"
+                                title={l.label}
+                                class:list={[
+                                  "block px-3.5 py-2.5 text-[0.8125rem] font-semibold leading-snug transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-marine",
+                                  active
+                                    ? "bg-marine/10 text-marine"
+                                    : "text-marine/88 hover:bg-sauge/30 hover:text-marine",
+                                ]}
+                                aria-current={active ? "page" : undefined}
+                              >
+                                <span class="block">{shown}</span>
+                                {shown !== l.label && (
+                                  <span class="mt-0.5 block text-xs font-normal text-marine/55">{l.label}</span>
+                                )}
+                              </a>
+                            </li>
+                          );
+                        })
+                      }
+                    </ul>
+                  </div>
                 </li>
               );
             })
@@ -352,6 +495,50 @@ function isActive(href: string): boolean {
 </div>
 
 <style>
+  .desktop-nav__chevron {
+    transition: transform 0.2s ease;
+  }
+
+  .desktop-nav__menu {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition:
+      opacity 0.18s ease,
+      visibility 0.18s ease,
+      transform 0.18s ease;
+  }
+
+  .desktop-nav__menu--center {
+    transform: translateX(-50%) translateY(6px);
+  }
+
+  .desktop-nav__group:hover .desktop-nav__menu,
+  .desktop-nav__group:focus-within .desktop-nav__menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .desktop-nav__group:hover .desktop-nav__menu--center,
+  .desktop-nav__group:focus-within .desktop-nav__menu--center {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .desktop-nav__group:hover .desktop-nav__chevron,
+  .desktop-nav__group:focus-within .desktop-nav__chevron {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desktop-nav__menu,
+    .desktop-nav__chevron {
+      transition: none;
+    }
+  }
+
   /* xs breakpoint (~360px) for tiny phones in 2-col grid */
   @media (min-width: 360px) {
     :global(.xs\:grid-cols-2) {
@@ -592,6 +779,28 @@ function isActive(href: string): boolean {
       );
 
       window.addEventListener("pageshow", unlockBodyScroll);
+
+      document.querySelectorAll(".desktop-nav__group").forEach(function (group) {
+        var trigger = group.querySelector(".desktop-nav__trigger");
+        if (!trigger) return;
+
+        function setExpanded(open) {
+          trigger.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+
+        group.addEventListener("mouseenter", function () {
+          setExpanded(true);
+        });
+        group.addEventListener("mouseleave", function () {
+          setExpanded(false);
+        });
+        group.addEventListener("focusin", function () {
+          setExpanded(true);
+        });
+        group.addEventListener("focusout", function (e) {
+          if (!group.contains(e.relatedTarget)) setExpanded(false);
+        });
+      });
     });
   })();
 </script>
