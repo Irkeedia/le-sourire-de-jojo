@@ -146,9 +146,11 @@ const {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      // Libération tardive : sur mobile, la prise en charge du fichier par le
+      // système peut se poursuivre bien après le clic.
       setTimeout(function () {
         URL.revokeObjectURL(url);
-      }, 2000);
+      }, 60000);
     }
 
     function statusFor(button) {
@@ -174,22 +176,40 @@ const {
       button.disabled = true;
       if (status) status.textContent = "Préparation du fichier Word…";
 
+      // Sans délai maximum, une requête sans réponse laisserait le bouton figé.
+      var abort = new AbortController();
+      var timeout = window.setTimeout(function () {
+        abort.abort();
+      }, 30000);
+
       try {
         var response = await fetch("/api/docx", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          signal: abort.signal,
           body: JSON.stringify({
             title: button.getAttribute("data-docx-title") || filename,
             filename: filename,
             blocks: blocks,
           }),
         });
+        if (response.status === 429) {
+          if (status)
+            status.textContent = "Trop de téléchargements d’affilée. Patientez quelques minutes.";
+          return;
+        }
         if (!response.ok) throw new Error("HTTP " + response.status);
         download(await response.blob(), filename + ".docx");
         if (status) status.textContent = "Fichier Word téléchargé.";
       } catch (error) {
-        if (status) status.textContent = "Téléchargement impossible. Réessayez dans un instant.";
+        if (status) {
+          status.textContent =
+            error && error.name === "AbortError"
+              ? "Le serveur met trop de temps à répondre. Réessayez."
+              : "Téléchargement impossible. Réessayez dans un instant.";
+        }
       } finally {
+        window.clearTimeout(timeout);
         button.disabled = false;
       }
     }
