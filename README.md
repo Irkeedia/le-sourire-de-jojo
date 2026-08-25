@@ -21,9 +21,10 @@ Par défaut, le site reste en **noindex** tant que `PUBLIC_ALLOW_INDEXING` n’e
 7. [Fonctionnalités clés](#fonctionnalités-clés)
 8. [API contact](#api-contact)
 9. [Signature et contrat](#signature-et-contrat)
-10. [Sécurité, RGPD et indexation](#sécurité-rgpd-et-indexation)
-11. [Build et déploiement](#build-et-déploiement)
-12. [Documentation complémentaire](#documentation-complémentaire)
+10. [Export Word des documents](#export-word-des-documents)
+11. [Sécurité, RGPD et indexation](#sécurité-rgpd-et-indexation)
+12. [Build et déploiement](#build-et-déploiement)
+13. [Documentation complémentaire](#documentation-complémentaire)
 
 ---
 
@@ -203,9 +204,36 @@ La page `/contrat` permet de générer un contrat opérationnel :
 - protections prestataire : nature non médicale, obligation de moyens, limites de responsabilité, risques préexistants, urgence, interruption possible, force majeure ;
 - double signature tactile : prestataire + client ;
 - horodatage local et ISO pour chaque signature ;
-- impression ou enregistrement PDF via le navigateur.
+- impression ou enregistrement PDF via le navigateur ;
+- téléchargement en **Word (.docx) modifiable** — formulaire vide : modèle vierge ; formulaire rempli et signé : contrat complet avec les signatures.
 
 Limite importante : il s’agit d’une **signature simple intégrée au document**, pas d’une signature électronique qualifiée. Pour identité vérifiée, piste d’audit et valeur probante renforcée, il faudra brancher un service spécialisé comme Yousign, DocuSign ou Universign.
+
+---
+
+## Export Word Des Documents
+
+Chaque document juridique peut être téléchargé en **`.docx` réellement modifiable** (Word, LibreOffice, Google Docs), en plus de l’impression / PDF :
+
+| Page | Fichier généré |
+| --- | --- |
+| `/contrat` | `Contrat-de-prestation-Le-Sourire-de-Jojo.docx` |
+| `/imprimer/cgv` | `CGV-Le-Sourire-de-Jojo.docx` |
+| `/imprimer/conditions-annulation` | `Conditions-annulation-Le-Sourire-de-Jojo.docx` |
+| `/consentement` | `Consentement-Le-Sourire-de-Jojo.docx` |
+
+Fonctionnement :
+
+1. `src/components/WordExportButton.astro` lit le document **tel qu’il est affiché** (titres, paragraphes, gras, signatures PNG) et le réduit à une liste de blocs simples ;
+2. `POST /api/docx` (`src/pages/api/docx.ts`) valide ces blocs avec Zod puis appelle `buildDocx()` ;
+3. `src/lib/docx-document.ts` construit un document Word natif via la librairie [`docx`](https://docx.js.org/) : page A4, marges 20 mm, styles calqués sur les documents du site, pied de page numéroté.
+
+Conséquences pratiques :
+
+- le contrat exporté reflète l’état du formulaire — vide, on obtient le **modèle vierge** à faire relire ; rempli et signé, on obtient le **contrat complet avec les deux signatures** ;
+- aucun contenu n’est dupliqué : le `.docx` suit automatiquement toute modification du texte des pages ;
+- le bouton est branché via la prop `docx` de `LegalPrintChrome.astro`, donc un nouveau document imprimable l’obtient en une ligne ;
+- limite anti-abus : `DOCX_RATE_LIMIT` / `DOCX_RATE_WINDOW_MS` (middleware), corps limité à 4 Mo.
 
 ---
 

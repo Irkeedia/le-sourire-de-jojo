@@ -19,6 +19,10 @@ function forbiddenResponse(request: Request, message: string, status = 403) {
   return new Response(JSON.stringify({ ok: false, error: message }), { status, headers });
 }
 
+/** Génération Word : plus permissif que le contact, mais borné (fichiers lourds). */
+const DOCX_POST_LIMIT = Number(import.meta.env.DOCX_RATE_LIMIT ?? "30");
+const DOCX_POST_WINDOW_MS = Number(import.meta.env.DOCX_RATE_WINDOW_MS ?? String(15 * 60 * 1000));
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, url, cookies, redirect } = context;
 
@@ -43,6 +47,22 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
     if (isPublic && context.locals.user) {
       return redirect("/compte");
+    }
+  }
+
+  if (url.pathname === "/api/docx" && request.method === "POST") {
+    const ip = getClientIp(request);
+    const rl = await rateLimitAsync(`docx:${ip}`, DOCX_POST_LIMIT, DOCX_POST_WINDOW_MS, "docx");
+    if (!rl.ok) {
+      const headers = new Headers({
+        "Content-Type": "application/json",
+        "Retry-After": String(rl.retryAfterSec),
+      });
+      applySecurityHeaders(request, headers, { cspNonce: context.locals.cspNonce });
+      return new Response(
+        JSON.stringify({ ok: false, error: "Trop de téléchargements. Réessayez plus tard." }),
+        { status: 429, headers },
+      );
     }
   }
 

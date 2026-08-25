@@ -1,6 +1,7 @@
 ---
 import LegalPrintChrome from "@/components/LegalPrintChrome.astro";
 import SignaturePad from "@/components/SignaturePad.astro";
+import WordExportButton from "@/components/WordExportButton.astro";
 
 const title = "Contrat de prestation à signer — Le Sourire de Jojo";
 const description =
@@ -22,6 +23,12 @@ const generatedAt = new Intl.DateTimeFormat("fr-FR", {
   title={title}
   description={description}
   breadcrumb={[{ href: "/", label: "Accueil" }, { href: "/legal", label: "Documents juridiques" }, { label: "Contrat à signer" }]}
+  docx={{
+    target: "#document-contrat",
+    filename: "Contrat-de-prestation-Le-Sourire-de-Jojo",
+    docTitle: "Contrat de prestation — Le Sourire de Jojo",
+  }}
+  docxHint="Le fichier Word reprend le contrat tel qu'il est affiché : formulaire vide, vous obtenez le modèle vierge à faire relire ; formulaire rempli et signé, vous obtenez le contrat complet avec les signatures."
 >
   <section class="no-print mx-auto mb-8 max-w-3xl rounded-3xl border border-marine/15 bg-white/95 p-5 text-marine shadow-sm sm:p-6 md:p-8" aria-labelledby="contract-form-title">
     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-rose-vieux">Signature simple en ligne</p>
@@ -154,6 +161,14 @@ const generatedAt = new Intl.DateTimeFormat("fr-FR", {
         <button type="button" data-contract-print class="inline-flex items-center justify-center rounded-full bg-marine px-5 py-3 text-sm font-semibold text-ivoire shadow-sm transition hover:bg-aquarelle-bleu focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine">
           Imprimer / Enregistrer en PDF
         </button>
+        <WordExportButton
+          target="#document-contrat"
+          filename="Contrat-de-prestation-Le-Sourire-de-Jojo"
+          docTitle="Contrat de prestation — Le Sourire de Jojo"
+          label="Télécharger en Word (.docx)"
+          buttonClass="inline-flex items-center justify-center rounded-full border border-marine/20 bg-white px-5 py-3 text-sm font-semibold text-marine shadow-sm transition hover:bg-marine/[0.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine disabled:cursor-progress disabled:opacity-60"
+          statusClass="text-sm text-marine/70"
+        />
       </div>
     </form>
   </section>
@@ -364,7 +379,7 @@ const generatedAt = new Intl.DateTimeFormat("fr-FR", {
           <p class="consent-sign-role">La Prestataire</p>
           <div class="contract-signature-preview">
             <img data-contract-signature-preview="provider" alt="Signature de la prestataire" />
-            <span data-contract-signature-empty="provider">Signature à compléter</span>
+            <span data-contract-signature-empty="provider" data-docx-text>Signature à compléter</span>
           </div>
           <p class="consent-sign-hint">Céline Meunier Benneji — signature simple recueillie sur le site</p>
         </div>
@@ -372,7 +387,7 @@ const generatedAt = new Intl.DateTimeFormat("fr-FR", {
           <p class="consent-sign-role">Le Client ou représentant légal</p>
           <div class="contract-signature-preview">
             <img data-contract-signature-preview="client" alt="Signature du client" />
-            <span data-contract-signature-empty="client">Signature à compléter</span>
+            <span data-contract-signature-empty="client" data-docx-text>Signature à compléter</span>
           </div>
           <p class="consent-sign-hint">
             <span data-contract-field="client_name">Nom du signataire</span> — signature simple recueillie sur le site

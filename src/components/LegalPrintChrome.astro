@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import WordExportButton from "@/components/WordExportButton.astro";
 import "@/styles/legal-document.css";
 
 interface Props {
@@ -8,9 +9,21 @@ interface Props {
   breadcrumb: { href?: string; label: string }[];
   noindex?: boolean;
   canonicalPath?: string;
+  /** Active le téléchargement Word du document affiché. */
+  docx?: { target: string; filename: string; docTitle: string };
+  /** Précision affichée sous le bouton Word (ex. modèle vierge vs contrat rempli). */
+  docxHint?: string;
 }
 
-const { title, description, breadcrumb, noindex = false, canonicalPath } = Astro.props;
+const {
+  title,
+  description,
+  breadcrumb,
+  noindex = false,
+  canonicalPath,
+  docx,
+  docxHint,
+} = Astro.props;
 ---
 
 <BaseLayout
@@ -23,13 +36,15 @@ const { title, description, breadcrumb, noindex = false, canonicalPath } = Astro
   <div class="consent-shell">
     <div class="no-print consent-toolbar mx-auto max-w-3xl px-3 pt-8 sm:px-4 sm:pt-10 md:px-6">
       <div class="rounded border border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-700 shadow-sm">
-        <p class="font-semibold uppercase tracking-wide text-slate-800">Enregistrer au format PDF</p>
+        <p class="font-semibold uppercase tracking-wide text-slate-800">Enregistrer ce document</p>
         <p class="mt-2 leading-relaxed">
-          Bouton ci-dessous, ou <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">Ctrl</kbd>+<kbd
-            class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">P</kbd> /
+          <strong>PDF</strong> : bouton ci-dessous, ou <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs"
+            >Ctrl</kbd
+          >+<kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">P</kbd> /
           <kbd class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">⌘</kbd>+<kbd
             class="rounded border border-slate-300 bg-white px-1.5 py-0.5 font-mono text-xs">P</kbd>, puis
           <strong>Enregistrer au format PDF</strong>.
+          {docx && <span><br /><strong>Word</strong> : fichier <code class="font-mono text-xs">.docx</code> modifiable, à envoyer par e-mail ou à retravailler.</span>}
         </p>
         <button
           type="button"
@@ -38,6 +53,14 @@ const { title, description, breadcrumb, noindex = false, canonicalPath } = Astro
         >
           Imprimer / PDF
         </button>
+        {
+          docx && (
+            <>
+              <WordExportButton target={docx.target} filename={docx.filename} docTitle={docx.docTitle} />
+              {docxHint && <p class="mt-2 text-xs leading-relaxed text-slate-600">{docxHint}</p>}
+            </>
+          )
+        }
       </div>
     </div>
 

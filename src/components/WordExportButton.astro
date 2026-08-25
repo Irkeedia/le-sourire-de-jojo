@@ -1,0 +1,203 @@
+---
+/**
+ * Bouton « Télécharger en Word (.docx) ».
+ *
+ * Le script lit le document tel qu'il est affiché (donc contrat rempli et
+ * signatures comprises), le résume en blocs simples et demande à /api/docx de
+ * fabriquer un vrai fichier Word, modifiable par l'avocat ou la CCI.
+ */
+interface Props {
+  /** Sélecteur CSS de l'article à exporter (ex. `#document-contrat`). */
+  target: string;
+  /** Nom du fichier téléchargé, sans extension. */
+  filename: string;
+  /** Titre inscrit dans les propriétés du document Word. */
+  docTitle: string;
+  label?: string;
+  /** Classes du bouton, pour s'accorder au contexte (barre d'outils ou formulaire). */
+  buttonClass?: string;
+  statusClass?: string;
+}
+
+const {
+  target,
+  filename,
+  docTitle,
+  label = "Télécharger en Word (.docx)",
+  buttonClass = "inline-flex items-center justify-center rounded border border-slate-800 bg-white px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-slate-900 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-progress disabled:opacity-60",
+  statusClass = "text-sm text-slate-600",
+} = Astro.props;
+---
+
+<div class="no-print mt-4 flex flex-wrap items-center gap-3">
+  <button
+    type="button"
+    data-docx-export
+    data-docx-target={target}
+    data-docx-filename={filename}
+    data-docx-title={docTitle}
+    class={buttonClass}
+  >
+    {label}
+  </button>
+  <span data-docx-status class={statusClass} role="status" aria-live="polite"></span>
+</div>
+
+<script is:inline nonce={Astro.locals.cspNonce}>
+  (function () {
+    if (window.__docxExportReady) return;
+    window.__docxExportReady = true;
+
+    var BOLD_SELECTOR = "strong,b,.consent-label,.consent-art-num,.consent-doc-entity,.consent-sign-role";
+    var ITALIC_SELECTOR = "em,i";
+    var BLOCK_SELECTOR = "h1,h2,h3,p,li,img,[data-docx-text]";
+
+    function isHidden(el) {
+      if (el.closest(".no-print")) return true;
+      var style = window.getComputedStyle(el);
+      if (style.display === "none" || style.visibility === "hidden") return true;
+      // Un ancêtre masqué retire l'élément du flux de mise en page.
+      return el.offsetParent === null && style.position !== "fixed" && el.tagName !== "BODY";
+    }
+
+    function styleFor(el) {
+      var tag = el.tagName.toLowerCase();
+      if (el.classList.contains("consent-doc-entity")) return "entity";
+      if (el.classList.contains("consent-doc-subentity") || el.classList.contains("consent-doc-director"))
+        return "subtitle";
+      if (tag === "h1") return "title";
+      if (tag === "h2" || tag === "h3") return "heading";
+      if (el.classList.contains("consent-doc-ref") || el.classList.contains("consent-doc-warning")) return "small";
+      if (el.classList.contains("consent-sign-role")) return "label";
+      if (el.closest(".consent-doc-footer")) return "footer";
+      if (tag === "li") return "bullet";
+      return "body";
+    }
+
+    function collectRuns(el) {
+      var runs = [];
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (node) {
+          var parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          if (parent.closest(".no-print")) return NodeFilter.FILTER_REJECT;
+          if (window.getComputedStyle(parent).display === "none") return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        },
+      });
+
+      var node;
+      while ((node = walker.nextNode())) {
+        var text = node.nodeValue.replace(/\s+/g, " ");
+        if (!text) continue;
+        var parent = node.parentElement;
+        var bold = Boolean(parent.closest(BOLD_SELECTOR));
+        var italic = Boolean(parent.closest(ITALIC_SELECTOR));
+        var previous = runs[runs.length - 1];
+        if (previous && Boolean(previous.b) === bold && Boolean(previous.i) === italic) {
+          previous.t += text;
+        } else {
+          runs.push({ t: text, b: bold || undefined, i: italic || undefined });
+        }
+      }
+
+      if (runs.length > 0) {
+        runs[0].t = runs[0].t.replace(/^\s+/, "");
+        runs[runs.length - 1].t = runs[runs.length - 1].t.replace(/\s+$/, "");
+        runs = runs.filter(function (run) {
+          return run.t.length > 0;
+        });
+      }
+      return runs;
+    }
+
+    function imageBlock(img) {
+      var src = img.currentSrc || img.getAttribute("src") || "";
+      var match = /^data:image\/png;base64,(.+)$/.exec(src);
+      if (!match) return null;
+      var rect = img.getBoundingClientRect();
+      var width = Math.round(rect.width) || Math.round(img.naturalWidth / 2) || 200;
+      var height = Math.round(rect.height) || Math.round(img.naturalHeight / 2) || 80;
+      return { type: "image", data: match[1], w: width, h: height };
+    }
+
+    function extractBlocks(root) {
+      var blocks = [];
+      root.querySelectorAll(BLOCK_SELECTOR).forEach(function (el) {
+        if (isHidden(el)) return;
+        if (el.tagName === "IMG") {
+          var image = imageBlock(el);
+          if (image) blocks.push(image);
+          return;
+        }
+        // Un paragraphe qui ne contient qu'une image est déjà traité via l'image.
+        var runs = collectRuns(el);
+        if (runs.length === 0) return;
+        blocks.push({ type: "text", style: styleFor(el), runs: runs });
+      });
+      return blocks;
+    }
+
+    function download(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(function () {
+        URL.revokeObjectURL(url);
+      }, 2000);
+    }
+
+    function statusFor(button) {
+      var wrapper = button.parentElement;
+      return wrapper ? wrapper.querySelector("[data-docx-status]") : null;
+    }
+
+    async function exportDocx(button) {
+      var status = statusFor(button);
+      var target = document.querySelector(button.getAttribute("data-docx-target"));
+      if (!target) {
+        if (status) status.textContent = "Document introuvable sur la page.";
+        return;
+      }
+
+      var filename = button.getAttribute("data-docx-filename") || "document";
+      var blocks = extractBlocks(target);
+      if (blocks.length === 0) {
+        if (status) status.textContent = "Document vide, rien à exporter.";
+        return;
+      }
+
+      button.disabled = true;
+      if (status) status.textContent = "Préparation du fichier Word…";
+
+      try {
+        var response = await fetch("/api/docx", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: button.getAttribute("data-docx-title") || filename,
+            filename: filename,
+            blocks: blocks,
+          }),
+        });
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        download(await response.blob(), filename + ".docx");
+        if (status) status.textContent = "Fichier Word téléchargé.";
+      } catch (error) {
+        if (status) status.textContent = "Téléchargement impossible. Réessayez dans un instant.";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    document.addEventListener("click", function (event) {
+      var button = event.target.closest ? event.target.closest("[data-docx-export]") : null;
+      if (!button) return;
+      exportDocx(button);
+    });
+  })();
+</script>
