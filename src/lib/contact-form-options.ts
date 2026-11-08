@@ -4,7 +4,7 @@ export const AUDIENCE_IDS = [
   "senior_autonome",
   "perte_autonomie",
   "convalescence",
-  "handicap_ou_pmr",
+  "parent_solo",
   "adulte_isole",
   "aidant_recherche_repit",
   "autre_situation",
@@ -15,7 +15,7 @@ export const AUDIENCE_LABELS: Record<AudienceId, string> = {
   senior_autonome: "Personne senior, plutôt autonome",
   perte_autonomie: "Personne senior avec perte d’autonomie",
   convalescence: "Convalescence / retour à domicile",
-  handicap_ou_pmr: "Handicap ou mobilité réduite (PMR)",
+  parent_solo: "Parent solo (garde ponctuelle d’enfants de plus de 3 ans)",
   adulte_isole: "Adulte isolé (hors senior)",
   aidant_recherche_repit: "Aidant : besoin de répit / relais",
   autre_situation: "Autre situation (précisez dans le message)",
@@ -41,9 +41,9 @@ export const RELATION_LABELS: Record<RelationId, string> = {
 };
 
 export const ZONE_IDS = [
+  "corbarieu",
   "montauban_centre",
   "montauban_peripherie",
-  "corbarieu",
   "lamothe_capdeville",
   "albias",
   "labastide_saint_pierre",
@@ -58,9 +58,9 @@ export const ZONE_IDS = [
 export type ZoneId = (typeof ZONE_IDS)[number];
 
 export const ZONE_LABELS: Record<ZoneId, string> = {
+  corbarieu: "Corbarieu",
   montauban_centre: "Montauban — centre / proche centre",
   montauban_peripherie: "Montauban — périphérie & alentours",
-  corbarieu: "Corbarieu",
   lamothe_capdeville: "Lamothe-Capdeville",
   albias: "Albias",
   labastide_saint_pierre: "Labastide-Saint-Pierre",
@@ -95,8 +95,17 @@ export const HORIZON_LABELS: Record<HorizonId, string> = {
   horizon_a_discuter: "À définir ensemble",
 };
 
+/**
+ * Anciennes options retirées du formulaire, conservées pour afficher
+ * correctement les messages déjà enregistrés en base.
+ */
+const LEGACY_AUDIENCE_LABELS: Record<string, string> = {
+  handicap_ou_pmr: "Handicap ou mobilité réduite (PMR) — ancienne option",
+};
+
 export function audienceLabel(id: string): string {
   if (id && id in AUDIENCE_LABELS) return AUDIENCE_LABELS[id as AudienceId];
+  if (id && Object.prototype.hasOwnProperty.call(LEGACY_AUDIENCE_LABELS, id)) return LEGACY_AUDIENCE_LABELS[id];
   return id || "—";
 }
 

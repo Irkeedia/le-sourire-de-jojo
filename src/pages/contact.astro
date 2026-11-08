@@ -6,7 +6,7 @@ import { PACK_IDS, PACK_LABELS, type PackId } from "@/lib/packs";
 
 const title = "Contact & informations légales — Le Sourire de Jojo";
 const description =
-  "Contact, mentions légales, RGPD, cadre de prestation et consentement — Montauban, Corbarieu, Tarn-et-Garonne. Tarifs sur la page Offres.";
+  "Contact, mentions légales, RGPD, cadre de prestation et consentement — Corbarieu, Montauban et alentours (Tarn-et-Garonne). Tarifs sur la page Offres.";
 
 const packParam = Astro.url.searchParams.get("pack") ?? "";
 const objetParam = Astro.url.searchParams.get("objet") ?? "";
@@ -44,7 +44,7 @@ const defaultSubject = safePack
     <section class="mt-12 scroll-mt-28" id="carte" aria-labelledby="map-title">
       <h2 id="map-title" class="font-display text-3xl text-marine">Nous trouver sur la carte</h2>
       <p class="mt-4 max-w-3xl text-marine/85">
-        Repère géographique de la zone d’intervention (Montauban, Corbarieu et Tarn-et-Garonne). Vous pouvez ouvrir
+        Repère géographique de la zone d’intervention (Corbarieu, Montauban et alentours, Tarn-et-Garonne). Vous pouvez ouvrir
         l’itinéraire directement dans Google Maps.
       </p>
       <div class="mt-8 max-w-4xl">
