@@ -7,6 +7,7 @@
  * Compte de Céline pour les essais : créez-le sur /compte/inscription avec l'e-mail
  * celine@test.local (ou la valeur de ADMIN_EMAIL si vous la définissez avant la commande).
  * Le premier lancement télécharge le moteur MongoDB (une seule fois, ~100 Mo).
+ * Deux copies du projet en parallèle : donner un autre port de base avec DEV_DB_PORT=27037.
  */
 import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
@@ -16,7 +17,7 @@ const dbPath = new URL("../.local-db/", import.meta.url).pathname;
 mkdirSync(dbPath, { recursive: true });
 
 const mongo = await MongoMemoryServer.create({
-  instance: { dbPath, storageEngine: "wiredTiger", port: 27027 },
+  instance: { dbPath, storageEngine: "wiredTiger", port: Number(process.env.DEV_DB_PORT || 27027) },
 });
 const uri = mongo.getUri("sourire-de-jojo");
 const adminEmail = process.env.ADMIN_EMAIL || "celine@test.local";

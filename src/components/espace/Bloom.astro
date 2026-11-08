@@ -1,0 +1,31 @@
+---
+import { LOGO_SRC } from "@/lib/brand";
+
+/**
+ * Illustration maison : le logo en médaillon, couronné de fleurs aquarelle du site.
+ * (Remplace les personnages 3D des maquettes, qui ne nous appartiennent pas.)
+ */
+interface Props {
+  size?: "md" | "lg";
+  class?: string;
+}
+const { size = "md", class: className = "" } = Astro.props;
+const box = size === "lg" ? "h-56 w-56 sm:h-64 sm:w-64" : "h-40 w-40 sm:h-48 sm:w-48";
+const medal = size === "lg" ? "h-32 w-32 sm:h-36 sm:w-36" : "h-24 w-24 sm:h-28 sm:w-28";
+---
+
+<div class:list={["relative shrink-0", box, className]} aria-hidden="true">
+  <img src="/images/fleurs/4.webp" alt="" class="absolute -left-2 top-0 w-[46%] -rotate-[18deg] drop-shadow-sm" />
+  <img src="/images/fleurs/3.webp" alt="" class="absolute -right-3 top-[2%] w-[42%] rotate-[22deg] drop-shadow-sm" />
+  <img src="/images/fleurs/8.webp" alt="" class="absolute -bottom-2 right-0 w-[48%] rotate-[8deg] drop-shadow-sm" />
+  <img src="/images/fleurs/1.webp" alt="" class="absolute -bottom-1 left-0 w-[40%] -rotate-[10deg] drop-shadow-sm" />
+  <img src="/images/fleurs/7.webp" alt="" class="absolute left-[-14%] top-[34%] w-[30%] -rotate-[30deg] opacity-90" />
+  <span
+    class:list={[
+      "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-white ring-[6px] ring-white shadow-[0_14px_30px_rgba(29,53,87,0.18)]",
+      medal,
+    ]}
+  >
+    <img src={LOGO_SRC} alt="" class="h-full w-full scale-110 object-cover object-[center_40%]" />
+  </span>
+</div>

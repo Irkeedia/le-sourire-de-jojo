@@ -1,0 +1,24 @@
+---
+import EspaceLayout from "@/layouts/EspaceLayout.astro";
+import type { EspaceSection } from "@/lib/espace-types";
+
+/** Cadre commun des rubriques d'un dossier, dans la mise en page « application ». */
+interface Props {
+  dossier: { id: string; name: string };
+  /** Titre de la rubrique. */
+  section: string;
+  active: EspaceSection;
+  subtitle?: string;
+  /** Lien de retour (ex. retour au carnet depuis une visite). */
+  back?: { href: string; label: string };
+  wide?: boolean;
+}
+const { dossier, section, active, subtitle, back, wide = false } = Astro.props;
+---
+
+<EspaceLayout title={section} subtitle={subtitle} active={active} dossier={dossier} back={back}>
+  <div class:list={["mt-3", wide ? "max-w-6xl" : "max-w-4xl"]}>
+    <slot name="intro" />
+    <slot />
+  </div>
+</EspaceLayout>

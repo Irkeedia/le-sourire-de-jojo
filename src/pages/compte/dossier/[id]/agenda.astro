@@ -1,0 +1,143 @@
+---
+import DossierShell from "@/components/espace/DossierShell.astro";
+import Icon from "@/components/espace/Icon.astro";
+import { cap, frDuration, frTime, listAppointments, PARIS_TZ, todayInParis } from "@/lib/dossier-data";
+import { loadDossierPage } from "@/lib/dossier-page";
+
+const ctx = await loadDossierPage(Astro);
+if (ctx instanceof Response) return ctx;
+const { admin, dossier } = ctx;
+const { upcoming, past } = await listAppointments(dossier.id);
+
+const part = (d: Date, opts: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat("fr-FR", { ...opts, timeZone: PARIS_TZ }).format(d);
+const inputClass =
+  "mt-1 w-full rounded-xl border border-marine/25 bg-ivoire px-4 py-3 text-lg text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30";
+const durations = [
+  [60, "1 h"],
+  [90, "1 h 30"],
+  [120, "2 h"],
+  [180, "3 h"],
+  [240, "4 h"],
+] as const;
+---
+
+<DossierShell dossier={dossier} active="agenda" section="Agenda des visites">
+  <p slot="intro" class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
+    {admin ? "Indiquez vos prochaines visites : la famille les voit tout de suite." : "Les prochaines visites prévues par Céline."}
+  </p>
+
+  <h2 class="mt-8 font-display text-3xl text-marine">À venir</h2>
+  {
+    upcoming.length === 0 ? (
+      <p class="mt-4 rounded-3xl border border-dashed border-marine/25 bg-white/70 p-6 text-lg text-marine/75">
+        Pas de visite prévue pour l’instant.
+      </p>
+    ) : (
+      <ol class="mt-4 space-y-4">
+        {upcoming.map((a, i) => (
+          <li class:list={[
+            "flex gap-4 rounded-3xl border bg-white p-4 shadow-[0_10px_30px_rgba(29,53,87,0.07)] sm:p-5",
+            i === 0 ? "border-sauge/60 ring-2 ring-sauge/30" : "border-marine/10",
+          ]}>
+            <div class="flex w-20 shrink-0 flex-col items-center justify-center rounded-2xl bg-sauge/20 py-2 text-marine">
+              <span class="text-sm font-semibold uppercase">{part(a.startsAt, { month: "short" })}</span>
+              <span class="font-hero text-4xl font-bold leading-none">{part(a.startsAt, { day: "numeric" })}</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              {i === 0 && <p class="text-sm font-bold uppercase tracking-wide text-[#5d7a61]">Prochaine visite</p>}
+              <p class="font-hero text-xl font-semibold text-marine">{cap(part(a.startsAt, { weekday: "long" }))} à {frTime(a.startsAt)}</p>
+              <p class="text-base text-marine/70">Durée : {frDuration(a.durationMinutes)}</p>
+              {a.note && <p class="mt-1 text-base leading-relaxed text-marine/85">{a.note}</p>}
+              {admin && (
+                <button
+                  type="button"
+                  data-delete-appointment
+                  data-id={a.id}
+                  class="mt-2 inline-flex min-h-[40px] items-center gap-1 text-sm font-medium text-marine/60 underline underline-offset-4 hover:text-marine"
+                >
+                  <Icon name="trash" class="h-4 w-4" /> Retirer de l’agenda
+                </button>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+
+  {
+    admin && (
+      <form id="appointment-form" data-dossier-id={dossier.id} class="mt-10 space-y-5 rounded-3xl border border-marine/10 bg-white p-5 shadow-[0_10px_30px_rgba(29,53,87,0.07)] sm:p-8" novalidate>
+        <h2 class="font-display text-3xl text-marine">Ajouter une visite</h2>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div>
+            <label for="appt-date" class="block text-base font-semibold text-marine">Date</label>
+            <input id="appt-date" name="date" type="date" min={todayInParis()} required class={inputClass} />
+          </div>
+          <div>
+            <label for="appt-time" class="block text-base font-semibold text-marine">Heure</label>
+            <input id="appt-time" name="time" type="time" value="14:00" step="900" required class={inputClass} />
+          </div>
+          <div>
+            <label for="appt-duration" class="block text-base font-semibold text-marine">Durée</label>
+            <select id="appt-duration" name="durationMinutes" class={inputClass}>
+              {durations.map(([v, label]) => <option value={v} selected={v === 120}>{label}</option>)}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="appt-note" class="block text-base font-semibold text-marine">Petit mot (facultatif)</label>
+          <input id="appt-note" name="note" type="text" maxlength="500" placeholder="Ex. : Promenade au parc si le temps le permet" class={inputClass} />
+        </div>
+        <button type="submit" class="min-h-[56px] rounded-2xl bg-marine px-8 text-lg font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60">
+          Ajouter à l’agenda
+        </button>
+        <p id="appointment-status" class="text-base text-marine/80" role="status" aria-live="polite"></p>
+      </form>
+    )
+  }
+
+  {
+    past.length > 0 && (
+      <section class="mt-10">
+        <h2 class="font-display text-2xl text-marine/80">Visites passées</h2>
+        <ul class="mt-3 divide-y divide-marine/10 rounded-2xl bg-white/70">
+          {past.map((a) => (
+            <li class="flex flex-wrap justify-between gap-2 px-4 py-3 text-base text-marine/75">
+              <span>{cap(part(a.startsAt, { weekday: "long", day: "numeric", month: "long" }))} à {frTime(a.startsAt)}</span>
+              <span>{frDuration(a.durationMinutes)}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</DossierShell>
+
+<script>
+  import { firstError, sendJson, wireDeleteButtons } from "@/scripts/espace-api";
+
+  const form = document.getElementById("appointment-form") as HTMLFormElement | null;
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const status = document.getElementById("appointment-status")!;
+    const fd = new FormData(form);
+    const body = {
+      date: String(fd.get("date") ?? ""),
+      time: String(fd.get("time") ?? ""),
+      durationMinutes: Number(fd.get("durationMinutes") ?? 120),
+      note: String(fd.get("note") ?? "").trim(),
+    };
+    if (!body.date) {
+      status.textContent = "Choisissez la date de la visite.";
+      return;
+    }
+    status.textContent = "Ajout…";
+    const { ok, data } = await sendJson(`/api/dossiers/${form.dataset.dossierId}/appointments`, body);
+    if (ok) window.location.reload();
+    else status.textContent = firstError(data, "Ajout impossible.");
+  });
+
+  wireDeleteButtons("[data-delete-appointment]", (id) => `/api/appointments/${id}`, "Retirer cette visite de l’agenda ?");
+</script>

@@ -1,18 +1,18 @@
 import type { APIRoute } from "astro";
-import { guard, isAdmin, json, photosOfDossier, readJson } from "@/lib/family-space";
+import { guard, json, photosOfDossier, readJson } from "@/lib/family-space";
 import { postSchema } from "@/lib/zod-auth";
 import { Post } from "@/models/Post";
 
 export const prerender = false;
 
 /**
- * Publier dans le fil d'un dossier :
- * - Céline : compte-rendu de visite (texte, date, photos déjà envoyées dans CE dossier) ;
- * - un proche : un message texte.
+ * Publier une visite dans le carnet de sourires (Céline uniquement) :
+ * texte, date et photos déjà envoyées dans CE dossier.
+ * Les proches écrivent dans la messagerie (/api/dossiers/[id]/messages).
  */
 export const POST: APIRoute = async (ctx) => {
   const dossierId = ctx.params.id ?? "";
-  const denied = await guard(ctx, { write: true, dossierId });
+  const denied = await guard(ctx, { write: true, adminOnly: true, dossierId });
   if (denied) return denied;
   const user = ctx.locals.user!;
 
@@ -25,8 +25,7 @@ export const POST: APIRoute = async (ctx) => {
   const parsed = postSchema.safeParse(body);
   if (!parsed.success) return json({ ok: false, errors: parsed.error.flatten().fieldErrors }, 422);
 
-  const admin = isAdmin(user);
-  const photoIds = admin ? await photosOfDossier(parsed.data.photoIds, dossierId) : [];
+  const photoIds = await photosOfDossier(parsed.data.photoIds, dossierId);
   if (!parsed.data.text && photoIds.length === 0) {
     return json({ ok: false, errors: { text: ["Écrivez un mot."] } }, 422);
   }
@@ -36,9 +35,9 @@ export const POST: APIRoute = async (ctx) => {
     authorId: user.id,
     authorName: user.name,
     authorRole: user.role,
-    kind: admin ? "visite" : "message",
+    kind: "visite",
     text: parsed.data.text,
-    visitDate: admin && parsed.data.visitDate ? new Date(`${parsed.data.visitDate}T12:00:00Z`) : undefined,
+    visitDate: parsed.data.visitDate ? new Date(`${parsed.data.visitDate}T12:00:00Z`) : undefined,
     photoIds,
   });
   return json({ ok: true, id: String(post._id) }, 201);

@@ -1,0 +1,115 @@
+---
+import DossierShell from "@/components/espace/DossierShell.astro";
+import Icon from "@/components/espace/Icon.astro";
+import Lightbox from "@/components/espace/Lightbox.astro";
+import { cap, fmt } from "@/lib/dossier-data";
+import { loadDossierPage } from "@/lib/dossier-page";
+import { listPosts } from "@/lib/family-space";
+
+const ctx = await loadDossierPage(Astro);
+if (ctx instanceof Response) return ctx;
+const { admin, dossier } = ctx;
+const base = `/compte/dossier/${dossier.id}`;
+
+// Les visites de CE dossier seulement : une visite d'un autre dossier n'est jamais trouvée ici.
+const visits = (await listPosts(dossier.id, 500)).filter((p) => p.kind === "visite");
+const index = visits.findIndex((v) => v.id === Astro.params.visite);
+if (index === -1) return Astro.redirect(`${base}/carnet`);
+const visit = visits[index];
+const newer = visits[index - 1];
+const older = visits[index + 1];
+const date = cap(fmt.dayYear.format(visit.visitDate ?? visit.createdAt));
+const navBtn =
+  "flex min-h-[56px] flex-1 items-center gap-2 rounded-2xl border-2 border-marine/15 bg-white px-4 text-base font-semibold text-marine hover:border-marine/30";
+---
+
+<DossierShell dossier={dossier} active="carnet" section="Carnet de sourires" back={{ href: `${base}/carnet`, label: "Toutes les visites" }}>
+  <article class="jojo-paper relative mt-6 overflow-hidden rounded-3xl p-5 sm:p-8">
+    <div class="relative z-[1]">
+      <p class="text-sm font-semibold uppercase tracking-[0.16em] text-marine/55">Visite du</p>
+      <h2 class="font-display text-4xl leading-tight text-marine">{date}</h2>
+      {visit.text && <p class="mt-5 whitespace-pre-line text-lg leading-relaxed text-marine/90">{visit.text}</p>}
+
+      {
+        visit.photoIds.length > 0 && (
+          <ul class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3" aria-label="Photos et pages du carnet">
+            {visit.photoIds.map((photoId, i) => (
+              <li>
+                <button
+                  type="button"
+                  data-lightbox="visite"
+                  data-src={`/api/photos/${photoId}`}
+                  data-alt={`Photo ${i + 1} de la visite du ${date}`}
+                  class="block w-full overflow-hidden rounded-2xl ring-1 ring-marine/10 transition hover:ring-marine/30 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-marine"
+                  aria-label={`Agrandir la photo ${i + 1}`}
+                >
+                  <img src={`/api/photos/${photoId}`} alt="" loading="lazy" class="aspect-square w-full object-cover" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+      <p class="mt-6 text-sm text-marine/60">Publiée par {visit.authorName.split(" ")[0]} le {fmt.stamp.format(visit.createdAt)}</p>
+    </div>
+  </article>
+
+  <nav class="mt-6 flex flex-col gap-3 sm:flex-row" aria-label="Autres visites">
+    {
+      older ? (
+        <a href={`${base}/carnet/${older.id}`} class={navBtn}>
+          <Icon name="back" class="h-5 w-5 shrink-0" />
+          <span>
+            <span class="block text-sm font-normal text-marine/60">Visite précédente</span>
+            <span>{fmt.short.format(older.visitDate ?? older.createdAt)}</span>
+          </span>
+        </a>
+      ) : (
+        <span class="hidden flex-1 sm:block" />
+      )
+    }
+    {
+      newer && (
+        <a href={`${base}/carnet/${newer.id}`} class:list={[navBtn, "justify-end text-right"]}>
+          <span>
+            <span class="block text-sm font-normal text-marine/60">Visite suivante</span>
+            <span>{fmt.short.format(newer.visitDate ?? newer.createdAt)}</span>
+          </span>
+          <Icon name="chevron" class="h-5 w-5 shrink-0" />
+        </a>
+      )
+    }
+  </nav>
+
+  {
+    admin && (
+      <button
+        type="button"
+        data-delete-visit
+        data-id={visit.id}
+        data-back={`${base}/carnet`}
+        class="mt-8 inline-flex min-h-[44px] items-center gap-2 rounded-xl px-3 text-base font-medium text-marine/60 underline underline-offset-4 hover:text-marine"
+      >
+        <Icon name="trash" class="h-5 w-5" /> Supprimer cette visite et ses photos
+      </button>
+    )
+  }
+
+  <Lightbox />
+</DossierShell>
+
+<script>
+  import { firstError, sendJson } from "@/scripts/espace-api";
+
+  const btn = document.querySelector<HTMLButtonElement>("[data-delete-visit]");
+  btn?.addEventListener("click", async () => {
+    if (!confirm("Supprimer définitivement cette visite et ses photos ?")) return;
+    btn.disabled = true;
+    const { ok, data } = await sendJson(`/api/posts/${btn.dataset.id}`, {}, "DELETE");
+    if (ok) window.location.href = btn.dataset.back ?? "/compte";
+    else {
+      btn.disabled = false;
+      alert(firstError(data, "Suppression impossible."));
+    }
+  });
+</script>

@@ -45,3 +45,35 @@ export const postSchema = z
     message: "Écrivez un mot ou ajoutez au moins une photo.",
     path: ["text"],
   });
+
+export const messageSchema = z.object({
+  text: z.string().trim().min(1, "Écrivez d’abord votre message.").max(4000, "Message trop long (4 000 caractères maximum)."),
+});
+
+export const appointmentSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date invalide."),
+  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Heure invalide."),
+  durationMinutes: z.coerce.number().int().min(15, "15 minutes minimum.").max(720, "12 heures maximum."),
+  note: z.string().trim().max(500, "500 caractères maximum.").default(""),
+});
+
+const newPassword = z
+  .string()
+  .min(8, "Au moins 8 caractères.")
+  .max(128)
+  .regex(/[A-Za-z]/, "Au moins une lettre.")
+  .regex(/[0-9]/, "Au moins un chiffre.");
+
+export const forgotSchema = z.object({
+  email: z.string().trim().email("E-mail invalide.").max(254),
+});
+
+export const resetSchema = z.object({
+  token: z.string().trim().min(10).max(128),
+  password: newPassword,
+});
+
+export const changePasswordSchema = z.object({
+  current: z.string().min(1, "Mot de passe actuel requis.").max(128),
+  password: newPassword,
+});

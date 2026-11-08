@@ -1,0 +1,90 @@
+---
+import EspaceLayout from "@/layouts/EspaceLayout.astro";
+import AuthField from "@/components/espace/AuthField.astro";
+import Icon from "@/components/espace/Icon.astro";
+import { isAdmin } from "@/lib/family-space";
+
+const user = Astro.locals.user!;
+const admin = isAdmin(user);
+const initials = user.name
+  .split(/\s+/)
+  .slice(0, 2)
+  .map((p) => p.charAt(0).toUpperCase())
+  .join("");
+const card = "rounded-[26px] bg-white/90 p-5 shadow-[0_12px_30px_rgba(29,53,87,0.07)] ring-1 ring-marine/5 sm:p-7";
+---
+
+<EspaceLayout title="Mon compte" active="compte">
+  <div class="mt-3 grid max-w-4xl gap-5 lg:grid-cols-5">
+    <section class:list={[card, "lg:col-span-2"]} aria-labelledby="profil">
+      <h2 id="profil" class="sr-only">Mon profil</h2>
+      <div class="flex flex-col items-center text-center">
+        <span class="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-[#F6DCCF] to-rose-vieux/60 font-hero text-3xl font-bold text-marine shadow-[0_10px_22px_rgba(200,141,141,0.35)] ring-4 ring-white">
+          {initials}
+        </span>
+        <p class="mt-4 font-hero text-2xl font-semibold text-marine">{user.name}</p>
+        <p class="mt-1 break-all text-base text-marine/70">{user.email}</p>
+        <p class="mt-3 rounded-full bg-sauge/25 px-4 py-1.5 text-sm font-semibold text-[#3f5c44]">
+          {admin ? "Administratrice — Le Sourire de Jojo" : "Proche d’une personne accompagnée"}
+        </p>
+      </div>
+      <div class="mt-6 space-y-2 border-t border-marine/10 pt-5">
+        <a href="/compte" class="flex min-h-[52px] items-center gap-3 rounded-2xl px-3 text-base font-semibold text-marine hover:bg-cream">
+          <Icon name="folders" class="h-6 w-6" /> {admin ? "Tous mes dossiers" : "Mes dossiers"}
+        </a>
+        <a href="/" class="flex min-h-[52px] items-center gap-3 rounded-2xl px-3 text-base font-semibold text-marine hover:bg-cream">
+          <Icon name="site" class="h-6 w-6" /> Retour au site
+        </a>
+        <button type="button" data-logout class="flex min-h-[52px] w-full items-center gap-3 rounded-2xl px-3 text-left text-base font-semibold text-marine hover:bg-cream">
+          <Icon name="logout" class="h-6 w-6" /> Se déconnecter
+        </button>
+      </div>
+    </section>
+
+    <section class:list={[card, "lg:col-span-3"]} aria-labelledby="mdp">
+      <h2 id="mdp" class="flex items-center gap-2 font-hero text-xl font-semibold text-marine">
+        <Icon name="key" class="h-6 w-6" /> Changer mon mot de passe
+      </h2>
+      <form id="password-form" class="mt-5 space-y-4" novalidate>
+        <AuthField id="pw-current" name="current" type="password" label="Mot de passe actuel" icon="lock" autocomplete="current-password" />
+        <AuthField
+          id="pw-new"
+          name="password"
+          type="password"
+          label="Nouveau mot de passe"
+          icon="lock"
+          autocomplete="new-password"
+          hint="8 caractères minimum, avec au moins une lettre et un chiffre."
+        />
+        <button
+          type="submit"
+          class="h-14 w-full rounded-full bg-gradient-to-r from-marine via-[#2B4A72] to-[#3E6A8F] text-lg font-bold text-white shadow-[0_14px_28px_rgba(29,53,87,0.25)] hover:brightness-110 disabled:opacity-60 sm:w-auto sm:px-10"
+        >
+          Enregistrer
+        </button>
+        <p data-status class="min-h-[1.5rem] text-base text-marine/80" role="status" aria-live="polite"></p>
+      </form>
+      <p class="mt-4 text-sm leading-relaxed text-marine/65">
+        Mot de passe actuel oublié ? Déconnectez-vous puis utilisez « Mot de passe oublié ? » sur la page de connexion.
+      </p>
+    </section>
+  </div>
+</EspaceLayout>
+
+<script>
+  import { wireAuthForm } from "@/scripts/auth-forms";
+
+  wireAuthForm({
+    formId: "password-form",
+    endpoint: "/api/auth/password",
+    pending: "Enregistrement…",
+    fallbackError: "Enregistrement impossible.",
+    body: (fd) => ({ current: String(fd.get("current") ?? ""), password: String(fd.get("password") ?? "") }),
+    onSuccess: (_r, form) => {
+      form.reset();
+      const status = form.querySelector<HTMLElement>("[data-status]")!;
+      status.textContent = "C’est fait : votre nouveau mot de passe est enregistré.";
+      form.querySelector<HTMLButtonElement>("button[type=submit]")!.disabled = false;
+    },
+  });
+</script>

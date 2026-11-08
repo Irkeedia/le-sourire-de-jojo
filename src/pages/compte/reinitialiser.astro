@@ -1,0 +1,58 @@
+---
+import AuthLayout from "@/layouts/AuthLayout.astro";
+import AuthField from "@/components/espace/AuthField.astro";
+import { isDbConfigured } from "@/lib/db-config";
+import { findValidReset } from "@/lib/password-reset";
+
+const token = Astro.url.searchParams.get("jeton") ?? "";
+const reset = isDbConfigured() && token ? await findValidReset(token) : null;
+---
+
+<AuthLayout
+  title="Nouveau mot de passe — Espace familles"
+  heading="Nouveau mot de passe"
+  intro={reset ? `Bonjour ${reset.userName.split(" ")[0]}, choisissez votre nouveau mot de passe.` : undefined}
+>
+  {
+    reset ? (
+      <form id="reset-form" data-token={token} class="mt-6 space-y-4" novalidate>
+        <AuthField
+          id="reset-password"
+          name="password"
+          type="password"
+          label="Nouveau mot de passe"
+          icon="lock"
+          autocomplete="new-password"
+          hint="8 caractères minimum, avec au moins une lettre et un chiffre."
+        />
+        <button
+          type="submit"
+          class="h-14 w-full rounded-full bg-gradient-to-r from-marine via-[#2B4A72] to-[#3E6A8F] text-lg font-bold text-white shadow-[0_14px_28px_rgba(29,53,87,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] transition hover:brightness-110 disabled:opacity-60"
+        >
+          Enregistrer et me connecter
+        </button>
+        <p data-status class="min-h-[1.5rem] text-center text-base text-marine/80" role="status" aria-live="polite" />
+      </form>
+    ) : (
+      <div class="mt-6 rounded-2xl bg-rose-vieux/15 p-5 text-center text-lg leading-relaxed text-marine" role="alert">
+        Ce lien n’est plus valable : il a déjà servi ou il date de plus d’une heure.
+        <a href="/compte/mot-de-passe-oublie" class="mt-2 block font-semibold text-aquarelle-bleu underline underline-offset-4">Demander un nouveau lien</a>
+      </div>
+    )
+  }
+</AuthLayout>
+
+<script>
+  import { wireAuthForm } from "@/scripts/auth-forms";
+
+  wireAuthForm({
+    formId: "reset-form",
+    endpoint: "/api/auth/reset",
+    pending: "Enregistrement…",
+    fallbackError: "Enregistrement impossible.",
+    body: (fd, form) => ({ token: form.dataset.token ?? "", password: String(fd.get("password") ?? "") }),
+    onSuccess: () => {
+      window.location.href = "/compte";
+    },
+  });
+</script>

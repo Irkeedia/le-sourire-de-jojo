@@ -1,5 +1,9 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import EspaceLayout from "@/layouts/EspaceLayout.astro";
+import Bloom from "@/components/espace/Bloom.astro";
+import Icon from "@/components/espace/Icon.astro";
+import StatTile from "@/components/espace/StatTile.astro";
+import { appointmentLabel, dossierCards, fmt, frTime, PARIS_TZ } from "@/lib/dossier-data";
 import { acceptInvitation, isAdmin, listDossiersFor } from "@/lib/family-space";
 import { isDbConfigured } from "@/lib/db-config";
 
@@ -16,122 +20,200 @@ if (invitationToken && isDbConfigured()) {
 
 const dossiers = isDbConfigured() ? await listDossiersFor(user) : [];
 
-// Un proche qui n'a qu'un dossier arrive directement dessus.
+// Un proche qui n'a qu'un dossier arrive directement sur son tableau de bord.
 if (!admin && dossiers.length === 1 && !invitationResult) {
   return Astro.redirect(`/compte/dossier/${dossiers[0].id}`);
 }
 
+const cards = await dossierCards(user.id, dossiers);
+const totalUnread = cards.reduce((n, c) => n + c.unread, 0);
+const monthVisits = cards.reduce((n, c) => n + c.visitsThisMonth, 0);
+const soonest = cards
+  .filter((c) => c.nextVisit)
+  .sort((a, b) => a.nextVisit!.startsAt.getTime() - b.nextVisit!.startsAt.getTime())[0];
 const firstName = user.name.split(" ")[0];
+const plural = (n: number, one: string, many: string) => `${n} ${n > 1 ? many : one}`;
+const part = (date: Date, opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("fr-FR", { ...opts, timeZone: PARIS_TZ }).format(date);
+const inputClass =
+  "min-h-[56px] w-full rounded-2xl border border-marine/20 bg-cream px-4 text-lg text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30";
 ---
 
-<BaseLayout
-  title="Espace familles — Le Sourire de Jojo"
-  description="Espace privé des familles accompagnées par Le Sourire de Jojo."
-  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Espace familles" }]}
-  noindex
->
-  <div class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
-    <h1 class="font-display text-4xl text-marine md:text-5xl">Bonjour {firstName}</h1>
-
+<EspaceLayout title={admin ? "Mes dossiers" : "Espace familles"} active="dossiers">
+  <div class="mt-3 max-w-6xl space-y-5">
     {
       invitationResult?.ok && (
-        <p class="mt-6 rounded-2xl border border-sauge/40 bg-sauge/20 p-4 text-marine" role="status">
+        <p class="rounded-2xl border border-sauge/40 bg-sauge/20 p-4 text-lg text-marine" role="status">
           Vous avez maintenant accès au dossier de <strong>{invitationResult.dossierName}</strong>.
         </p>
       )
     }
     {
       invitationResult && !invitationResult.ok && (
-        <p class="mt-6 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-4 text-marine" role="alert">
+        <p class="rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-4 text-lg text-marine" role="alert">
           Ce lien d’invitation n’est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau à Céline.
         </p>
       )
     }
 
-    {
-      admin ? (
-        <>
-          <p class="mt-4 text-lg leading-relaxed text-marine/85">
-            Votre espace administratrice : un dossier par personne accompagnée. Dans chaque dossier, vous publiez vos
-            visites (mots, photos, pages du carnet) et vous invitez les proches.
+    <section
+      class="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#F8E3D8] via-[#F6E7DF] to-[#EEF2E8] p-5 shadow-[0_16px_36px_rgba(200,141,141,0.18),inset_0_1px_0_rgba(255,255,255,0.8)] sm:p-7"
+      aria-labelledby="accueil-titre"
+    >
+      <div class="flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
+        <Bloom size="md" />
+        <div class="min-w-0 flex-1">
+          <p id="accueil-titre" class="font-display text-4xl leading-tight text-marine sm:text-5xl">
+            Bonjour {firstName} <span aria-hidden="true">☀️</span>
           </p>
+          <p class="mt-2 text-lg leading-relaxed text-marine/80 sm:text-xl">
+            {
+              admin
+                ? totalUnread > 0
+                  ? `Vous avez ${plural(totalUnread, "message non lu", "messages non lus")}.`
+                  : "Pas de nouveau message. Belle journée !"
+                : "Choisissez le dossier de votre proche pour voir ses nouvelles."
+            }
+          </p>
+          {
+            admin && cards.length > 0 && (
+              <form action="/compte/publier" method="get" class="mt-5 flex flex-col gap-3 sm:flex-row">
+                <label for="publish-dossier" class="sr-only">
+                  Publier une visite pour quel dossier ?
+                </label>
+                <select
+                  id="publish-dossier"
+                  name="dossier"
+                  class="min-h-[56px] flex-1 rounded-2xl border-0 bg-white/90 px-4 text-lg text-marine shadow ring-1 ring-marine/10"
+                >
+                  {cards.map((c) => (
+                    <option value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+                <button
+                  type="submit"
+                  class="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-marine to-[#2E5079] px-6 text-lg font-semibold text-ivoire shadow-[0_12px_24px_rgba(29,53,87,0.28)] hover:brightness-110"
+                >
+                  <Icon name="plus" class="h-6 w-6" /> Publier une visite
+                </button>
+              </form>
+            )
+          }
+        </div>
+      </div>
+    </section>
 
-          <form id="new-dossier-form" class="mt-10 rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm" novalidate>
-            <h2 class="font-display text-2xl text-marine">Nouveau dossier</h2>
-            <label for="dossier-name" class="mt-4 block text-sm font-medium text-marine">
-              Nom de la personne accompagnée
-            </label>
-            <div class="mt-1 flex flex-col gap-3 sm:flex-row">
-              <input
-                id="dossier-name"
-                name="name"
-                type="text"
-                required
-                maxlength="120"
-                placeholder="Ex. : Monsieur Robert Durand"
-                class="min-h-[48px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-base text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-              />
-              <button
-                type="submit"
-                class="min-h-[48px] shrink-0 rounded-xl bg-marine px-6 font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60"
-              >
-                Créer le dossier
-              </button>
-            </div>
-            <p id="new-dossier-status" class="mt-2 text-sm text-marine/80" role="status"></p>
-          </form>
-        </>
-      ) : (
-        <p class="mt-4 text-lg leading-relaxed text-marine/85">
-          Retrouvez ici les nouvelles de vos proches : les comptes-rendus de visite, les photos et les pages du carnet de
-          sourires.
-        </p>
-      )
-    }
-
-    <h2 class="mt-12 font-display text-2xl text-marine">{admin ? "Tous les dossiers" : "Vos dossiers"}</h2>
     {
-      dossiers.length === 0 ? (
-        <p class="mt-4 rounded-2xl border border-dashed border-marine/25 bg-cream/80 p-6 text-marine/80">
-          {admin
-            ? "Aucun dossier pour l’instant. Créez le premier ci-dessus."
-            : "Vous n’avez encore accès à aucun dossier. Céline vous enverra un lien d’invitation."}
-        </p>
-      ) : (
-        <ul class="mt-4 grid gap-4 sm:grid-cols-2">
-          {dossiers.map((d) => (
-            <li>
-              <a
-                href={`/compte/dossier/${d.id}`}
-                class="flex min-h-[72px] items-center justify-between gap-3 rounded-2xl border border-marine/15 bg-white/95 p-5 shadow-sm transition hover:border-marine/30 hover:shadow-md"
-              >
-                <span class="font-display text-xl text-marine">{d.name}</span>
-                <span class="text-marine/50" aria-hidden="true">→</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+      admin && (
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <StatTile href="#dossiers" icon="folders" tone="sauge" label="Dossiers" value={String(cards.length)} sub="personnes accompagnées" />
+          <StatTile
+            href="#dossiers"
+            icon="messages"
+            tone="bleu"
+            label="Messages"
+            value={String(totalUnread)}
+            sub={totalUnread > 0 ? plural(totalUnread, "message non lu", "messages non lus") : "Tout est lu"}
+            alert={totalUnread > 0}
+          />
+          <StatTile
+            href={soonest ? `/compte/dossier/${soonest.id}/agenda` : "#dossiers"}
+            icon="agenda"
+            tone="peche"
+            label="Prochaine visite"
+            value={soonest ? part(soonest.nextVisit!.startsAt, { day: "numeric", month: "short" }).replace(".", "") : "—"}
+            sub={soonest ? `${soonest.name.split(" ").slice(0, 2).join(" ")} à ${frTime(soonest.nextVisit!.startsAt)}` : "Rien de prévu"}
+          />
+          <StatTile
+            href="#dossiers"
+            icon="carnet"
+            tone="jaune"
+            label="Ce mois-ci"
+            value={String(monthVisits)}
+            sub={monthVisits > 1 ? "visites racontées" : "visite racontée"}
+          />
+        </div>
       )
     }
 
-    <div class="mt-12 border-t border-marine/10 pt-6 text-sm text-marine/70">
-      <p>Connecté·e : {user.email}</p>
-      <button
-        type="button"
-        id="logout-btn"
-        class="mt-3 min-h-[44px] rounded-xl border-2 border-marine/20 px-5 font-semibold text-marine hover:bg-marine/5"
-      >
-        Se déconnecter
-      </button>
-    </div>
+    <section id="dossiers" aria-labelledby="titre-dossiers" class="scroll-mt-24">
+      <h2 id="titre-dossiers" class="font-hero text-2xl font-semibold text-marine">Vos dossiers</h2>
+      {
+        cards.length === 0 ? (
+          <p class="mt-3 rounded-[26px] bg-white/80 p-6 text-lg text-marine/80 shadow-sm">
+            {admin
+              ? "Aucun dossier pour l’instant. Créez le premier ci-dessous."
+              : "Vous n’avez encore accès à aucun dossier. Céline vous enverra un lien d’invitation."}
+          </p>
+        ) : (
+          <ul class="mt-3 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {cards.map((c) => (
+              <li class="flex flex-col overflow-hidden rounded-[26px] bg-white/90 shadow-[0_12px_30px_rgba(29,53,87,0.07)] ring-1 ring-marine/5">
+                <a href={`/compte/dossier/${c.id}`} class="group block flex-1 p-5 hover:bg-cream/60 sm:p-6">
+                  <span class="flex items-start justify-between gap-3">
+                    <span class="font-display text-3xl leading-tight text-marine">{c.name}</span>
+                    {c.unread > 0 && (
+                      <span
+                        class="mt-1 inline-flex shrink-0 items-center rounded-full bg-rose-vieux px-3 py-1 text-sm font-bold text-white shadow-[inset_0_-2px_0_rgba(0,0,0,0.12)]"
+                        aria-label={`${c.unread} message${c.unread > 1 ? "s" : ""} non lu${c.unread > 1 ? "s" : ""}`}
+                      >
+                        {`${c.unread} message${c.unread > 1 ? "s" : ""}`}
+                      </span>
+                    )}
+                  </span>
+                  <span class="mt-4 flex items-center gap-3 text-base text-marine/80">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sauge/25 text-[#4f6b53]">
+                      <Icon name="agenda" class="h-5 w-5" />
+                    </span>
+                    {c.nextVisit ? appointmentLabel(c.nextVisit) : "Pas de visite prévue"}
+                  </span>
+                  <span class="mt-2 flex items-center gap-3 text-base text-marine/80">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F7E1D7] text-[#a0665a]">
+                      <Icon name="carnet" class="h-5 w-5" />
+                    </span>
+                    {c.lastPublication ? `Dernière visite racontée : ${fmt.short.format(c.lastPublication)}` : "Carnet encore vide"}
+                  </span>
+                </a>
+                {admin && (
+                  <a
+                    href={`/compte/dossier/${c.id}/carnet/nouvelle`}
+                    class="flex min-h-[56px] items-center justify-center gap-2 border-t border-marine/5 bg-cream/60 text-base font-semibold text-marine hover:bg-cream"
+                  >
+                    <Icon name="plus" class="h-5 w-5" /> Publier une visite
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    {
+      admin && (
+        <form
+          id="new-dossier-form"
+          class="max-w-2xl rounded-[26px] bg-white/90 p-5 shadow-[0_12px_30px_rgba(29,53,87,0.07)] ring-1 ring-marine/5 sm:p-6"
+          novalidate
+        >
+          <h2 class="font-hero text-xl font-semibold text-marine">Nouveau dossier</h2>
+          <label for="dossier-name" class="mt-3 block text-base font-semibold text-marine">
+            Nom de la personne accompagnée
+          </label>
+          <div class="mt-2 flex flex-col gap-3 sm:flex-row">
+            <input id="dossier-name" name="name" type="text" required maxlength="120" placeholder="Ex. : Monsieur Robert Durand" class={inputClass} />
+            <button type="submit" class="min-h-[56px] shrink-0 rounded-2xl bg-marine px-6 text-lg font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60">
+              Créer le dossier
+            </button>
+          </div>
+          <p id="new-dossier-status" class="mt-2 text-base text-marine/80" role="status"></p>
+        </form>
+      )
+    }
   </div>
-</BaseLayout>
+</EspaceLayout>
 
 <script>
-  document.getElementById("logout-btn")?.addEventListener("click", async () => {
-    await fetch("/api/auth/logout", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
-    window.location.href = "/compte/connexion";
-  });
+  import { firstError, sendJson } from "@/scripts/espace-api";
 
   const form = document.getElementById("new-dossier-form") as HTMLFormElement | null;
   const status = document.getElementById("new-dossier-status");
@@ -144,16 +226,11 @@ const firstName = user.name.split(" ")[0];
       return;
     }
     status.textContent = "Création…";
-    const res = await fetch("/api/dossiers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    }).catch(() => null);
-    const data = res ? await res.json().catch(() => ({})) : {};
-    if (!res?.ok) {
-      status.textContent = data.error ?? data.errors?.name?.[0] ?? "Création impossible.";
+    const { ok, data } = await sendJson("/api/dossiers", { name });
+    if (!ok) {
+      status.textContent = firstError(data, "Création impossible.");
       return;
     }
-    window.location.href = `/compte/dossier/${data.dossier.id}`;
+    window.location.href = `/compte/dossier/${(data.dossier as { id: string }).id}`;
   });
 </script>

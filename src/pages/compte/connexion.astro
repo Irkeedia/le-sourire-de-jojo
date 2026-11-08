@@ -1,139 +1,81 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import AuthLayout from "@/layouts/AuthLayout.astro";
+import AuthField from "@/components/espace/AuthField.astro";
 import { isDbConfigured } from "@/lib/db-config";
 import { findValidInvitation } from "@/lib/family-space";
 
-const title = "Connexion — Espace familles";
-const description = "Espace familles — nouvelles, photos et carnet de sourires.";
 const dbReady = isDbConfigured();
 const invitationToken = Astro.url.searchParams.get("invitation") ?? "";
 const invitation = dbReady && invitationToken ? await findValidInvitation(invitationToken) : null;
 const rawNext = Astro.url.searchParams.get("next") ?? "";
 // Seulement des chemins internes (jamais « //autre-site »).
 const next = /^\/(?!\/)/.test(rawNext) ? rawNext : "/compte";
+const reset = Astro.url.searchParams.has("motdepasse");
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Espace familles" }, { label: "Connexion" }]}
-  noindex
->
-  <div class="mx-auto max-w-md px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
-    <h1 class="font-display text-4xl text-marine">Connexion</h1>
-    <p class="mt-4 text-marine/85 leading-relaxed">
-      Retrouvez les nouvelles de vos proches : comptes-rendus de visite, photos et carnet de sourires.
-    </p>
-    {
-      invitation && (
-        <p class="mt-6 rounded-2xl border border-sauge/40 bg-sauge/20 p-4 text-marine">
-          Vous êtes invité·e au dossier de <strong>{invitation.dossierName}</strong>. Connectez-vous avec votre compte
-          habituel : l’accès sera ajouté automatiquement.
-        </p>
-      )
-    }
-
-    {
-      !dbReady && (
-        <div class="mt-8 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-5 text-sm text-marine/85">
-          L’espace familles n’est pas encore ouvert. Il le sera très bientôt !
-        </div>
-      )
-    }
-
-    <form id="login-form" data-invitation={invitationToken} data-next={next} class="mt-8 space-y-5 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm" novalidate>
-      <div>
-        <label for="login-email" class="block text-sm font-medium text-marine">E-mail</label>
-        <input
-          id="login-email"
-          name="email"
-          type="email"
-          required
-          autocomplete="email"
-          class="mt-1 min-h-[48px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-base text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-        />
-        <p class="mt-1 hidden text-sm text-red-800" data-error-for="email"></p>
-      </div>
-      <div>
-        <label for="login-password" class="block text-sm font-medium text-marine">Mot de passe</label>
-        <input
-          id="login-password"
-          name="password"
-          type="password"
-          required
-          autocomplete="current-password"
-          class="mt-1 min-h-[48px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-base text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-        />
-        <p class="mt-1 hidden text-sm text-red-800" data-error-for="password"></p>
-      </div>
-      <button
-        type="submit"
-        class="min-h-[48px] w-full rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60"
-        disabled={!dbReady}
-      >
-        Se connecter
-      </button>
-      <p id="login-status" class="text-sm text-marine/80" role="status"></p>
-    </form>
-
-    <p class="mt-8 text-center text-sm text-marine/75">
-      Pas encore de compte ? Il se crée avec le lien d’invitation envoyé par Céline.
-      {
-        invitation && (
-          <a
-            href={`/compte/inscription?invitation=${encodeURIComponent(invitationToken)}`}
-            class="mt-2 block font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
-          >
-            Créer mon compte avec cette invitation
-          </a>
-        )
-      }
-    </p>
-  </div>
-</BaseLayout>
-
-<script>
-  const form = document.getElementById("login-form") as HTMLFormElement | null;
-  const status = document.getElementById("login-status");
-
-  function showErrors(errors: Record<string, string[] | undefined>) {
-    document.querySelectorAll("[data-error-for]").forEach((el) => {
-      el.classList.add("hidden");
-      (el as HTMLElement).textContent = "";
-    });
-    for (const [key, msgs] of Object.entries(errors)) {
-      const target = document.querySelector(`[data-error-for="${key}"]`);
-      if (target && msgs?.[0]) {
-        target.classList.remove("hidden");
-        target.textContent = msgs[0];
-      }
-    }
+<AuthLayout title="Connexion — Espace familles" heading="Bon retour !" intro="Espace familles du Sourire de Jojo">
+  {
+    invitation && (
+      <p class="mt-5 rounded-2xl bg-sauge/20 p-4 text-center text-base text-marine">
+        Vous êtes invité·e au dossier de <strong>{invitation.dossierName}</strong>. Connectez-vous : l’accès sera ajouté
+        automatiquement.
+      </p>
+    )
+  }
+  {reset && <p class="mt-5 rounded-2xl bg-sauge/20 p-4 text-center text-base text-marine">Mot de passe changé. Vous pouvez vous connecter.</p>}
+  {
+    !dbReady && (
+      <p class="mt-5 rounded-2xl bg-rose-vieux/15 p-4 text-center text-base text-marine">
+        L’espace familles n’est pas encore ouvert. Il le sera très bientôt !
+      </p>
+    )
   }
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!form || !status) return;
-    status.textContent = "Connexion…";
-    const fd = new FormData(form);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: String(fd.get("email") ?? ""),
-          password: String(fd.get("password") ?? ""),
-          invitation: form.dataset.invitation || undefined,
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        if (data.errors) showErrors(data.errors);
-        status.textContent = data.error ?? "Erreur de connexion.";
-        return;
-      }
-      window.location.href = form.dataset.invitation ? "/compte" : form.dataset.next || "/compte";
-    } catch {
-      status.textContent = "Erreur réseau.";
+  <form id="login-form" data-invitation={invitationToken} data-next={next} class="mt-6 space-y-4" novalidate>
+    <AuthField id="login-email" name="email" type="email" label="Votre e-mail" icon="mail" autocomplete="email" placeholder="prenom@exemple.fr" />
+    <AuthField id="login-password" name="password" type="password" label="Mot de passe" icon="lock" autocomplete="current-password" />
+    <p class="text-right">
+      <a href="/compte/mot-de-passe-oublie" class="inline-flex min-h-[44px] items-center text-base font-semibold text-aquarelle-bleu underline-offset-4 hover:underline">
+        Mot de passe oublié ?
+      </a>
+    </p>
+    <button
+      type="submit"
+      disabled={!dbReady}
+      class="h-14 w-full rounded-full bg-gradient-to-r from-marine via-[#2B4A72] to-[#3E6A8F] text-lg font-bold text-white shadow-[0_14px_28px_rgba(29,53,87,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] transition hover:brightness-110 disabled:opacity-60"
+    >
+      Se connecter
+    </button>
+    <p data-status class="min-h-[1.5rem] text-center text-base text-marine/80" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="mt-4 border-t border-marine/10 pt-5 text-center text-base text-marine/75">
+    <p>Pas encore de compte ? Il se crée avec le lien d’invitation envoyé par Céline.</p>
+    {
+      invitation && (
+        <a href={`/compte/inscription?invitation=${encodeURIComponent(invitationToken)}`} class="mt-2 inline-flex min-h-[44px] items-center font-semibold text-aquarelle-bleu underline underline-offset-4">
+          Créer mon compte avec cette invitation
+        </a>
+      )
     }
+  </div>
+</AuthLayout>
+
+<script>
+  import { wireAuthForm } from "@/scripts/auth-forms";
+
+  wireAuthForm({
+    formId: "login-form",
+    endpoint: "/api/auth/login",
+    pending: "Connexion…",
+    fallbackError: "Connexion impossible.",
+    body: (fd, form) => ({
+      email: String(fd.get("email") ?? ""),
+      password: String(fd.get("password") ?? ""),
+      invitation: form.dataset.invitation || undefined,
+    }),
+    onSuccess: (_r, form) => {
+      window.location.href = form.dataset.invitation ? "/compte" : form.dataset.next || "/compte";
+    },
   });
 </script>

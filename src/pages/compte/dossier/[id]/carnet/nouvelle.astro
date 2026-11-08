@@ -1,0 +1,158 @@
+---
+import DossierShell from "@/components/espace/DossierShell.astro";
+import { todayInParis } from "@/lib/dossier-data";
+import { loadDossierPage } from "@/lib/dossier-page";
+import { MAX_PHOTOS_PER_POST } from "@/lib/family-space";
+
+const ctx = await loadDossierPage(Astro);
+if (ctx instanceof Response) return ctx;
+const { admin, dossier } = ctx;
+const base = `/compte/dossier/${dossier.id}`;
+if (!admin) return Astro.redirect(`${base}/carnet`);
+const today = todayInParis();
+
+const inputClass =
+  "mt-1 w-full rounded-xl border border-marine/25 bg-ivoire px-4 py-3 text-lg text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30";
+---
+
+<DossierShell dossier={dossier} active="carnet" section="Publier une visite" back={{ href: `${base}/carnet`, label: "Carnet de sourires" }}>
+  <form
+    id="visit-form"
+    data-dossier-id={dossier.id}
+    data-max-photos={MAX_PHOTOS_PER_POST}
+    class="mt-6 space-y-6 rounded-3xl border border-marine/10 bg-white p-5 shadow-[0_10px_30px_rgba(29,53,87,0.07)] sm:p-8"
+    novalidate
+  >
+    <div>
+      <label for="visit-date" class="block text-base font-semibold text-marine">Date de la visite</label>
+      <input id="visit-date" name="visitDate" type="date" value={today} max={today} class={inputClass} />
+    </div>
+    <div>
+      <label for="visit-text" class="block text-base font-semibold text-marine">Votre mot pour la famille</label>
+      <textarea
+        id="visit-text"
+        name="text"
+        rows="6"
+        maxlength="4000"
+        placeholder="Ex. : Belle après-midi ! Nous avons fait une partie de cartes puis une petite promenade au soleil."
+        class={inputClass}
+      />
+    </div>
+    <div>
+      <p class="block text-base font-semibold text-marine">Photos et pages du carnet</p>
+      <label
+        for="visit-photos"
+        class="mt-2 flex min-h-[120px] cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-marine/25 bg-cream px-4 text-center text-marine transition hover:border-marine/40 hover:bg-ivoire"
+      >
+        <span class="text-lg font-semibold">📷 Prendre ou choisir des photos</span>
+        <span class="text-sm text-marine/65">Jusqu’à {MAX_PHOTOS_PER_POST} — elles sont allégées et leur localisation est effacée.</span>
+      </label>
+      <input id="visit-photos" name="photos" type="file" accept="image/*" multiple class="sr-only" />
+      <ul id="visit-previews" class="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6" aria-label="Photos choisies"></ul>
+    </div>
+    <button
+      type="submit"
+      class="flex min-h-[60px] w-full items-center justify-center rounded-2xl bg-marine px-6 text-lg font-semibold text-ivoire shadow-lg hover:bg-marine/90 disabled:opacity-60"
+    >
+      Publier la visite
+    </button>
+    <p id="visit-status" class="text-base text-marine/80" role="status" aria-live="polite"></p>
+  </form>
+</DossierShell>
+
+<script>
+  import { firstError, sendJson } from "@/scripts/espace-api";
+
+  const form = document.getElementById("visit-form") as HTMLFormElement | null;
+  const input = document.getElementById("visit-photos") as HTMLInputElement | null;
+  const previews = document.getElementById("visit-previews");
+  const dossierId = form?.dataset.dossierId ?? "";
+  const maxPhotos = Number(form?.dataset.maxPhotos ?? "12");
+
+  input?.addEventListener("change", () => {
+    if (!previews || !input.files) return;
+    previews.replaceChildren(
+      ...Array.from(input.files)
+        .slice(0, maxPhotos)
+        .map((file) => {
+          const li = document.createElement("li");
+          const img = document.createElement("img");
+          img.src = URL.createObjectURL(file);
+          img.alt = "";
+          img.className = "aspect-square w-full rounded-xl object-cover ring-1 ring-marine/10";
+          li.appendChild(img);
+          return li;
+        }),
+    );
+  });
+
+  /** Réduit la photo dans le navigateur (1600 px, JPEG) : envoi rapide et sous la limite du serveur. */
+  async function shrink(file: File): Promise<Blob> {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    const g = canvas.getContext("2d")!;
+    // Fond blanc : sans lui, les zones transparentes d'un PNG deviennent noires en JPEG.
+    g.fillStyle = "#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    g.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+    if (!blob) throw new Error("conversion");
+    return blob;
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const status = document.getElementById("visit-status")!;
+    const submit = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+    const fd = new FormData(form);
+    const text = String(fd.get("text") ?? "").trim();
+    const visitDate = String(fd.get("visitDate") ?? "");
+    const files = Array.from(input?.files ?? []);
+
+    if (files.length > maxPhotos) {
+      status.textContent = `${maxPhotos} photos maximum par visite.`;
+      return;
+    }
+    if (!text && files.length === 0) {
+      status.textContent = "Écrivez un mot ou ajoutez au moins une photo.";
+      return;
+    }
+
+    submit.disabled = true;
+    const photoIds: string[] = [];
+    try {
+      for (const [i, file] of files.entries()) {
+        status.textContent = `Envoi de la photo ${i + 1} sur ${files.length}…`;
+        let blob: Blob;
+        try {
+          blob = await shrink(file);
+        } catch {
+          throw new Error(`La photo « ${file.name} » n’a pas pu être lue (format non pris en charge).`);
+        }
+        const res = await fetch(`/api/dossiers/${dossierId}/photos`, {
+          method: "POST",
+          headers: { "Content-Type": "image/jpeg" },
+          body: blob,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(firstError(data, `La photo ${i + 1} n’a pas pu être envoyée.`));
+        photoIds.push(data.id);
+      }
+      status.textContent = "Publication…";
+      const { ok, data } = await sendJson(`/api/dossiers/${dossierId}/posts`, {
+        text,
+        photoIds,
+        visitDate: visitDate || undefined,
+      });
+      if (!ok) throw new Error(firstError(data, "Publication impossible."));
+      window.location.href = `/compte/dossier/${dossierId}/carnet/${data.id}`;
+    } catch (err) {
+      status.textContent = err instanceof Error ? err.message : "Publication impossible.";
+      submit.disabled = false;
+    }
+  });
+</script>

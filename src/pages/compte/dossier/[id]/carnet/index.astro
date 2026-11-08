@@ -1,0 +1,72 @@
+---
+import DossierShell from "@/components/espace/DossierShell.astro";
+import Icon from "@/components/espace/Icon.astro";
+import { cap, excerpt, fmt } from "@/lib/dossier-data";
+import { loadDossierPage } from "@/lib/dossier-page";
+import { listPosts } from "@/lib/family-space";
+
+const ctx = await loadDossierPage(Astro);
+if (ctx instanceof Response) return ctx;
+const { admin, dossier } = ctx;
+const base = `/compte/dossier/${dossier.id}`;
+const visits = (await listPosts(dossier.id, 500)).filter((p) => p.kind === "visite");
+---
+
+<DossierShell dossier={dossier} active="carnet" section="Carnet de sourires">
+  <p slot="intro" class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
+    Après chaque visite, Céline raconte le moment passé ensemble, avec des photos et les pages du carnet.
+  </p>
+
+  {
+    admin && (
+      <a
+        href={`${base}/carnet/nouvelle`}
+        class="mt-6 inline-flex min-h-[56px] items-center gap-2 rounded-2xl bg-marine px-6 text-lg font-semibold text-ivoire shadow-lg hover:bg-marine/90"
+      >
+        <Icon name="plus" class="h-6 w-6" /> Publier une visite
+      </a>
+    )
+  }
+
+  {
+    visits.length === 0 ? (
+      <p class="mt-8 rounded-3xl border border-dashed border-marine/25 bg-white/70 p-8 text-center text-lg text-marine/75">
+        Le carnet est encore vide. La première visite racontée apparaîtra ici.
+      </p>
+    ) : (
+      <ol class="mt-8 space-y-5">
+        {visits.map((v) => (
+          <li>
+            <a
+              href={`${base}/carnet/${v.id}`}
+              class="jojo-paper group flex flex-col overflow-hidden rounded-3xl transition hover:-translate-y-0.5 sm:flex-row"
+            >
+              {v.photoIds[0] && (
+                <span class="relative block shrink-0 sm:w-56">
+                  <img
+                    src={`/api/photos/${v.photoIds[0]}`}
+                    alt=""
+                    loading="lazy"
+                    class="aspect-[16/10] h-full w-full object-cover sm:aspect-auto"
+                  />
+                  {v.photoIds.length > 1 && (
+                    <span class="absolute bottom-2 right-2 rounded-full bg-marine/80 px-2.5 py-1 text-sm font-semibold text-ivoire">
+                      {v.photoIds.length} photos
+                    </span>
+                  )}
+                </span>
+              )}
+              <span class="relative z-[1] block flex-1 p-5 sm:p-6">
+                <span class="block font-display text-3xl text-marine">{cap(fmt.dayYear.format(v.visitDate ?? v.createdAt))}</span>
+                {v.text && <span class="mt-2 block text-base leading-relaxed text-marine/85">{excerpt(v.text, 200)}</span>}
+                <span class="mt-3 inline-flex items-center gap-1 font-semibold text-aquarelle-bleu">
+                  Ouvrir la page <Icon name="chevron" class="h-5 w-5" />
+                </span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+</DossierShell>

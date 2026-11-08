@@ -1,0 +1,187 @@
+---
+import DossierShell from "@/components/espace/DossierShell.astro";
+import { listMembers } from "@/lib/dossier-data";
+import { loadDossierPage } from "@/lib/dossier-page";
+
+const ctx = await loadDossierPage(Astro);
+if (ctx instanceof Response) return ctx;
+const { user, admin, dossier } = ctx;
+const members = await listMembers(dossier.id);
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p.charAt(0).toUpperCase())
+    .join("");
+const inputClass =
+  "mt-1 w-full rounded-xl border border-marine/25 bg-ivoire px-4 py-3 text-lg text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30";
+---
+
+<DossierShell dossier={dossier} active="proches" section="Les proches">
+  <p slot="intro" class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
+    Les personnes qui ont accès à ce dossier, en plus de Céline. Elles voient le carnet, l’album, l’agenda, les documents et la
+    messagerie.
+  </p>
+
+  <ul class="mt-8 space-y-3">
+    <li class="flex items-center gap-4 rounded-3xl border border-marine/10 bg-white p-4 shadow-[0_8px_24px_rgba(29,53,87,0.06)]">
+      <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rose-vieux/20 font-bold text-marine">CM</span>
+      <span>
+        <span class="block font-hero text-lg font-semibold text-marine">Céline</span>
+        <span class="block text-sm text-marine/60">Le Sourire de Jojo</span>
+      </span>
+    </li>
+    {
+      members.map((m) => (
+        <li class="flex flex-wrap items-center gap-4 rounded-3xl border border-marine/10 bg-white p-4 shadow-[0_8px_24px_rgba(29,53,87,0.06)]">
+          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-sauge/25 font-bold text-marine">{initials(m.name)}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-hero text-lg font-semibold text-marine">
+              {m.name}
+              {m.id === user.id && <span class="font-sans text-sm font-normal text-marine/60"> (vous)</span>}
+            </span>
+            {admin && <span class="block break-all text-sm text-marine/60">{m.email}</span>}
+          </span>
+          {admin && (
+            <button
+              type="button"
+              data-reset-member
+              data-id={m.id}
+              data-name={m.name}
+              class="min-h-[44px] rounded-xl border-2 border-marine/15 px-4 text-base font-semibold text-marine hover:border-marine/30"
+            >
+              Lien mot de passe
+            </button>
+          )}
+          {admin && (
+            <button
+              type="button"
+              data-remove-member
+              data-id={m.id}
+              data-confirm={`Retirer l’accès de ${m.name} à ce dossier ?`}
+              class="min-h-[44px] rounded-xl border-2 border-marine/15 px-4 text-base font-semibold text-marine hover:border-marine/30"
+            >
+              Retirer l’accès
+            </button>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+  {members.length === 0 && <p class="mt-4 text-lg text-marine/70">Aucun proche invité pour l’instant.</p>}
+
+  {
+    admin && (
+      <div id="reset-result" hidden class="mt-4 space-y-3 rounded-2xl bg-cream p-4 ring-1 ring-marine/10">
+        <p id="reset-text" class="text-base text-marine/85"></p>
+        <input id="reset-link" type="text" readonly class={inputClass} />
+        <button type="button" id="reset-copy" class="min-h-[52px] rounded-2xl bg-marine px-6 font-semibold text-ivoire">Copier le lien</button>
+      </div>
+    )
+  }
+
+  {
+    admin ? (
+      <form id="invite-form" data-dossier-id={dossier.id} class="mt-10 space-y-4 rounded-3xl border border-marine/10 bg-white p-5 shadow-[0_10px_30px_rgba(29,53,87,0.07)] sm:p-8" novalidate>
+        <h2 class="font-display text-3xl text-marine">Inviter un proche</h2>
+        <div>
+          <label for="invite-label" class="block text-base font-semibold text-marine">Qui invitez-vous ?</label>
+          <input id="invite-label" name="label" type="text" maxlength="120" placeholder="Ex. : son fils Paul" class={inputClass} />
+        </div>
+        <button type="submit" class="min-h-[56px] rounded-2xl bg-marine px-8 text-lg font-semibold text-ivoire shadow hover:bg-marine/90">
+          Créer le lien d’invitation
+        </button>
+        <p id="invite-status" class="text-base text-marine/80" role="status" aria-live="polite"></p>
+        <div id="invite-result" class="hidden space-y-3 rounded-2xl bg-cream p-4 ring-1 ring-marine/10">
+          <p class="text-base text-marine/85">
+            Envoyez ce lien au proche (SMS, WhatsApp ou e-mail). Il sert <strong>une seule fois</strong> et reste valable 14 jours.
+          </p>
+          <input id="invite-link" type="text" readonly class:list={[inputClass, "text-sm"]} />
+          <div class="flex flex-wrap gap-3">
+            <button type="button" id="invite-copy" class="min-h-[52px] rounded-2xl bg-marine px-6 font-semibold text-ivoire">Copier le lien</button>
+            <button type="button" id="invite-share" class="hidden min-h-[52px] rounded-2xl border-2 border-marine/20 px-6 font-semibold text-marine">
+              Partager…
+            </button>
+          </div>
+        </div>
+      </form>
+    ) : (
+      <p class="mt-8 rounded-2xl bg-sauge/15 px-4 py-3 text-base text-marine/80">
+        Pour ajouter un membre de la famille, demandez à Céline : elle vous enverra un lien d’invitation pour lui.
+      </p>
+    )
+  }
+</DossierShell>
+
+<script>
+  import { firstError, sendJson, wireDeleteButtons } from "@/scripts/espace-api";
+
+  const form = document.getElementById("invite-form") as HTMLFormElement | null;
+  const dossierId = form?.dataset.dossierId ?? "";
+
+  wireDeleteButtons("[data-remove-member]", (id) => `/api/dossiers/${dossierId}/members/${id}`, "Retirer cet accès ?");
+
+  // Lien de réinitialisation du mot de passe pour un proche (valable 1 h).
+  document.querySelectorAll<HTMLButtonElement>("[data-reset-member]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const { ok, data } = await sendJson(`/api/dossiers/${dossierId}/members/${btn.dataset.id}/reset`);
+      if (!ok) {
+        alert(firstError(data, "Création du lien impossible."));
+        return;
+      }
+      document.getElementById("reset-text")!.textContent = `Lien pour ${btn.dataset.name} : il permet de choisir un nouveau mot de passe, une seule fois, pendant une heure. Envoyez-le par SMS ou e-mail.`;
+      (document.getElementById("reset-link") as HTMLInputElement).value = String(data.link);
+      const box = document.getElementById("reset-result")!;
+      box.hidden = false;
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+  document.getElementById("reset-copy")?.addEventListener("click", async () => {
+    const link = document.getElementById("reset-link") as HTMLInputElement;
+    try {
+      await navigator.clipboard.writeText(link.value);
+      document.getElementById("reset-text")!.textContent = "Lien copié : collez-le dans un SMS ou un e-mail.";
+    } catch {
+      link.select();
+    }
+  });
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const status = document.getElementById("invite-status")!;
+    const label = String(new FormData(form).get("label") ?? "").trim();
+    if (label.length < 2) {
+      status.textContent = "Indiquez qui vous invitez (ex. : son fils Paul).";
+      return;
+    }
+    status.textContent = "Création du lien…";
+    const { ok, data } = await sendJson(`/api/dossiers/${dossierId}/invitations`, { label });
+    if (!ok) {
+      status.textContent = firstError(data, "Création impossible.");
+      return;
+    }
+    status.textContent = `Lien créé pour ${label}.`;
+    (document.getElementById("invite-link") as HTMLInputElement).value = String(data.link);
+    document.getElementById("invite-result")!.classList.remove("hidden");
+    if (navigator.share) document.getElementById("invite-share")!.classList.remove("hidden");
+  });
+
+  document.getElementById("invite-copy")?.addEventListener("click", async () => {
+    const link = document.getElementById("invite-link") as HTMLInputElement;
+    const status = document.getElementById("invite-status")!;
+    try {
+      await navigator.clipboard.writeText(link.value);
+      status.textContent = "Lien copié : il ne reste plus qu’à le coller dans un SMS ou un e-mail.";
+    } catch {
+      link.select();
+      status.textContent = "Sélectionnez le lien et copiez-le.";
+    }
+  });
+
+  document.getElementById("invite-share")?.addEventListener("click", async () => {
+    const link = document.getElementById("invite-link") as HTMLInputElement;
+    await navigator
+      .share({ title: "Le Sourire de Jojo — Espace familles", text: "Votre invitation à l’espace familles du Sourire de Jojo :", url: link.value })
+      .catch(() => {});
+  });
+</script>

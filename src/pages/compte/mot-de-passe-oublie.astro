@@ -1,0 +1,48 @@
+---
+import AuthLayout from "@/layouts/AuthLayout.astro";
+import AuthField from "@/components/espace/AuthField.astro";
+---
+
+<AuthLayout title="Mot de passe oublié — Espace familles" heading="Mot de passe oublié ?" intro="Pas d’inquiétude, cela arrive à tout le monde.">
+  <form id="forgot-form" class="mt-6 space-y-4" novalidate>
+    <AuthField id="forgot-email" name="email" type="email" label="Votre e-mail" icon="mail" autocomplete="email" placeholder="prenom@exemple.fr" />
+    <button
+      type="submit"
+      class="h-14 w-full rounded-full bg-gradient-to-r from-marine via-[#2B4A72] to-[#3E6A8F] text-lg font-bold text-white shadow-[0_14px_28px_rgba(29,53,87,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] transition hover:brightness-110 disabled:opacity-60"
+    >
+      Recevoir un lien
+    </button>
+    <p data-status class="min-h-[1.5rem] text-center text-base text-marine/80" role="status" aria-live="polite"></p>
+  </form>
+  <div id="forgot-done" hidden class="mt-6 space-y-3 rounded-2xl bg-sauge/20 p-5 text-center text-lg leading-relaxed text-marine">
+    <p data-done-email hidden>
+      Si cette adresse correspond à un compte, un e-mail vient de partir avec un lien pour choisir un nouveau mot de passe. Il est
+      valable <strong>une heure</strong>. Pensez à regarder dans les courriers indésirables.
+    </p>
+    <p data-done-celine hidden>
+      Contactez <strong>Céline</strong> : elle peut vous envoyer un lien pour choisir un nouveau mot de passe, par SMS ou par
+      e-mail.
+    </p>
+  </div>
+  <p class="mt-4 border-t border-marine/10 pt-5 text-center text-base">
+    <a href="/compte/connexion" class="inline-flex min-h-[44px] items-center font-semibold text-aquarelle-bleu underline underline-offset-4">Retour à la connexion</a>
+  </p>
+</AuthLayout>
+
+<script>
+  import { wireAuthForm } from "@/scripts/auth-forms";
+
+  wireAuthForm({
+    formId: "forgot-form",
+    endpoint: "/api/auth/forgot",
+    pending: "Envoi…",
+    fallbackError: "Envoi impossible pour le moment.",
+    body: (fd) => ({ email: String(fd.get("email") ?? "") }),
+    onSuccess: (result, form) => {
+      form.hidden = true;
+      const done = document.getElementById("forgot-done")!;
+      done.hidden = false;
+      done.querySelector<HTMLElement>(result.data.emailEnabled ? "[data-done-email]" : "[data-done-celine]")!.hidden = false;
+    },
+  });
+</script>

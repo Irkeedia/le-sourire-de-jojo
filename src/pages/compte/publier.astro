@@ -1,0 +1,9 @@
+---
+import { canAccessDossier, isAdmin } from "@/lib/family-space";
+
+/** Raccourci « Publier une visite » de l'accueil : choisit le dossier puis ouvre le formulaire. */
+const user = Astro.locals.user;
+const id = Astro.url.searchParams.get("dossier") ?? "";
+if (!user || !isAdmin(user) || !(await canAccessDossier(user, id))) return Astro.redirect("/compte");
+return Astro.redirect(`/compte/dossier/${id}/carnet/nouvelle`);
+---
