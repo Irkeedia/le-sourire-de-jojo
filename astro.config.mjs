@@ -19,13 +19,16 @@ export default defineConfig({
     checkOrigin: true,
   },
   vite: {
+    build: {
+      // Ne jamais intégrer scripts ni polices directement dans la page : la CSP
+      // (script-src 'self' + nonce, font-src 'self') bloquerait ces contenus intégrés.
+      // Ils sont servis comme fichiers séparés, autorisés par 'self'.
+      assetsInlineLimit: 0,
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
       },
-    },
-    ssr: {
-      noExternal: ["mongoose"],
     },
   },
 });
