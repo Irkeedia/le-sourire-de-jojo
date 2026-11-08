@@ -36,3 +36,20 @@ export async function sendContactNotification(payload: MailPayload): Promise<voi
     text: payload.text,
   });
 }
+
+/** Le serveur sait-il envoyer des e-mails ? */
+export function isSmtpConfigured(): boolean {
+  return Boolean(import.meta.env.SMTP_HOST && import.meta.env.SMTP_USER && import.meta.env.SMTP_PASS);
+}
+
+/** E-mail simple envoyé par le site (ex. réinitialisation du mot de passe). */
+export async function sendSiteMail(payload: { to: string; subject: string; text: string }): Promise<void> {
+  const user = import.meta.env.SMTP_USER;
+  await sendContactNotification({
+    fromName: "Le Sourire de Jojo",
+    fromEmail: import.meta.env.CONTACT_TO_EMAIL || user || "",
+    to: payload.to,
+    subject: payload.subject,
+    text: payload.text,
+  });
+}

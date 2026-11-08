@@ -230,6 +230,22 @@ try {
   check("un message vide est refusé", r.status === 422, `statut ${r.status}`);
   void messageA2;
 
+  console.log("\nCloche des nouveautés");
+  r = await familleA.request(`/compte/dossier/${dossierA}`);
+  const dashNotif = await r.text();
+  check("la cloche du proche A annonce des nouveautés", /aria-label="Nouveautés : \d+"/.test(dashNotif) && dashNotif.includes("Message de Céline"));
+  r = await familleB.request(`/api/dossiers/${dossierA}/seen`, { method: "POST", json: {} });
+  check("le proche B ne peut pas marquer les nouveautés du dossier A", r.status === 404, `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierB}`);
+  check("la cloche du dossier B ne montre rien du dossier A", !(await r.text()).includes("Je passe jeudi"));
+  r = await familleA.request(`/api/dossiers/${dossierA}/seen`, { method: "POST", json: {} });
+  check("le proche A ouvre la cloche (nouveautés vues)", r.ok, `statut ${r.status}`);
+  r = await familleA.request(`/compte/dossier/${dossierA}`);
+  check("après ouverture, la cloche n'a plus de pastille", r.ok && (await r.text()).includes('aria-label="Nouveautés"'));
+  r = await celine.request(`/api/dossiers/${dossierA}/messages`, { method: "POST", json: { text: "Petit rappel : apportez les photos de famille." } });
+  r = await familleA.request(`/compte/dossier/${dossierA}`);
+  check("un nouveau message refait apparaître la pastille", /aria-label="Nouveautés : 1"/.test(await r.text()));
+
   console.log("\nAgenda des visites");
   const tomorrow = new Date(Date.now() + 24 * 3600000).toISOString().slice(0, 10);
   r = await celine.request(`/api/dossiers/${dossierA}/appointments`, { method: "POST", json: { date: tomorrow, time: "14:00", durationMinutes: 120, note: "Promenade au parc" } });
@@ -246,7 +262,7 @@ try {
   check("le proche B ne peut pas voir l'agenda du dossier A", r.status === 302, `statut ${r.status}`);
   r = await familleB.request(`/compte/dossier/${dossierB}`);
   const dashB = await r.text();
-  check("le tableau de bord du dossier B n'affiche pas la visite du dossier A", r.ok && dashB.includes("Agenda des visites") && !dashB.includes("Promenade au parc"), `statut ${r.status}`);
+  check("le tableau de bord du dossier B n'affiche pas la visite du dossier A", r.ok && dashB.includes("Prochaines visites") && !dashB.includes("Promenade au parc"), `statut ${r.status}`);
   r = await celine.request(`/api/dossiers/${dossierA}/appointments`, { method: "POST", json: { date: tomorrow, time: "25:00", durationMinutes: 60 } });
   check("une heure invalide est refusée", r.status === 422, `statut ${r.status}`);
   await celine.request(`/api/dossiers/${dossierA}/appointments`, { method: "POST", json: { date: "2027-07-15", time: "14:00", durationMinutes: 60, note: "été" } });
@@ -315,11 +331,70 @@ try {
     const html = await res.text();
     if (!res.ok || inlineScripts(html) > 0) badPages.push(`${page || "/"} (${res.status})`);
   }
-  const home = await (await celine.request("/compte")).text();
-  if (inlineScripts(home) > 0) badPages.push("/compte");
-  check("aucun script intégré sans nonce dans les 10 pages de l'espace", badPages.length === 0, badPages.join(", "));
+  for (const page of ["/compte", "/compte/mon-compte"]) {
+    const html = await (await celine.request(page)).text();
+    if (inlineScripts(html) > 0) badPages.push(page);
+  }
+  for (const page of ["/compte/connexion", "/compte/inscription", "/compte/mot-de-passe-oublie", "/compte/reinitialiser?jeton=x"]) {
+    const res = await intrus.request(page);
+    const html = await res.text();
+    if (!res.ok || inlineScripts(html) > 0) badPages.push(`${page} (${res.status})`);
+  }
+  check("aucun script intégré sans nonce dans les 15 pages de l'espace", badPages.length === 0, badPages.join(", "));
   const csp = (await celine.request(`/compte/dossier/${dossierA}`)).headers.get("content-security-policy") ?? "";
   check("la CSP de production est bien envoyée", csp.includes("script-src 'self' 'nonce-"));
+
+  console.log("\nMot de passe oublié et réinitialisation");
+  r = await intrus.request("/api/auth/forgot", { method: "POST", json: { email: "paul@test.local" } });
+  const forgotKnown = await intrus.data(r);
+  r = await intrus.request("/api/auth/forgot", { method: "POST", json: { email: "personne@test.local" } });
+  const forgotUnknown = await intrus.data(r);
+  check("même réponse que le compte existe ou non", JSON.stringify(forgotKnown) === JSON.stringify(forgotUnknown) && forgotKnown.ok === true);
+  check("sans e-mail configuré, la page invite à contacter Céline", forgotKnown.emailEnabled === false);
+  r = await intrus.request("/api/auth/forgot", { method: "POST", json: { email: "paul@test.local" }, origin: "https://site-malveillant.example" });
+  check("demande venant d'un autre site refusée", r.status === 403, `statut ${r.status}`);
+
+  const paul = await db.db().collection("users").findOne({ email: "paul@test.local" });
+  const anne = await db.db().collection("users").findOne({ email: "anne@test.local" });
+  r = await familleA.request(`/api/dossiers/${dossierA}/members/${anne._id}/reset`, { method: "POST", json: {} });
+  check("un proche ne peut pas créer de lien de mot de passe", r.status === 403, `statut ${r.status}`);
+  r = await celine.request(`/api/dossiers/${dossierA}/members/${anne._id}/reset`, { method: "POST", json: {} });
+  check("Céline ne peut pas créer de lien pour un proche d'un autre dossier", r.status === 404, `statut ${r.status}`);
+  r = await celine.request(`/api/dossiers/${dossierA}/members/${paul._id}/reset`, { method: "POST", json: {} });
+  const resetUrl = new URL((await celine.data(r)).link ?? "http://x/");
+  const resetToken = resetUrl.searchParams.get("jeton");
+  check("Céline crée un lien de mot de passe pour Paul", r.status === 201 && resetUrl.pathname === "/compte/reinitialiser" && Boolean(resetToken));
+  r = await intrus.request(`/compte/reinitialiser?jeton=${encodeURIComponent(resetToken)}`);
+  check("la page du lien salue Paul", r.ok && (await r.text()).includes("Bonjour Paul"), `statut ${r.status}`);
+  r = await intrus.request("/api/auth/reset", { method: "POST", json: { token: resetToken, password: "court" } });
+  check("un mot de passe trop faible est refusé", r.status === 422, `statut ${r.status}`);
+  const pauloAvant = actor();
+  await pauloAvant.request("/api/auth/login", { method: "POST", json: { email: "paul@test.local", password: pwd } });
+  const nouveau = actor();
+  r = await nouveau.request("/api/auth/reset", { method: "POST", json: { token: resetToken, password: "NouveauMot2" } });
+  check("Paul choisit un nouveau mot de passe avec le lien", r.ok, `statut ${r.status}`);
+  r = await nouveau.request(`/compte/dossier/${dossierA}`);
+  check("… et se retrouve connecté", r.ok, `statut ${r.status}`);
+  r = await intrus.request("/api/auth/reset", { method: "POST", json: { token: resetToken, password: "EncoreUn3" } });
+  check("le lien ne sert qu'une fois", r.status === 410, `statut ${r.status}`);
+  r = await pauloAvant.request(`/compte/dossier/${dossierA}`);
+  check("les anciennes sessions de Paul sont fermées", r.status === 302, `statut ${r.status}`);
+  r = await intrus.request("/api/auth/login", { method: "POST", json: { email: "paul@test.local", password: pwd } });
+  check("l'ancien mot de passe ne marche plus", r.status === 401, `statut ${r.status}`);
+  await familleA.request("/api/auth/login", { method: "POST", json: { email: "paul@test.local", password: "NouveauMot2" } });
+
+  const expired = await celine.request(`/api/dossiers/${dossierA}/members/${paul._id}/reset`, { method: "POST", json: {} });
+  const expiredToken = new URL((await celine.data(expired)).link).searchParams.get("jeton");
+  await db.db().collection("password_resets").updateMany({ usedAt: { $exists: false } }, { $set: { expiresAt: new Date(Date.now() - 1000) } });
+  r = await intrus.request("/api/auth/reset", { method: "POST", json: { token: expiredToken, password: "EncoreUn3" } });
+  check("un lien de plus d'une heure est refusé", r.status === 410, `statut ${r.status}`);
+
+  r = await familleA.request("/api/auth/password", { method: "POST", json: { current: "mauvais", password: "Changement4" } });
+  check("changer de mot de passe exige l'actuel", r.status === 403, `statut ${r.status}`);
+  r = await familleA.request("/api/auth/password", { method: "POST", json: { current: "NouveauMot2", password: "Changement4" } });
+  check("Paul change son mot de passe depuis Mon compte", r.ok, `statut ${r.status}`);
+  r = await intrus.request("/api/auth/password", { method: "POST", json: { current: "x", password: "Changement4" } });
+  check("un visiteur non connecté ne peut pas changer de mot de passe", r.status === 401, `statut ${r.status}`);
 
   console.log("\nCompte existant invité dans un second dossier");
   const tokenA2 = await tokenOf(dossierA, "sa fille Anne");

@@ -110,7 +110,7 @@ export async function unreadMessages(userId: string, dossierId: string): Promise
   return Message.countDocuments({
     dossierId,
     authorId: { $ne: new mongoose.Types.ObjectId(userId) },
-    ...(state ? { createdAt: { $gt: state.messagesReadAt } } : {}),
+    ...(state?.messagesReadAt ? { createdAt: { $gt: state.messagesReadAt } } : {}),
   });
 }
 
@@ -303,60 +303,11 @@ export async function listMembers(dossierId: string): Promise<MemberView[]> {
   return users.map((u) => ({ id: String(u._id), name: u.name, email: u.email }));
 }
 
-/* ---------- Indicateurs des tuiles ---------- */
-
-export type DossierOverview = {
-  visits: number;
-  lastVisit: { id: string; date: Date; text: string; coverPhotoId: string | null } | null;
-  unread: number;
-  lastMessage: { authorId: string; authorName: string; text: string; createdAt: Date } | null;
-  photos: number;
-  photoPreview: string[];
-  nextVisit: AppointmentView | null;
-  documents: number;
-  members: MemberView[];
-};
-
-export async function dossierOverview(userId: string, dossierId: string): Promise<DossierOverview> {
-  await connectDb();
-  const [visits, lastVisitRow, unread, lastMessageRow, album, next, docs, members] = await Promise.all([
-    Post.countDocuments({ dossierId, kind: "visite" }),
-    Post.findOne({ dossierId, kind: "visite" }).sort({ createdAt: -1 }).lean(),
-    unreadMessages(userId, dossierId),
-    Message.findOne({ dossierId }).sort({ createdAt: -1 }).lean(),
-    listAlbum(dossierId),
-    nextAppointment(dossierId),
-    countDocuments(dossierId),
-    listMembers(dossierId),
-  ]);
-  return {
-    visits,
-    lastVisit: lastVisitRow
-      ? {
-          id: String(lastVisitRow._id),
-          date: lastVisitRow.visitDate ?? lastVisitRow.createdAt,
-          text: lastVisitRow.text ?? "",
-          coverPhotoId: lastVisitRow.photoIds?.[0] ? String(lastVisitRow.photoIds[0]) : null,
-        }
-      : null,
-    unread,
-    lastMessage: lastMessageRow
-      ? {
-          authorId: String(lastMessageRow.authorId),
-          authorName: lastMessageRow.authorName,
-          text: lastMessageRow.text,
-          createdAt: lastMessageRow.createdAt,
-        }
-      : null,
-    photos: album.length,
-    photoPreview: album.slice(0, 4).map((p) => p.photoId),
-    nextVisit: next,
-    documents: docs,
-    members,
-  };
-}
-
 /* ---------- Cartes de l'accueil de l'espace ---------- */
+
+function monthKey(d: Date): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: PARIS_TZ, year: "numeric", month: "2-digit" }).format(d);
+}
 
 export type DossierCard = {
   id: string;
@@ -364,6 +315,7 @@ export type DossierCard = {
   unread: number;
   nextVisit: AppointmentView | null;
   lastPublication: Date | null;
+  visitsThisMonth: number;
 };
 
 /** Ordre : messages non lus d'abord, puis la visite la plus proche, puis l'ordre alphabétique. */
@@ -371,16 +323,182 @@ export async function dossierCards(userId: string, dossiers: { id: string; name:
   await connectDb();
   const cards = await Promise.all(
     dossiers.map(async (d) => {
-      const [unread, nextVisit, last] = await Promise.all([
+      const [unread, nextVisit, visits] = await Promise.all([
         unreadMessages(userId, d.id),
         nextAppointment(d.id),
-        Post.findOne({ dossierId: d.id, kind: "visite" }).sort({ createdAt: -1 }).lean(),
+        Post.find({ dossierId: d.id, kind: "visite" }, { visitDate: 1, createdAt: 1 }).sort({ createdAt: -1 }).lean(),
       ]);
-      return { ...d, unread, nextVisit, lastPublication: last ? (last.visitDate ?? last.createdAt) : null };
+      const last = visits[0];
+      const nowKey = monthKey(new Date());
+      return {
+        ...d,
+        unread,
+        nextVisit,
+        lastPublication: last ? (last.visitDate ?? last.createdAt) : null,
+        visitsThisMonth: visits.filter((v) => monthKey(v.visitDate ?? v.createdAt) === nowKey).length,
+      };
     }),
   );
   const soon = (c: DossierCard) => c.nextVisit?.startsAt.getTime() ?? Number.POSITIVE_INFINITY;
   return cards.sort(
     (a, b) => Number(b.unread > 0) - Number(a.unread > 0) || soon(a) - soon(b) || a.name.localeCompare(b.name, "fr"),
   );
+}
+
+
+/* ---------- Tableau de bord ---------- */
+
+const monthShort = new Intl.DateTimeFormat("fr-FR", { month: "short", timeZone: PARIS_TZ });
+
+export type DashboardData = {
+  visitsThisMonth: number;
+  visitsTotal: number;
+  unread: number;
+  photos: number;
+  nextVisit: AppointmentView | null;
+  upcoming: AppointmentView[];
+  recentVisits: { id: string; date: Date; text: string; coverPhotoId: string | null; photos: number }[];
+  albumPreview: string[];
+  recentMessages: MessageView[];
+  /** Visites racontées sur les 6 derniers mois (le plus ancien d'abord). */
+  visitsByMonth: { label: string; count: number; current: boolean }[];
+  members: MemberView[];
+};
+
+export async function dashboardData(userId: string, dossierId: string): Promise<DashboardData> {
+  await connectDb();
+  const [posts, unread, agenda, messages, members] = await Promise.all([
+    listPosts(dossierId, 500),
+    unreadMessages(userId, dossierId),
+    listAppointments(dossierId),
+    listMessages(dossierId, 3),
+    listMembers(dossierId),
+  ]);
+  const visits = posts.filter((p) => p.kind === "visite");
+  const dateOf = (v: (typeof visits)[number]) => v.visitDate ?? v.createdAt;
+  const nowKey = monthKey(new Date());
+
+  const months: { key: string; label: string; count: number; current: boolean }[] = [];
+  const cursor = new Date();
+  cursor.setUTCDate(15);
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(cursor);
+    d.setUTCMonth(cursor.getUTCMonth() - i);
+    const key = monthKey(d);
+    months.push({ key, label: monthShort.format(d).replace(".", ""), count: 0, current: key === nowKey });
+  }
+  for (const v of visits) {
+    const m = months.find((x) => x.key === monthKey(dateOf(v)));
+    if (m) m.count += 1;
+  }
+
+  const album = visits.flatMap((v) => v.photoIds);
+  return {
+    visitsThisMonth: visits.filter((v) => monthKey(dateOf(v)) === nowKey).length,
+    visitsTotal: visits.length,
+    unread,
+    photos: album.length,
+    nextVisit: agenda.upcoming[0] ?? null,
+    upcoming: agenda.upcoming.slice(0, 3),
+    recentVisits: visits.slice(0, 3).map((v) => ({
+      id: v.id,
+      date: dateOf(v),
+      text: v.text,
+      coverPhotoId: v.photoIds[0] ?? null,
+      photos: v.photoIds.length,
+    })),
+    albumPreview: album.slice(0, 5),
+    recentMessages: messages.reverse(),
+    visitsByMonth: months.map(({ label, count, current }) => ({ label, count, current })),
+    members,
+  };
+}
+
+/** « Aujourd'hui », « Demain » ou « À venir » pour une visite prévue. */
+export function appointmentStatus(a: AppointmentView): { label: string; tone: "rose" | "jaune" | "sauge" } {
+  const day = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: PARIS_TZ }).format(d);
+  const today = day(new Date());
+  const tomorrow = day(new Date(Date.now() + 86400000));
+  const at = day(a.startsAt);
+  if (at === today) return { label: "Aujourd’hui", tone: "rose" };
+  if (at === tomorrow) return { label: "Demain", tone: "jaune" };
+  return { label: "À venir", tone: "sauge" };
+}
+
+/* ---------- Notifications (cloche) ---------- */
+
+export type NotificationItem = {
+  kind: "visite" | "message" | "document" | "agenda";
+  label: string;
+  detail: string;
+  date: Date;
+  href: string;
+};
+
+/** Nouveautés écrites par les autres depuis la dernière ouverture de la cloche. */
+export async function notificationsFor(
+  user: { id: string; role: "family" | "admin" },
+  dossierId: string,
+): Promise<{ count: number; items: NotificationItem[] }> {
+  await connectDb();
+  const userId = user.id;
+  const isAdminUser = user.role === "admin";
+  const state = await ReadState.findOne({ dossierId, userId }).lean();
+  const since = state?.seenAt ?? new Date(0);
+  const me = new mongoose.Types.ObjectId(userId);
+  const base = `/compte/dossier/${dossierId}`;
+  const db = mongoose.connection.db;
+
+  const [visits, messages, docs, appointments] = await Promise.all([
+    Post.find({ dossierId, kind: "visite", authorId: { $ne: me }, createdAt: { $gt: since } }).sort({ createdAt: -1 }).limit(20).lean(),
+    Message.find({ dossierId, authorId: { $ne: me }, createdAt: { $gt: since } }).sort({ createdAt: -1 }).limit(20).lean(),
+    db
+      ? db
+          .collection(`${DOCUMENT_BUCKET}.files`)
+          .find({ "metadata.dossierId": new mongoose.Types.ObjectId(dossierId), "metadata.uploadedBy": { $ne: userId }, uploadDate: { $gt: since } })
+          .sort({ uploadDate: -1 })
+          .limit(20)
+          .toArray()
+      : [],
+    Appointment.find({ dossierId, createdAt: { $gt: since }, startsAt: { $gt: new Date() } }).sort({ createdAt: -1 }).limit(20).lean(),
+  ]);
+
+  const items: NotificationItem[] = [
+    ...visits.map((v) => ({
+      kind: "visite" as const,
+      label: "Nouvelle visite racontée",
+      detail: cap(fmt.day.format(v.visitDate ?? v.createdAt)),
+      date: v.createdAt,
+      href: `${base}/carnet/${v._id}`,
+    })),
+    ...messages.map((m) => ({
+      kind: "message" as const,
+      label: `Message de ${m.authorName.split(" ")[0]}`,
+      detail: excerpt(m.text, 70),
+      date: m.createdAt,
+      href: `${base}/messages`,
+    })),
+    ...docs.map((d) => ({
+      kind: "document" as const,
+      label: "Nouveau document",
+      detail: String(d.metadata?.title ?? "Document"),
+      date: d.uploadDate as Date,
+      href: `${base}/documents`,
+    })),
+    // Les visites de l'agenda sont saisies par Céline : ce n'est une nouveauté que pour les proches.
+    ...(isAdminUser ? [] : appointments).map((a) => ({
+      kind: "agenda" as const,
+      label: "Visite ajoutée à l’agenda",
+      detail: appointmentLabel(toAppointment(a)),
+      date: a.createdAt,
+      href: `${base}/agenda`,
+    })),
+  ].sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  return { count: items.length, items: items.slice(0, 8) };
+}
+
+export async function markNotificationsSeen(userId: string, dossierId: string): Promise<void> {
+  await connectDb();
+  await ReadState.updateOne({ dossierId, userId }, { $set: { seenAt: new Date() } }, { upsert: true });
 }

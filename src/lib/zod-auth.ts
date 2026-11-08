@@ -56,3 +56,24 @@ export const appointmentSchema = z.object({
   durationMinutes: z.coerce.number().int().min(15, "15 minutes minimum.").max(720, "12 heures maximum."),
   note: z.string().trim().max(500, "500 caractères maximum.").default(""),
 });
+
+const newPassword = z
+  .string()
+  .min(8, "Au moins 8 caractères.")
+  .max(128)
+  .regex(/[A-Za-z]/, "Au moins une lettre.")
+  .regex(/[0-9]/, "Au moins un chiffre.");
+
+export const forgotSchema = z.object({
+  email: z.string().trim().email("E-mail invalide.").max(254),
+});
+
+export const resetSchema = z.object({
+  token: z.string().trim().min(10).max(128),
+  password: newPassword,
+});
+
+export const changePasswordSchema = z.object({
+  current: z.string().min(1, "Mot de passe actuel requis.").max(128),
+  password: newPassword,
+});

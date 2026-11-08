@@ -1,0 +1,40 @@
+/** Types partagés par l'interface de l'espace familles. */
+
+export type EspaceSection =
+  | "dashboard"
+  | "carnet"
+  | "messages"
+  | "album"
+  | "agenda"
+  | "documents"
+  | "proches"
+  | "compte"
+  | "dossiers";
+
+export type IconName =
+  | "carnet"
+  | "messages"
+  | "album"
+  | "agenda"
+  | "documents"
+  | "proches"
+  | "plus"
+  | "chevron"
+  | "back"
+  | "download"
+  | "trash"
+  | "heart"
+  | "home"
+  | "user"
+  | "bell"
+  | "logout"
+  | "site"
+  | "more"
+  | "lock"
+  | "mail"
+  | "eye"
+  | "eye-off"
+  | "close"
+  | "sun"
+  | "key"
+  | "folders";

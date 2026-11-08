@@ -1,153 +1,89 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import AuthLayout from "@/layouts/AuthLayout.astro";
+import AuthField from "@/components/espace/AuthField.astro";
 import { isDbConfigured } from "@/lib/db-config";
 import { findValidInvitation } from "@/lib/family-space";
 
-const title = "Créer mon compte — Espace familles";
-const description = "Créer un compte pour l’espace familles du Sourire de Jojo, avec le lien d’invitation de Céline.";
 const dbReady = isDbConfigured();
 const invitationToken = Astro.url.searchParams.get("invitation") ?? "";
 const invitation = dbReady && invitationToken ? await findValidInvitation(invitationToken) : null;
 const invitationInvalid = Boolean(invitationToken) && !invitation;
-
-const inputClass =
-  "mt-1 min-h-[48px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-base text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30";
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Espace familles" }, { label: "Créer mon compte" }]}
-  noindex
+<AuthLayout
+  title="Créer mon compte — Espace familles"
+  heading="Bienvenue !"
+  intro={invitation ? undefined : "Un compte se crée avec le lien d’invitation envoyé par Céline."}
 >
-  <div class="mx-auto max-w-md px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
-    <h1 class="font-display text-4xl text-marine">Créer mon compte</h1>
-
-    {
-      invitation ? (
-        <p class="mt-6 rounded-2xl border border-sauge/40 bg-sauge/20 p-4 text-lg text-marine">
-          Céline vous invite à suivre les nouvelles de <strong>{invitation.dossierName}</strong>.
-        </p>
-      ) : (
-        <p class="mt-4 leading-relaxed text-marine/85">
-          L’espace familles est privé : un compte se crée uniquement avec le <strong>lien d’invitation</strong> envoyé par
-          Céline.
-        </p>
-      )
-    }
-
-    {
-      invitationInvalid && (
-        <div class="mt-6 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-4 text-marine" role="alert">
-          Ce lien d’invitation n’est plus valable : il a déjà servi ou il a expiré (14 jours). Demandez-en un nouveau à
-          Céline.
-        </div>
-      )
-    }
-
-    {
-      !dbReady && (
-        <div class="mt-8 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-5 text-sm text-marine/85">
-          L’espace familles n’est pas encore ouvert. Il le sera très bientôt !
-        </div>
-      )
-    }
-
-    <form
-      id="register-form"
-      data-invitation={invitation ? invitationToken : ""}
-      class="mt-8 space-y-5 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm"
-      novalidate
-    >
-      <div>
-        <label for="reg-name" class="block text-sm font-medium text-marine">Votre prénom et nom</label>
-        <input id="reg-name" name="name" type="text" required autocomplete="name" class={inputClass} />
-        <p class="mt-1 hidden text-sm text-red-800" data-error-for="name"></p>
-      </div>
-      <div>
-        <label for="reg-email" class="block text-sm font-medium text-marine">Votre e-mail</label>
-        <input id="reg-email" name="email" type="email" required autocomplete="email" class={inputClass} />
-        <p class="mt-1 hidden text-sm text-red-800" data-error-for="email"></p>
-      </div>
-      <div>
-        <label for="reg-password" class="block text-sm font-medium text-marine">Choisissez un mot de passe</label>
-        <input
-          id="reg-password"
-          name="password"
-          type="password"
-          required
-          autocomplete="new-password"
-          minlength="8"
-          class={inputClass}
-        />
-        <p class="mt-1 text-xs text-marine/60">8 caractères minimum, avec au moins une lettre et un chiffre.</p>
-        <p class="mt-1 hidden text-sm text-red-800" data-error-for="password"></p>
-      </div>
-      <button
-        type="submit"
-        class="min-h-[48px] w-full rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60"
-        disabled={!dbReady}
-      >
-        Créer mon compte
-      </button>
-      <p id="register-status" class="text-sm text-marine/80" role="status"></p>
-    </form>
-
-    <p class="mt-8 text-center text-sm text-marine/75">
-      Vous avez déjà un compte ?
-      <a
-        href={invitation ? `/compte/connexion?invitation=${encodeURIComponent(invitationToken)}` : "/compte/connexion"}
-        class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
-      >
-        Se connecter
-      </a>
-    </p>
-  </div>
-</BaseLayout>
-
-<script>
-  const form = document.getElementById("register-form") as HTMLFormElement | null;
-  const status = document.getElementById("register-status");
-
-  function showErrors(errors: Record<string, string[] | undefined>) {
-    document.querySelectorAll("[data-error-for]").forEach((el) => {
-      el.classList.add("hidden");
-      (el as HTMLElement).textContent = "";
-    });
-    for (const [key, msgs] of Object.entries(errors)) {
-      const target = document.querySelector(`[data-error-for="${key}"]`);
-      if (target && msgs?.[0]) {
-        target.classList.remove("hidden");
-        target.textContent = msgs[0];
-      }
-    }
+  {
+    invitation && (
+      <p class="mt-4 rounded-2xl bg-gradient-to-r from-[#F7E1D7] to-[#E4ECE2] p-4 text-center text-lg leading-relaxed text-marine">
+        Céline vous invite à suivre les nouvelles de <strong>{invitation.dossierName}</strong>.
+      </p>
+    )
+  }
+  {
+    invitationInvalid && (
+      <p class="mt-4 rounded-2xl bg-rose-vieux/15 p-4 text-center text-base text-marine" role="alert">
+        Ce lien d’invitation n’est plus valable : il a déjà servi ou il a expiré (14 jours). Demandez-en un nouveau à Céline.
+      </p>
+    )
+  }
+  {
+    !dbReady && (
+      <p class="mt-4 rounded-2xl bg-rose-vieux/15 p-4 text-center text-base text-marine">L’espace familles n’est pas encore ouvert. Il le sera très bientôt !</p>
+    )
   }
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!form || !status) return;
-    status.textContent = "Création du compte…";
-    const fd = new FormData(form);
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: String(fd.get("name") ?? ""),
-          email: String(fd.get("email") ?? ""),
-          password: String(fd.get("password") ?? ""),
-          invitation: form.dataset.invitation || undefined,
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        if (data.errors) showErrors(data.errors);
-        status.textContent = data.error ?? "Inscription impossible.";
-        return;
-      }
+  <form id="register-form" data-invitation={invitation ? invitationToken : ""} class="mt-6 space-y-4" novalidate>
+    <AuthField id="reg-name" name="name" label="Votre prénom et nom" icon="user" autocomplete="name" placeholder="Paul Durand" />
+    <AuthField id="reg-email" name="email" type="email" label="Votre e-mail" icon="mail" autocomplete="email" placeholder="prenom@exemple.fr" />
+    <AuthField
+      id="reg-password"
+      name="password"
+      type="password"
+      label="Choisissez un mot de passe"
+      icon="lock"
+      autocomplete="new-password"
+      hint="8 caractères minimum, avec au moins une lettre et un chiffre."
+    />
+    <button
+      type="submit"
+      disabled={!dbReady}
+      class="h-14 w-full rounded-full bg-gradient-to-r from-marine via-[#2B4A72] to-[#3E6A8F] text-lg font-bold text-white shadow-[0_14px_28px_rgba(29,53,87,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] transition hover:brightness-110 disabled:opacity-60"
+    >
+      Créer mon compte
+    </button>
+    <p data-status class="min-h-[1.5rem] text-center text-base text-marine/80" role="status" aria-live="polite"></p>
+  </form>
+
+  <p class="mt-4 border-t border-marine/10 pt-5 text-center text-base text-marine/75">
+    Vous avez déjà un compte ?
+    <a
+      href={invitation ? `/compte/connexion?invitation=${encodeURIComponent(invitationToken)}` : "/compte/connexion"}
+      class="inline-flex min-h-[44px] items-center font-semibold text-aquarelle-bleu underline underline-offset-4"
+    >
+      Se connecter
+    </a>
+  </p>
+</AuthLayout>
+
+<script>
+  import { wireAuthForm } from "@/scripts/auth-forms";
+
+  wireAuthForm({
+    formId: "register-form",
+    endpoint: "/api/auth/register",
+    pending: "Création du compte…",
+    fallbackError: "Inscription impossible.",
+    body: (fd, form) => ({
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      password: String(fd.get("password") ?? ""),
+      invitation: form.dataset.invitation || undefined,
+    }),
+    onSuccess: () => {
       window.location.href = "/compte";
-    } catch {
-      status.textContent = "Erreur réseau.";
-    }
+    },
   });
 </script>

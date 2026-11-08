@@ -1,162 +1,284 @@
 ---
-import DossierShell from "@/components/espace/DossierShell.astro";
+import EspaceLayout from "@/layouts/EspaceLayout.astro";
+import Bloom from "@/components/espace/Bloom.astro";
 import Icon from "@/components/espace/Icon.astro";
-import Tile from "@/components/espace/Tile.astro";
-import { appointmentLabel, cap, dossierOverview, excerpt, fmt } from "@/lib/dossier-data";
+import StatTile from "@/components/espace/StatTile.astro";
+import { appointmentLabel, appointmentStatus, cap, dashboardData, excerpt, fmt, frDuration, frTime, PARIS_TZ } from "@/lib/dossier-data";
 import { loadDossierPage } from "@/lib/dossier-page";
 
 const ctx = await loadDossierPage(Astro);
 if (ctx instanceof Response) return ctx;
 const { user, admin, dossier } = ctx;
-const o = await dossierOverview(user.id, dossier.id);
+const d = await dashboardData(user.id, dossier.id);
 const base = `/compte/dossier/${dossier.id}`;
 const firstName = user.name.split(" ")[0];
-
 const plural = (n: number, one: string, many: string) => `${n} ${n > 1 ? many : one}`;
-const lastVisitInfo = o.lastVisit ? `Dernière visite : ${fmt.short.format(o.lastVisit.date)}` : "Aucune visite publiée pour l’instant";
-const messagesInfo =
-  o.unread > 0
-    ? plural(o.unread, "nouveau message", "nouveaux messages")
-    : o.lastMessage
-      ? `${o.lastMessage.authorId === user.id ? "Vous" : o.lastMessage.authorName.split(" ")[0]} : « ${excerpt(o.lastMessage.text, 60)} »`
-      : admin
-        ? "Écrivez à la famille"
-        : "Écrivez à Céline";
-const memberNames = o.members.map((m) => m.name.split(" ")[0]);
+
+const heroText = admin
+  ? d.unread > 0
+    ? `${plural(d.unread, "message vous attend", "messages vous attendent")} dans le dossier de ${dossier.name}.`
+    : `Tout est à jour pour ${dossier.name}. Racontez votre prochaine visite !`
+  : `Voici les dernières nouvelles de ${dossier.name}.`;
+const heroCta = admin
+  ? { href: `${base}/carnet/nouvelle`, label: "Publier une visite", icon: "plus" as const }
+  : d.recentVisits[0]
+    ? { href: `${base}/carnet/${d.recentVisits[0].id}`, label: "Lire la dernière visite", icon: "carnet" as const }
+    : { href: `${base}/messages`, label: "Écrire à Céline", icon: "messages" as const };
+const heroSecondary = admin && d.unread > 0 ? { href: `${base}/messages`, label: "Lire les messages" } : null;
+
+const maxMonth = Math.max(1, ...d.visitsByMonth.map((m) => m.count));
+const barColors = ["#C9D8C8", "#F2C9B8", "#F1DDA0", "#C7D8E6", "#E9C1C1", "#8FA892"];
+const chartSummary = d.visitsByMonth.map((m) => `${m.label} : ${m.count}`).join(", ");
+const part = (date: Date, opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("fr-FR", { ...opts, timeZone: PARIS_TZ }).format(date);
+const statusTone = {
+  rose: "bg-rose-vieux/20 text-[#8f4f4f]",
+  jaune: "bg-aquarelle-jaune/35 text-[#7a5a12]",
+  sauge: "bg-sauge/25 text-[#3f5c44]",
+};
+const card = "rounded-[26px] bg-white/90 p-5 shadow-[0_12px_30px_rgba(29,53,87,0.07)] ring-1 ring-marine/5 sm:p-6";
+const cardTitle = "font-hero text-xl font-semibold text-marine";
+const pill =
+  "inline-flex min-h-[40px] items-center rounded-full bg-cream px-4 text-sm font-semibold text-marine shadow-[0_4px_10px_rgba(29,53,87,0.08)] ring-1 ring-marine/5 hover:bg-ivoire";
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p.charAt(0).toUpperCase())
+    .join("");
 ---
 
-<DossierShell dossier={dossier} wide>
-  <p slot="intro" class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
-    {admin
-      ? "Votre tableau de bord pour ce dossier. Seuls vous et les proches invités y ont accès."
-      : `Bonjour ${firstName} ! Retrouvez ici les nouvelles, les photos et les prochaines visites de Céline.`}
-  </p>
+<EspaceLayout title="Tableau de bord" subtitle={dossier.name} active="dashboard" dossier={dossier} hideMobileTitle>
+  <div class="mt-3 grid grid-cols-1 gap-5 lg:grid-cols-12 [&>*]:min-w-0">
+    <!-- Carte d'accueil -->
+    <section
+      class="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#F8E3D8] via-[#F6E7DF] to-[#EEF2E8] p-5 shadow-[0_16px_36px_rgba(200,141,141,0.18),inset_0_1px_0_rgba(255,255,255,0.8)] sm:p-7 lg:col-span-12"
+      aria-labelledby="accueil-titre"
+    >
+      <div class="flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
+        <Bloom size="md" />
+        <div class="min-w-0 flex-1">
+          <p id="accueil-titre" class="font-display text-4xl leading-tight text-marine sm:text-5xl">
+            Bonjour {firstName} <span aria-hidden="true">☀️</span>
+          </p>
+          <p class="mt-2 text-lg leading-relaxed text-marine/80 sm:text-xl">{heroText}</p>
+          <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <a
+              href={heroCta.href}
+              class="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-marine to-[#2E5079] px-6 text-lg font-semibold text-ivoire shadow-[0_12px_24px_rgba(29,53,87,0.28),inset_0_1px_0_rgba(255,255,255,0.15)] hover:brightness-110"
+            >
+              <Icon name={heroCta.icon} class="h-6 w-6" />
+              {heroCta.label}
+            </a>
+            {
+              heroSecondary && (
+                <a
+                  href={heroSecondary.href}
+                  class="inline-flex min-h-[56px] items-center justify-center rounded-2xl bg-white/80 px-6 text-lg font-semibold text-marine shadow ring-1 ring-marine/10 hover:bg-white"
+                >
+                  {heroSecondary.label}
+                </a>
+              )
+            }
+          </div>
+        </div>
+      </div>
+    </section>
 
-  {
-    admin && (
-      <a
-        href={`${base}/carnet/nouvelle`}
-        class="mt-6 flex min-h-[64px] items-center justify-center gap-3 rounded-2xl bg-marine px-6 text-lg font-semibold text-ivoire shadow-[0_12px_30px_rgba(29,53,87,0.25)] transition hover:bg-marine/90 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-marine sm:inline-flex"
-      >
-        <Icon name="plus" class="h-6 w-6" />
-        Publier une visite
-      </a>
-    )
-  }
-
-  {
-    o.nextVisit && (
-      <a
-        href={`${base}/agenda`}
-        class="mt-6 flex items-center gap-4 rounded-2xl border border-sauge/40 bg-sauge/15 px-5 py-4 text-marine transition hover:bg-sauge/25"
-      >
-        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-[#5d7a61]">
-          <Icon name="agenda" class="h-6 w-6" />
-        </span>
-        <span>
-          <span class="block text-sm font-semibold uppercase tracking-wide text-marine/60">Prochaine visite</span>
-          <span class="block font-hero text-xl font-semibold">{appointmentLabel(o.nextVisit)}</span>
-        </span>
-      </a>
-    )
-  }
-
-  <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Les espaces du dossier">
-    <li>
-      <Tile
+    <!-- Statistiques -->
+    <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:col-span-12 lg:grid-cols-4">
+      <StatTile
         href={`${base}/carnet`}
         icon="carnet"
-        tone="rose"
-        title="Carnet de sourires"
-        info={lastVisitInfo}
-        detail={o.visits > 0 ? plural(o.visits, "visite racontée", "visites racontées") : undefined}
+        tone="peche"
+        label="Visites ce mois-ci"
+        value={String(d.visitsThisMonth)}
+        sub={`${plural(d.visitsTotal, "visite racontée", "visites racontées")} en tout`}
       />
-    </li>
-    <li>
-      <Tile
+      <StatTile
         href={`${base}/messages`}
         icon="messages"
         tone="bleu"
-        title={admin ? "Messagerie" : "Écrire à Céline"}
-        info={messagesInfo}
-        detail={o.unread === 0 && o.lastMessage ? fmt.stamp.format(o.lastMessage.createdAt) : undefined}
-        badge={o.unread}
-        badgeLabel={plural(o.unread, "message non lu", "messages non lus")}
+        label="Messages"
+        value={String(d.unread)}
+        sub={d.unread > 0 ? plural(d.unread, "message non lu", "messages non lus") : "Tout est lu"}
+        alert={d.unread > 0}
       />
-    </li>
-    <li>
-      <Tile
-        href={`${base}/album`}
-        icon="album"
-        tone="jaune"
-        title="Album photos"
-        info={o.photos > 0 ? plural(o.photos, "photo", "photos") : "Les photos des visites arriveront ici"}
-      >
-        {
-          o.photoPreview.length > 0 && (
-            <span class="mt-3 flex gap-1.5" aria-hidden="true">
-              {o.photoPreview.map((id) => (
-                <img src={`/api/photos/${id}`} alt="" loading="lazy" class="h-12 w-12 rounded-lg object-cover ring-1 ring-marine/10" />
-              ))}
-            </span>
-          )
-        }
-      </Tile>
-    </li>
-    <li>
-      <Tile
+      <StatTile
         href={`${base}/agenda`}
         icon="agenda"
         tone="sauge"
-        title="Agenda des visites"
-        info={o.nextVisit ? `Prochaine : ${appointmentLabel(o.nextVisit, false)}` : "Pas de visite prévue pour l’instant"}
-        detail={o.nextVisit?.note ? excerpt(o.nextVisit.note, 60) : undefined}
+        label="Prochaine visite"
+        value={d.nextVisit ? part(d.nextVisit.startsAt, { day: "numeric", month: "short" }).replace(".", "") : "—"}
+        sub={d.nextVisit ? `${cap(part(d.nextVisit.startsAt, { weekday: "long" }))} à ${frTime(d.nextVisit.startsAt)}` : "Pas encore prévue"}
       />
-    </li>
-    <li>
-      <Tile
-        href={`${base}/documents`}
-        icon="documents"
-        tone="marine"
-        title="Documents"
-        info={o.documents > 0 ? plural(o.documents, "document", "documents") : "Contrat, devis, factures…"}
-        detail={o.documents > 0 ? "Contrat, devis, factures, attestation fiscale" : undefined}
-      />
-    </li>
-    <li>
-      <Tile
-        href={`${base}/proches`}
-        icon="proches"
-        tone="rose"
-        title="Les proches"
-        info={o.members.length > 0 ? memberNames.join(", ") : admin ? "Invitez la famille" : "Vous seul·e pour l’instant"}
-        detail={admin ? "Inviter ou retirer un proche" : "Qui a accès à ce dossier"}
-      />
-    </li>
-  </ul>
+      <StatTile href={`${base}/album`} icon="album" tone="jaune" label="Photos" value={String(d.photos)} sub="dans l’album" />
+    </div>
 
-  {
-    o.lastVisit && (
-      <section class="mt-10" aria-labelledby="derniere-visite">
-        <h2 id="derniere-visite" class="font-display text-3xl text-marine">La dernière visite</h2>
-        <a
-          href={`${base}/carnet/${o.lastVisit.id}`}
-          class="mt-4 flex flex-col overflow-hidden rounded-3xl border border-marine/10 bg-white shadow-[0_10px_30px_rgba(29,53,87,0.07)] transition hover:shadow-[0_16px_40px_rgba(29,53,87,0.12)] sm:flex-row"
-        >
-          {o.lastVisit.coverPhotoId && (
-            <img
-              src={`/api/photos/${o.lastVisit.coverPhotoId}`}
-              alt=""
-              class="aspect-[4/3] w-full object-cover sm:aspect-auto sm:w-64"
-            />
-          )}
-          <span class="block p-5 sm:p-6">
-            <span class="block font-hero text-lg font-semibold text-marine">{cap(fmt.dayYear.format(o.lastVisit.date))}</span>
-            <span class="mt-2 block text-base leading-relaxed text-marine/85">{excerpt(o.lastVisit.text, 220)}</span>
-            <span class="mt-3 inline-block font-semibold text-aquarelle-bleu">Lire la visite →</span>
-          </span>
-        </a>
-      </section>
-    )
-  }
-</DossierShell>
+    <!-- Dernières visites -->
+    <section class:list={[card, "lg:col-span-7"]} aria-labelledby="dernieres-visites">
+      <div class="flex items-center justify-between gap-3">
+        <h2 id="dernieres-visites" class={cardTitle}>Dernières visites</h2>
+        <a href={`${base}/carnet`} class={pill}>Tout voir</a>
+      </div>
+      {
+        d.recentVisits.length === 0 ? (
+          <p class="mt-4 text-base text-marine/70">La première visite racontée apparaîtra ici.</p>
+        ) : (
+          <ul class="mt-3 divide-y divide-marine/5">
+            {d.recentVisits.map((v) => (
+              <li>
+                <a href={`${base}/carnet/${v.id}`} class="flex items-center gap-4 rounded-2xl py-3 hover:bg-cream/70 sm:px-2">
+                  {v.coverPhotoId ? (
+                    <img src={`/api/photos/${v.coverPhotoId}`} alt="" loading="lazy" class="h-16 w-16 shrink-0 rounded-2xl object-cover shadow-sm" />
+                  ) : (
+                    <span class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#F7E1D7] text-[#a0665a]">
+                      <Icon name="carnet" class="h-7 w-7" />
+                    </span>
+                  )}
+                  <span class="min-w-0 flex-1">
+                    <span class="block font-semibold text-marine">{cap(fmt.day.format(v.date))}</span>
+                    <span class="block text-base leading-snug text-marine/75">{excerpt(v.text || "Photos de la visite", 90)}</span>
+                    {v.photos > 0 && <span class="block text-sm text-marine/60">{plural(v.photos, "photo", "photos")}</span>}
+                  </span>
+                  <Icon name="chevron" class="h-5 w-5 shrink-0 text-marine/35" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    <!-- Prochaines visites -->
+    <section class:list={[card, "lg:col-span-5"]} aria-labelledby="prochaines-visites">
+      <div class="flex items-center justify-between gap-3">
+        <h2 id="prochaines-visites" class={cardTitle}>Prochaines visites</h2>
+        <a href={`${base}/agenda`} class={pill}>Agenda</a>
+      </div>
+      {
+        d.upcoming.length === 0 ? (
+          <p class="mt-4 text-base text-marine/70">Pas de visite prévue pour l’instant.</p>
+        ) : (
+          <ul class="mt-3 space-y-3">
+            {d.upcoming.map((a) => {
+              const status = appointmentStatus(a);
+              return (
+                <li class="flex items-center gap-3 rounded-2xl bg-cream/70 p-3">
+                  <span class="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-white shadow-sm">
+                    <span class="text-xs font-bold uppercase text-marine/60">{part(a.startsAt, { month: "short" }).replace(".", "")}</span>
+                    <span class="font-hero text-xl font-bold leading-none text-marine">{part(a.startsAt, { day: "numeric" })}</span>
+                  </span>
+                  <span class="min-w-0 flex-1">
+                    <span class="block font-semibold text-marine">{appointmentLabel(a)}</span>
+                    <span class="block truncate text-sm text-marine/70">{a.note || `Durée : ${frDuration(a.durationMinutes)}`}</span>
+                  </span>
+                  <span class:list={["shrink-0 rounded-full px-3 py-1 text-sm font-semibold", statusTone[status.tone]]}>{status.label}</span>
+                </li>
+              );
+            })}
+          </ul>
+        )
+      }
+    </section>
+
+    <!-- Album -->
+    <section class:list={[card, "lg:col-span-7"]} aria-labelledby="apercu-album">
+      <div class="flex items-center justify-between gap-3">
+        <h2 id="apercu-album" class={cardTitle}>Album photos</h2>
+        <a href={`${base}/album`} class={pill}>Tout voir</a>
+      </div>
+      {
+        d.albumPreview.length === 0 ? (
+          <p class="mt-4 text-base text-marine/70">Les photos des visites arriveront ici.</p>
+        ) : (
+          <a href={`${base}/album`} class="mt-4 grid h-56 grid-cols-4 grid-rows-2 gap-2 sm:h-64" aria-label="Ouvrir l’album photos">
+            {d.albumPreview.map((id, i) => (
+              <img
+                src={`/api/photos/${id}`}
+                alt=""
+                loading="lazy"
+                class:list={[
+                  "h-full w-full rounded-2xl object-cover",
+                  i === 0 ? "col-span-2 row-span-2" : "col-span-1",
+                  d.albumPreview.length < 5 && i === d.albumPreview.length - 1 && i > 0 && "col-span-2",
+                ]}
+              />
+            ))}
+          </a>
+        )
+      }
+    </section>
+
+    <!-- Rythme des visites : seul graphique, et utile (régularité de l'accompagnement) -->
+    <section class:list={[card, "lg:col-span-5"]} aria-labelledby="rythme">
+      <h2 id="rythme" class={cardTitle}>Rythme des visites</h2>
+      <p class="mt-1 text-sm text-marine/70">Visites racontées sur les six derniers mois</p>
+      <figure class="mt-4" aria-label={`Visites par mois : ${chartSummary}`}>
+        <div class="flex h-40 items-end gap-2 sm:gap-3" aria-hidden="true">
+          {
+            d.visitsByMonth.map((m, i) => (
+              <div class="flex h-full flex-1 flex-col items-center justify-end gap-1">
+                <span class="text-sm font-bold text-marine/80">{m.count > 0 ? m.count : ""}</span>
+                <span
+                  class:list={["w-full max-w-[3rem] rounded-b-md rounded-t-2xl shadow-[inset_0_2px_0_rgba(255,255,255,0.5)]", m.current && "ring-2 ring-marine/25"]}
+                  style={`height: ${m.count === 0 ? 6 : Math.max(14, Math.round((m.count / maxMonth) * 100))}%; background: ${barColors[i % barColors.length]};`}
+                />
+              </div>
+            ))
+          }
+        </div>
+        <div class="mt-2 flex gap-2 sm:gap-3" aria-hidden="true">
+          {d.visitsByMonth.map((m) => <span class:list={["flex-1 text-center text-sm", m.current ? "font-bold text-marine" : "text-marine/65"]}>{m.label}</span>)}
+        </div>
+      </figure>
+    </section>
+
+    <!-- Derniers messages -->
+    <section class:list={[card, "lg:col-span-7"]} aria-labelledby="derniers-messages">
+      <div class="flex items-center justify-between gap-3">
+        <h2 id="derniers-messages" class={cardTitle}>Derniers messages</h2>
+        <a href={`${base}/messages`} class={pill}>{admin ? "Répondre" : "Écrire"}</a>
+      </div>
+      {
+        d.recentMessages.length === 0 ? (
+          <p class="mt-4 text-base text-marine/70">{admin ? "Pas encore de message dans ce dossier." : "Écrivez à Céline : elle vous répondra ici."}</p>
+        ) : (
+          <ul class="mt-3 space-y-2">
+            {d.recentMessages.map((m) => (
+              <li>
+                <a href={`${base}/messages`} class="flex items-start gap-3 rounded-2xl p-2 hover:bg-cream/70">
+                  <span
+                    class:list={[
+                      "flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold",
+                      m.authorRole === "admin" ? "bg-rose-vieux/25 text-[#7f4646]" : "bg-sauge/30 text-[#3f5c44]",
+                    ]}
+                  >
+                    {initials(m.authorName)}
+                  </span>
+                  <span class="min-w-0 flex-1">
+                    <span class="flex items-baseline justify-between gap-2">
+                      <span class="font-semibold text-marine">{m.authorId === user.id ? "Vous" : m.authorName.split(" ")[0]}</span>
+                      <span class="shrink-0 text-sm text-marine/60">{fmt.short.format(m.createdAt)}</span>
+                    </span>
+                    <span class="block text-base leading-snug text-marine/75">{excerpt(m.text, 110)}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+
+    <!-- Un sourire du jour -->
+    <section
+      class="relative overflow-hidden rounded-[26px] bg-gradient-to-br from-[#F8EDCF] to-[#F3E2B8] p-6 shadow-[0_12px_30px_rgba(226,184,90,0.18),inset_0_1px_0_rgba(255,255,255,0.8)] lg:col-span-5"
+      aria-labelledby="sourire-du-jour"
+    >
+      <img src="/images/fleurs/7.webp" alt="" aria-hidden="true" class="pointer-events-none absolute -right-6 -top-4 w-32 rotate-12 opacity-80" />
+      <h2 id="sourire-du-jour" class="font-display text-3xl text-marine">Un sourire du jour</h2>
+      <blockquote class="relative mt-3 max-w-xs font-hero text-2xl italic leading-snug text-marine">« Tiens-toi droit et souris. »</blockquote>
+      <p class="mt-2 text-base text-marine/75">Lanza del Vasto, le livre qui a inspiré Le Sourire de Jojo.</p>
+    </section>
+  </div>
+</EspaceLayout>

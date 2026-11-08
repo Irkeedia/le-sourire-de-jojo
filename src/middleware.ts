@@ -8,10 +8,26 @@ const CONTACT_POST_LIMIT = Number(import.meta.env.CONTACT_RATE_LIMIT ?? "12");
 const CONTACT_POST_WINDOW_MS = Number(
   import.meta.env.CONTACT_RATE_WINDOW_MS ?? String(15 * 60 * 1000),
 );
-const AUTH_POST_LIMIT = Number(import.meta.env.AUTH_RATE_LIMIT ?? "8");
-const AUTH_POST_WINDOW_MS = Number(import.meta.env.AUTH_RATE_WINDOW_MS ?? String(15 * 60 * 1000));
+/** Lu au démarrage du serveur d'abord (réglable sans rebuild), puis la valeur figée au build. */
+const runtimeNumber = (fromProcess: string | undefined, fromBuild: string | undefined, fallback: number) =>
+  Number(fromProcess || fromBuild || fallback);
+const AUTH_POST_LIMIT = runtimeNumber(
+  typeof process !== "undefined" ? process.env.AUTH_RATE_LIMIT : undefined,
+  import.meta.env.AUTH_RATE_LIMIT,
+  8,
+);
+const AUTH_POST_WINDOW_MS = runtimeNumber(
+  typeof process !== "undefined" ? process.env.AUTH_RATE_WINDOW_MS : undefined,
+  import.meta.env.AUTH_RATE_WINDOW_MS,
+  15 * 60 * 1000,
+);
 
-const PUBLIC_ACCOUNT_PATHS = new Set(["/compte/connexion", "/compte/inscription"]);
+const PUBLIC_ACCOUNT_PATHS = new Set([
+  "/compte/connexion",
+  "/compte/inscription",
+  "/compte/mot-de-passe-oublie",
+  "/compte/reinitialiser",
+]);
 
 function forbiddenResponse(request: Request, message: string, status = 403) {
   const headers = new Headers({ "Content-Type": "application/json" });
@@ -45,7 +61,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
       const nextPath = encodeURIComponent(url.pathname);
       return redirect(`/compte/connexion?next=${nextPath}`);
     }
-    if (isPublic && context.locals.user) {
+    const signInPage = url.pathname === "/compte/connexion" || url.pathname === "/compte/inscription";
+    if (signInPage && context.locals.user) {
       // Déjà connecté et nouveau lien d'invitation : /compte rattache le compte au dossier.
       const invitation = url.searchParams.get("invitation");
       return redirect(invitation ? `/compte?invitation=${encodeURIComponent(invitation)}` : "/compte");

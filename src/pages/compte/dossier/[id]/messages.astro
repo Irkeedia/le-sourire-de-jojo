@@ -20,7 +20,7 @@ for (const m of messages) {
 }
 ---
 
-<DossierShell dossier={dossier} section={admin ? "Messagerie" : "Écrire à Céline"}>
+<DossierShell dossier={dossier} active="messages" section={admin ? "Messagerie" : "Écrire à Céline"}>
   <p slot="intro" class="mt-3 flex items-start gap-2 rounded-2xl bg-aquarelle-bleu/10 px-4 py-3 text-base leading-relaxed text-marine/85">
     <span aria-hidden="true">👀</span>
     <span>Ces messages sont visibles par <strong>Céline</strong> et par <strong>tous les proches</strong> de ce dossier.</span>

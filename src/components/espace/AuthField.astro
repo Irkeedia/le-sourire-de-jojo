@@ -1,0 +1,70 @@
+---
+import Icon from "@/components/espace/Icon.astro";
+import type { IconName } from "@/lib/espace-types";
+
+/** Champ arrondi avec icône, étiquette visible (lisibilité) et œil pour les mots de passe. */
+interface Props {
+  id: string;
+  name: string;
+  label: string;
+  type?: "text" | "email" | "password";
+  icon: IconName;
+  autocomplete?: string;
+  placeholder?: string;
+  hint?: string;
+}
+const { id, name, label, type = "text", icon, autocomplete, placeholder, hint } = Astro.props;
+---
+
+<div>
+  <label for={id} class="mb-1.5 block pl-2 text-base font-semibold text-marine">{label}</label>
+  <div class="relative">
+    <span class="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-marine/55">
+      <Icon name={icon} class="h-6 w-6" />
+    </span>
+    <input
+      id={id}
+      name={name}
+      type={type}
+      required
+      autocomplete={autocomplete}
+      placeholder={placeholder}
+      class:list={[
+        "h-14 w-full rounded-full border border-marine/10 bg-[#F8F4EE] pl-14 text-lg text-marine shadow-[inset_0_2px_6px_rgba(29,53,87,0.06)] placeholder:text-marine/40 focus:border-marine/40 focus:bg-white focus:outline-none focus:ring-4 focus:ring-sauge/30",
+        type === "password" ? "pr-14" : "pr-5",
+      ]}
+    />
+    {
+      type === "password" && (
+        <button
+          type="button"
+          data-toggle-password={id}
+          aria-pressed="false"
+          aria-label="Afficher le mot de passe"
+          class="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-marine/60 hover:bg-marine/5 hover:text-marine"
+        >
+          <span data-eye><Icon name="eye" class="h-6 w-6" /></span>
+          <span data-eye-off class="hidden"><Icon name="eye-off" class="h-6 w-6" /></span>
+        </button>
+      )
+    }
+  </div>
+  {hint && <p class="mt-1 pl-2 text-sm text-marine/65">{hint}</p>}
+  <p class="mt-1 hidden pl-2 text-base text-[#9b3b3b]" data-error-for={name}></p>
+</div>
+
+<script>
+  // Bouton « œil » : afficher ou masquer le mot de passe.
+  document.querySelectorAll<HTMLButtonElement>("[data-toggle-password]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const input = document.getElementById(btn.dataset.togglePassword ?? "") as HTMLInputElement | null;
+      if (!input) return;
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.setAttribute("aria-pressed", String(show));
+      btn.setAttribute("aria-label", show ? "Masquer le mot de passe" : "Afficher le mot de passe");
+      btn.querySelector("[data-eye]")?.classList.toggle("hidden", show);
+      btn.querySelector("[data-eye-off]")?.classList.toggle("hidden", !show);
+    });
+  });
+</script>

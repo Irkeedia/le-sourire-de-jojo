@@ -101,7 +101,7 @@ Guide complet : [`docs/ENVIRONNEMENT.md`](docs/ENVIRONNEMENT.md).
 | `npm run start` | Démarrage Node après build |
 | `npm run images` | Regénère les images du site depuis `assets-src/` |
 | `npm run dev:familles` | Site + base MongoDB locale (`.local-db/`) pour essayer l’espace familles |
-| `npm run test:familles` | Test de bout en bout de l’espace familles, 82 vérifications (à lancer après `npm run build`) |
+| `npm run test:familles` | Test de bout en bout de l’espace familles, 105 vérifications (à lancer après `npm run build`) |
 
 ---
 
@@ -263,18 +263,16 @@ Espace privé où Céline publie ses comptes-rendus de visite (mot, photos, page
 **Fonctionnement**
 
 - **Un dossier par personne accompagnée** (ex. « Monsieur Robert »), créé par Céline depuis `/compte`. Son accueil liste les dossiers en cartes (messages non lus, prochaine visite, dernière visite racontée), avec un raccourci **« Publier une visite »**.
-- **Tableau de bord du dossier** (`/compte/dossier/[id]`) : six tuiles, chacune menant à sa page :
-  - **Carnet de sourires** : les visites racontées par Céline (date, mot, photos et pages du carnet), une page par visite, visite précédente / suivante ;
-  - **Messagerie** : conversation séparée du carnet, pastille « non lu » côté proche et côté Céline ; visible par Céline et tous les proches du dossier ;
-  - **Album photos** : toutes les photos des visites, visionneuse plein écran (précédente / suivante, glisser du doigt) ;
-  - **Agenda des visites** : prochaines visites ajoutées par Céline (heure de Paris), affichées sur la tuile ;
-  - **Documents** : contrat, devis, factures, attestation fiscale (PDF ou images, 4 Mo max), téléchargeables par les seuls membres du dossier. Pas de données de santé (rappel affiché côté Céline) ;
-  - **Les proches** : qui a accès ; Céline invite et retire.
+- **Interface « application »** (`src/layouts/EspaceLayout.astro`) : menu latéral sur ordinateur (initiales, « Bonjour … », rubriques, retour au site, déconnexion) ; sur mobile, barre du haut compacte et barre d’onglets en bas avec un panneau « Plus ». L’en-tête du site public n’apparaît pas dans l’espace connecté.
+- **Tableau de bord du dossier** (`/compte/dossier/[id]`) : carte d’accueil (« Bonjour Paul ☀️ », bouton « Lire la dernière visite » ou, pour Céline, « Publier une visite »), quatre statistiques (visites du mois, messages non lus, prochaine visite, photos), puis les cartes « Dernières visites », « Prochaines visites » (pastilles Aujourd’hui / Demain / À venir), aperçu de l’album, « Rythme des visites » (visites racontées par mois sur 6 mois), « Derniers messages » et « Un sourire du jour ». L’illustration est maison : le logo en médaillon couronné des fleurs aquarelle du site.
+- **Cloche des nouveautés** : visites racontées, messages, documents et rendez-vous ajoutés depuis la dernière ouverture de la cloche (par personne et par dossier).
+- **Rubriques** : Carnet de sourires (une page par visite, précédente / suivante), Messagerie (pastille « non lu », visible par Céline et tous les proches du dossier), Photos (visionneuse plein écran), Agenda (heure de Paris), Documents (PDF ou images, 4 Mo max, pas de données de santé), Proches (Céline invite, retire, ou crée un lien de mot de passe), Mon compte (changement de mot de passe).
+- **Connexion** (`src/layouts/AuthLayout.astro`) : grande carte arrondie, champs avec icônes, bouton « œil », pas de connexion par Google, Apple ou Facebook. **Mot de passe oublié** : lien à usage unique valable 1 h, jeton stocké haché, réponse identique que le compte existe ou non. L’e-mail part si le SMTP est configuré ; sinon la page invite à contacter Céline, qui peut créer le lien depuis la rubrique Proches. Une réinitialisation ferme toutes les sessions du compte.
 - **Invitations** : depuis un dossier, Céline crée un lien pour chaque proche (usage unique, valable 14 jours) et l’envoie par SMS, WhatsApp ou e-mail. Il n’y a **pas d’inscription libre** : seul l’e-mail `ADMIN_EMAIL` peut créer un compte sans invitation (celui de Céline). Un proche qui a déjà un compte et reçoit un nouveau lien est simplement rattaché au nouveau dossier.
 - **Cloisonnement** : un proche ne voit que les dossiers auxquels il est rattaché. Chaque page (`loadDossierPage`) et chaque API (`guard`) vérifie l’accès ; un dossier inaccessible répond « introuvable » sans révéler son existence. Les écritures venant d’un autre site sont refusées.
 - **Photos et documents** : photos réduites dans le navigateur (1600 px, une par une pour rester sous la limite de 4,5 Mo de Vercel) puis ré-encodées en WebP ; documents images ré-encodés en JPEG ; les **métadonnées sont effacées** (position GPS, modèle du téléphone). Les PDF sont vérifiés (signature `%PDF-`). Tout est stocké dans MongoDB (GridFS), servi aux seuls membres du dossier, avec un cache privé.
-- Code : `src/lib/family-space.ts` (règles d’accès, garde des API), `src/lib/dossier-data.ts` (messagerie, agenda, documents, album, indicateurs), `src/lib/dossier-page.ts`, `src/components/espace/`, `src/models/`, `src/pages/compte/`, `src/pages/api/`.
-- Test : `npm run build && npm run test:familles` (82 vérifications, dont le proche d’un dossier qui tente d’atteindre un autre dossier sur chaque rubrique, et l’absence de script intégré sans nonce).
+- Code : `src/lib/family-space.ts` (règles d’accès, garde des API), `src/lib/dossier-data.ts` (messagerie, agenda, documents, album, tableau de bord, notifications), `src/lib/password-reset.ts`, `src/lib/dossier-page.ts`, `src/layouts/EspaceLayout.astro`, `src/layouts/AuthLayout.astro`, `src/components/espace/`, `src/models/`, `src/pages/compte/`, `src/pages/api/`.
+- Test : `npm run build && npm run test:familles` (105 vérifications : cloisonnement de chaque rubrique et de la cloche, mot de passe oublié et liens de réinitialisation, heure de Paris, absence de script intégré sans nonce dans les 15 pages).
 
 **Essayer en local**
 

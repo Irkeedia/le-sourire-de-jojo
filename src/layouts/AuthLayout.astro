@@ -1,0 +1,59 @@
+---
+/**
+ * Pages d'accès à l'espace familles (connexion, inscription par invitation, mot de passe oublié).
+ * Grande carte arrondie, médaillon fleuri posé dessus, fleurs aquarelle sur les côtés.
+ */
+import "../styles/fonts";
+import "../styles/global.css";
+import Bloom from "@/components/espace/Bloom.astro";
+import Icon from "@/components/espace/Icon.astro";
+import { APPLE_TOUCH_ICON_SRC, FAVICON_SRC } from "@/lib/brand";
+
+interface Props {
+  title: string;
+  heading: string;
+  intro?: string;
+}
+const { title, heading, intro } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#F6EDE6" />
+    <link rel="icon" type="image/png" href={FAVICON_SRC} />
+    <link rel="apple-touch-icon" href={APPLE_TOUCH_ICON_SRC} />
+    <title>{title} — Le Sourire de Jojo</title>
+  </head>
+  <body class="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-[#FBF6F0] via-[#F6E6DE] to-[#E3ECE1] font-sans text-[17px] text-marine antialiased">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <img src="/images/fleurs/6.webp" alt="" class="absolute -bottom-10 -left-16 w-64 -rotate-12 opacity-80 sm:w-80 lg:-left-6 lg:w-[26rem]" />
+      <img src="/images/fleurs/8.webp" alt="" class="absolute -bottom-6 -right-14 w-56 rotate-6 opacity-80 sm:w-72 lg:right-0 lg:w-96" />
+      <img src="/images/fleurs/5.webp" alt="" class="absolute -left-10 top-24 hidden w-56 rotate-12 opacity-40 lg:block" />
+      <img src="/images/fleurs/2.webp" alt="" class="absolute -right-6 top-16 hidden w-40 -rotate-12 opacity-60 lg:block" />
+    </div>
+
+    <header class="relative z-10 mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
+      <a href="/" class="flex items-center gap-2 font-display text-2xl text-marine">Le Sourire de Jojo</a>
+      <a href="/" class="inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-white/70 px-4 text-base font-semibold text-marine shadow-sm hover:bg-white">
+        <Icon name="back" class="h-5 w-5" /> Retour au site
+      </a>
+    </header>
+
+    <main class="relative z-10 mx-auto w-full max-w-[28rem] px-4 pb-16 pt-4">
+      <div class="relative mt-32 rounded-[34px] bg-white/90 px-5 pb-8 pt-32 shadow-[0_30px_70px_rgba(29,53,87,0.16),inset_0_1px_0_rgba(255,255,255,0.9)] ring-1 ring-white/70 backdrop-blur sm:mt-36 sm:px-8 sm:pt-36">
+        <div class="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">
+          <Bloom size="lg" />
+        </div>
+        <h1 class="text-center font-display text-5xl leading-tight text-marine">{heading}</h1>
+        {intro && <p class="mt-2 text-center text-lg leading-relaxed text-marine/75">{intro}</p>}
+        <slot />
+      </div>
+      <slot name="after" />
+    </main>
+
+  </body>
+</html>

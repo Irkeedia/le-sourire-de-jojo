@@ -12,7 +12,7 @@ const base = `/compte/dossier/${dossier.id}`;
 const visits = (await listPosts(dossier.id, 500)).filter((p) => p.kind === "visite");
 ---
 
-<DossierShell dossier={dossier} section="Carnet de sourires">
+<DossierShell dossier={dossier} active="carnet" section="Carnet de sourires">
   <p slot="intro" class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
     Après chaque visite, Céline raconte le moment passé ensemble, avec des photos et les pages du carnet.
   </p>
