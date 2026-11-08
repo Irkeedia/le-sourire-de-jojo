@@ -114,7 +114,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (!allowIndexing) {
     out.set("X-Robots-Tag", "noindex, nofollow");
   }
-  const privatePrefixes = ["/compte", "/api/auth", "/api/dossiers", "/api/posts", "/api/photos"];
+  const privatePrefixes = [
+    "/compte",
+    "/api/auth",
+    "/api/dossiers",
+    "/api/posts",
+    "/api/photos",
+    "/api/messages",
+    "/api/appointments",
+    "/api/documents",
+  ];
   if (privatePrefixes.some((p) => url.pathname.startsWith(p))) {
     out.set("X-Robots-Tag", "noindex, nofollow");
   }

@@ -45,3 +45,14 @@ export const postSchema = z
     message: "Écrivez un mot ou ajoutez au moins une photo.",
     path: ["text"],
   });
+
+export const messageSchema = z.object({
+  text: z.string().trim().min(1, "Écrivez d’abord votre message.").max(4000, "Message trop long (4 000 caractères maximum)."),
+});
+
+export const appointmentSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date invalide."),
+  time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Heure invalide."),
+  durationMinutes: z.coerce.number().int().min(15, "15 minutes minimum.").max(720, "12 heures maximum."),
+  note: z.string().trim().max(500, "500 caractères maximum.").default(""),
+});

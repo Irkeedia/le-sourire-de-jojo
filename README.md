@@ -101,7 +101,7 @@ Guide complet : [`docs/ENVIRONNEMENT.md`](docs/ENVIRONNEMENT.md).
 | `npm run start` | Démarrage Node après build |
 | `npm run images` | Regénère les images du site depuis `assets-src/` |
 | `npm run dev:familles` | Site + base MongoDB locale (`.local-db/`) pour essayer l’espace familles |
-| `npm run test:familles` | Test de bout en bout de l’espace familles (à lancer après `npm run build`) |
+| `npm run test:familles` | Test de bout en bout de l’espace familles, 82 vérifications (à lancer après `npm run build`) |
 
 ---
 
@@ -262,12 +262,19 @@ Espace privé où Céline publie ses comptes-rendus de visite (mot, photos, page
 
 **Fonctionnement**
 
-- **Un dossier par personne accompagnée** (ex. « Monsieur Robert »), créé par Céline depuis `/compte`.
+- **Un dossier par personne accompagnée** (ex. « Monsieur Robert »), créé par Céline depuis `/compte`. Son accueil liste les dossiers en cartes (messages non lus, prochaine visite, dernière visite racontée), avec un raccourci **« Publier une visite »**.
+- **Tableau de bord du dossier** (`/compte/dossier/[id]`) : six tuiles, chacune menant à sa page :
+  - **Carnet de sourires** : les visites racontées par Céline (date, mot, photos et pages du carnet), une page par visite, visite précédente / suivante ;
+  - **Messagerie** : conversation séparée du carnet, pastille « non lu » côté proche et côté Céline ; visible par Céline et tous les proches du dossier ;
+  - **Album photos** : toutes les photos des visites, visionneuse plein écran (précédente / suivante, glisser du doigt) ;
+  - **Agenda des visites** : prochaines visites ajoutées par Céline (heure de Paris), affichées sur la tuile ;
+  - **Documents** : contrat, devis, factures, attestation fiscale (PDF ou images, 4 Mo max), téléchargeables par les seuls membres du dossier. Pas de données de santé (rappel affiché côté Céline) ;
+  - **Les proches** : qui a accès ; Céline invite et retire.
 - **Invitations** : depuis un dossier, Céline crée un lien pour chaque proche (usage unique, valable 14 jours) et l’envoie par SMS, WhatsApp ou e-mail. Il n’y a **pas d’inscription libre** : seul l’e-mail `ADMIN_EMAIL` peut créer un compte sans invitation (celui de Céline). Un proche qui a déjà un compte et reçoit un nouveau lien est simplement rattaché au nouveau dossier.
-- **Cloisonnement** : un proche ne voit que les dossiers auxquels il est rattaché. Pages, API et photos vérifient l’accès à chaque requête ; un dossier inaccessible répond « introuvable » sans révéler son existence.
-- **Photos** : réduites dans le navigateur avant l’envoi (1600 px, une par une pour rester sous la limite de 4,5 Mo de Vercel), puis ré-encodées en WebP côté serveur, ce qui **efface les métadonnées** (position GPS, modèle du téléphone). Elles sont stockées dans MongoDB (GridFS) et servies uniquement aux membres du dossier, avec un cache privé.
-- **Messages** : un proche peut « Écrire à Céline » dans le fil du dossier (visible par Céline et les autres proches de ce dossier).
-- Code : `src/lib/family-space.ts` (règles d’accès), `src/models/` (Dossier, Membership, Invitation, Post), `src/pages/compte/`, `src/pages/api/dossiers|posts|photos/`.
+- **Cloisonnement** : un proche ne voit que les dossiers auxquels il est rattaché. Chaque page (`loadDossierPage`) et chaque API (`guard`) vérifie l’accès ; un dossier inaccessible répond « introuvable » sans révéler son existence. Les écritures venant d’un autre site sont refusées.
+- **Photos et documents** : photos réduites dans le navigateur (1600 px, une par une pour rester sous la limite de 4,5 Mo de Vercel) puis ré-encodées en WebP ; documents images ré-encodés en JPEG ; les **métadonnées sont effacées** (position GPS, modèle du téléphone). Les PDF sont vérifiés (signature `%PDF-`). Tout est stocké dans MongoDB (GridFS), servi aux seuls membres du dossier, avec un cache privé.
+- Code : `src/lib/family-space.ts` (règles d’accès, garde des API), `src/lib/dossier-data.ts` (messagerie, agenda, documents, album, indicateurs), `src/lib/dossier-page.ts`, `src/components/espace/`, `src/models/`, `src/pages/compte/`, `src/pages/api/`.
+- Test : `npm run build && npm run test:familles` (82 vérifications, dont le proche d’un dossier qui tente d’atteindre un autre dossier sur chaque rubrique, et l’absence de script intégré sans nonce).
 
 **Essayer en local**
 
@@ -275,7 +282,7 @@ Espace privé où Céline publie ses comptes-rendus de visite (mot, photos, page
 npm run dev:familles
 ```
 
-Puis créer le compte de Céline sur `/compte/inscription` avec l’e-mail `celine@test.local`. Les données de test restent dans `.local-db/` (ignoré par Git).
+Puis créer le compte de Céline sur `/compte/inscription` avec l’e-mail `celine@test.local`. Les données de test restent dans `.local-db/` (ignoré par Git). Pour faire tourner deux copies du projet en même temps, donner un autre port de base : `DEV_DB_PORT=27037 npm run dev:familles -- --port 4331`.
 
 **Mise en service en ligne**
 

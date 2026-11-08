@@ -1,0 +1,68 @@
+---
+import DossierShell from "@/components/espace/DossierShell.astro";
+import Lightbox from "@/components/espace/Lightbox.astro";
+import { cap, fmt, listAlbum } from "@/lib/dossier-data";
+import { loadDossierPage } from "@/lib/dossier-page";
+
+const ctx = await loadDossierPage(Astro);
+if (ctx instanceof Response) return ctx;
+const { dossier } = ctx;
+const base = `/compte/dossier/${dossier.id}`;
+const photos = await listAlbum(dossier.id);
+
+const groups: { postId: string; date: Date; photoIds: string[] }[] = [];
+for (const p of photos) {
+  const last = groups.at(-1);
+  if (last?.postId === p.postId) last.photoIds.push(p.photoId);
+  else groups.push({ postId: p.postId, date: p.date, photoIds: [p.photoId] });
+}
+let n = 0;
+---
+
+<DossierShell dossier={dossier} section="Album photos" wide>
+  <p slot="intro" class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
+    Toutes les photos des visites. Touchez une photo pour l’agrandir, puis passez à la suivante.
+  </p>
+
+  {
+    photos.length === 0 ? (
+      <p class="mt-8 rounded-3xl border border-dashed border-marine/25 bg-white/70 p-8 text-center text-lg text-marine/75">
+        L’album est encore vide. Les photos des visites apparaîtront ici.
+      </p>
+    ) : (
+      <div class="mt-8 space-y-10">
+        {groups.map((g) => (
+          <section aria-label={`Visite du ${fmt.dayYear.format(g.date)}`}>
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 class="font-display text-3xl text-marine">{cap(fmt.dayYear.format(g.date))}</h2>
+              <a href={`${base}/carnet/${g.postId}`} class="font-semibold text-aquarelle-bleu underline underline-offset-4">
+                Lire la visite
+              </a>
+            </div>
+            <ul class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
+              {g.photoIds.map((photoId) => {
+                n += 1;
+                return (
+                  <li>
+                    <button
+                      type="button"
+                      data-lightbox="album"
+                      data-src={`/api/photos/${photoId}`}
+                      data-alt={`Photo du ${fmt.dayYear.format(g.date)}`}
+                      aria-label={`Agrandir la photo ${n}`}
+                      class="block w-full overflow-hidden rounded-2xl ring-1 ring-marine/10 transition hover:ring-marine/30 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-marine"
+                    >
+                      <img src={`/api/photos/${photoId}`} alt="" loading="lazy" class="aspect-square w-full object-cover" />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))}
+      </div>
+    )
+  }
+
+  <Lightbox />
+</DossierShell>

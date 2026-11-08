@@ -164,9 +164,9 @@ try {
   r = await intrus.request(`/compte/dossier/${dossierA}`);
   check("un visiteur non connecté est renvoyé vers la connexion", r.status === 302 && (r.headers.get("location") ?? "").startsWith("/compte/connexion"));
 
-  r = await familleA.request(`/api/dossiers/${dossierB}/posts`, { method: "POST", json: { text: "Je m'invite" } });
+  r = await familleA.request(`/api/dossiers/${dossierB}/messages`, { method: "POST", json: { text: "Je m'invite" } });
   check("le proche A ne peut pas écrire dans le dossier B", r.status === 404, `statut ${r.status}`);
-  r = await familleA.request(`/api/dossiers/${dossierA}/posts`, { method: "POST", json: { text: "Merci Céline !" } });
+  r = await familleA.request(`/api/dossiers/${dossierA}/messages`, { method: "POST", json: { text: "Merci Céline !" } });
   const messageA = (await familleA.data(r)).id;
   check("le proche A écrit à Céline dans son dossier", r.status === 201, `statut ${r.status}`);
   r = await familleA.request(`/api/dossiers/${dossierA}/invitations`, { method: "POST", json: { label: "un ami" } });
@@ -175,13 +175,151 @@ try {
   check("un proche ne peut pas créer de dossier", r.status === 403, `statut ${r.status}`);
   r = await familleA.request(`/api/posts/${visiteA}`, { method: "DELETE" });
   check("un proche ne peut pas supprimer la visite de Céline", r.status === 403, `statut ${r.status}`);
-  r = await familleB.request(`/api/posts/${messageA}`, { method: "DELETE" });
+  r = await familleB.request(`/api/messages/${messageA}`, { method: "DELETE" });
   check("le proche B ne peut pas supprimer un message du dossier A", r.status === 404, `statut ${r.status}`);
-  r = await familleA.request(`/api/posts/${messageA}`, { method: "DELETE" });
+  r = await familleA.request(`/api/messages/${messageA}`, { method: "DELETE" });
   check("le proche A supprime son propre message", r.ok, `statut ${r.status}`);
 
   r = await familleB.request("/compte");
   check("le proche B (un seul dossier) arrive directement sur son dossier", r.status === 302 && r.headers.get("location") === `/compte/dossier/${dossierB}`);
+
+  console.log("\nCarnet, album et pages de visite");
+  r = await familleA.request(`/compte/dossier/${dossierA}/carnet/${visiteA}`);
+  check("le proche A ouvre la page de la visite", r.ok && (await r.text()).includes("Belle partie de cartes"), `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierB}/carnet/${visiteA}`);
+  const leak = await r.text();
+  check("la visite du dossier A est introuvable depuis le dossier B", r.status === 302 && !leak.includes("Belle partie"), `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierA}/carnet/${visiteA}`);
+  check("le proche B ne peut pas ouvrir une visite du dossier A", r.status === 302 && r.headers.get("location") === "/compte", `statut ${r.status}`);
+  r = await familleA.request(`/compte/dossier/${dossierA}/album`);
+  check("l'album du dossier A montre ses photos", r.ok && (await r.text()).includes(photoA), `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierA}/album`);
+  check("le proche B ne peut pas ouvrir l'album du dossier A", r.status === 302, `statut ${r.status}`);
+  r = await familleA.request(`/compte/dossier/${dossierA}/carnet/nouvelle`);
+  check("un proche n'a pas accès au formulaire de publication", r.status === 302, `statut ${r.status}`);
+  r = await familleA.request(`/api/dossiers/${dossierA}/posts`, { method: "POST", json: { text: "Je publie une visite" } });
+  check("un proche ne peut pas publier de visite", r.status === 403, `statut ${r.status}`);
+
+  console.log("\nMessagerie et non-lus");
+  r = await familleA.request(`/api/dossiers/${dossierA}/messages`, { method: "POST", json: { text: "Papa a adoré la belote." } });
+  const messageA2 = (await familleA.data(r)).id;
+  check("le proche A écrit un nouveau message", r.status === 201, `statut ${r.status}`);
+  r = await celine.request("/compte");
+  check("Céline voit « 1 message non lu » sur la carte du dossier A", r.ok && (await r.text()).includes("1 message non lu"), `statut ${r.status}`);
+  r = await celine.request(`/compte/dossier/${dossierA}`);
+  check("la tuile Messagerie de Céline affiche la pastille non lu", (await r.text()).includes("1 message non lu"));
+  r = await celine.request(`/compte/dossier/${dossierA}/messages`);
+  const convA = await r.text();
+  check("Céline lit la conversation", r.ok && convA.includes("Papa a adoré la belote."), `statut ${r.status}`);
+  r = await celine.request(`/compte/dossier/${dossierA}`);
+  const dashAfter = await r.text();
+  check("après lecture, la pastille disparaît", r.ok && dashAfter.includes("Messagerie") && !dashAfter.includes("message non lu"), `statut ${r.status}`);
+  r = await celine.request(`/api/dossiers/${dossierA}/messages`, { method: "POST", json: { text: "Je passe jeudi à 14 h." } });
+  const messageCeline = (await celine.data(r)).id;
+  check("Céline répond", r.status === 201, `statut ${r.status}`);
+  r = await familleA.request(`/compte/dossier/${dossierA}`);
+  check("le proche A voit la pastille « 1 message non lu »", (await r.text()).includes("1 message non lu"));
+  r = await familleA.request(`/api/messages/${messageCeline}`, { method: "DELETE" });
+  check("un proche ne peut pas supprimer le message de Céline", r.status === 403, `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierA}/messages`);
+  check("le proche B ne peut pas lire la messagerie du dossier A", r.status === 302, `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierB}/messages`);
+  const convB = await r.text();
+  check("la messagerie du dossier B ne contient rien du dossier A", r.ok && !convB.includes("belote") && !convB.includes("jeudi à 14 h"));
+  r = await familleA.request(`/api/dossiers/${dossierA}/messages`, { method: "POST", json: { text: "   " } });
+  check("un message vide est refusé", r.status === 422, `statut ${r.status}`);
+  void messageA2;
+
+  console.log("\nAgenda des visites");
+  const tomorrow = new Date(Date.now() + 24 * 3600000).toISOString().slice(0, 10);
+  r = await celine.request(`/api/dossiers/${dossierA}/appointments`, { method: "POST", json: { date: tomorrow, time: "14:00", durationMinutes: 120, note: "Promenade au parc" } });
+  const apptA = (await celine.data(r)).id;
+  check("Céline ajoute une visite à l'agenda", r.status === 201, `statut ${r.status}`);
+  r = await familleA.request(`/compte/dossier/${dossierA}`);
+  const dashA = await r.text();
+  check("le proche A voit « Prochaine visite … à 14 h » sur son tableau de bord", dashA.includes("Prochaine visite") && dashA.includes("à 14 h"));
+  r = await familleA.request(`/api/dossiers/${dossierA}/appointments`, { method: "POST", json: { date: tomorrow, time: "10:00", durationMinutes: 60 } });
+  check("un proche ne peut pas ajouter de visite", r.status === 403, `statut ${r.status}`);
+  r = await familleA.request(`/api/appointments/${apptA}`, { method: "DELETE" });
+  check("un proche ne peut pas retirer une visite", r.status === 403, `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierA}/agenda`);
+  check("le proche B ne peut pas voir l'agenda du dossier A", r.status === 302, `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierB}`);
+  const dashB = await r.text();
+  check("le tableau de bord du dossier B n'affiche pas la visite du dossier A", r.ok && dashB.includes("Agenda des visites") && !dashB.includes("Promenade au parc"), `statut ${r.status}`);
+  r = await celine.request(`/api/dossiers/${dossierA}/appointments`, { method: "POST", json: { date: tomorrow, time: "25:00", durationMinutes: 60 } });
+  check("une heure invalide est refusée", r.status === 422, `statut ${r.status}`);
+  await celine.request(`/api/dossiers/${dossierA}/appointments`, { method: "POST", json: { date: "2027-07-15", time: "14:00", durationMinutes: 60, note: "été" } });
+  await celine.request(`/api/dossiers/${dossierA}/appointments`, { method: "POST", json: { date: "2027-01-15", time: "14:00", durationMinutes: 60, note: "hiver" } });
+  const ete = await db.db().collection("appointments").findOne({ note: "été" });
+  const hiver = await db.db().collection("appointments").findOne({ note: "hiver" });
+  check("14 h l'été à Paris = 12 h UTC", ete?.startsAt.toISOString() === "2027-07-15T12:00:00.000Z", ete?.startsAt.toISOString());
+  check("14 h l'hiver à Paris = 13 h UTC", hiver?.startsAt.toISOString() === "2027-01-15T13:00:00.000Z", hiver?.startsAt.toISOString());
+  r = await celine.request(`/api/appointments/${apptA}`, { method: "DELETE" });
+  check("Céline retire une visite de l'agenda", r.ok, `statut ${r.status}`);
+
+  console.log("\nDocuments");
+  const pdf = Buffer.from("%PDF-1.4\n1 0 obj << /Type /Catalog >> endobj\ntrailer << /Root 1 0 R >>\n%%EOF\n");
+  const docHeaders = (title, category = "facture", type = "application/pdf") => ({
+    "content-type": type,
+    "x-document-title": encodeURIComponent(title),
+    "x-document-category": category,
+  });
+  r = await celine.request(`/api/dossiers/${dossierA}/documents`, { method: "POST", body: pdf, headers: docHeaders("Facture d’octobre") });
+  const docA = (await celine.data(r)).id;
+  check("Céline dépose une facture PDF", r.status === 201 && Boolean(docA), `statut ${r.status}`);
+  r = await celine.request(`/api/dossiers/${dossierA}/documents`, { method: "POST", body: Buffer.from("<html>pas un pdf</html>"), headers: docHeaders("Faux PDF") });
+  check("un faux PDF est refusé", r.status === 422, `statut ${r.status}`);
+  r = await celine.request(`/api/dossiers/${dossierA}/documents`, { method: "POST", body: Buffer.from("<script>"), headers: docHeaders("Page web", "autre", "text/html") });
+  check("un fichier HTML est refusé", r.status === 415, `statut ${r.status}`);
+  r = await celine.request(`/api/dossiers/${dossierA}/documents`, { method: "POST", body: pdf, headers: docHeaders("Piratage"), origin: "https://site-malveillant.example" });
+  check("dépôt de document depuis un autre site refusé", r.status === 403, `statut ${r.status}`);
+  r = await celine.request(`/api/dossiers/${dossierA}/documents`, { method: "POST", body: withExif, headers: docHeaders("Devis signé", "devis", "image/jpeg") });
+  const docImage = (await celine.data(r)).id;
+  check("Céline dépose un document photo", r.status === 201, `statut ${r.status}`);
+  r = await familleA.request(`/api/documents/${docImage}`);
+  const docImgMeta = await sharp(Buffer.from(await r.arrayBuffer())).metadata();
+  check("le document photo est servi sans métadonnées", r.ok && docImgMeta.format === "jpeg" && !docImgMeta.exif);
+  r = await familleA.request(`/api/documents/${docA}?telecharger`);
+  const pdfBack = Buffer.from(await r.arrayBuffer());
+  check(
+    "le proche A télécharge la facture",
+    r.ok && r.headers.get("content-type") === "application/pdf" && (r.headers.get("content-disposition") ?? "").startsWith("attachment") && pdfBack.equals(pdf),
+    `statut ${r.status}`,
+  );
+  r = await familleB.request(`/api/documents/${docA}`);
+  check("le proche B ne peut PAS télécharger la facture du dossier A", r.status === 404, `statut ${r.status}`);
+  r = await intrus.request(`/api/documents/${docA}`);
+  check("un visiteur non connecté ne peut pas télécharger", r.status === 404, `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierA}/documents`);
+  check("le proche B ne peut pas ouvrir les documents du dossier A", r.status === 302, `statut ${r.status}`);
+  r = await familleB.request(`/compte/dossier/${dossierB}/documents`);
+  check("les documents du dossier B ne listent rien du dossier A", !(await r.text()).includes("Facture d’octobre"));
+  r = await familleA.request(`/api/dossiers/${dossierA}/documents`, { method: "POST", body: pdf, headers: docHeaders("Mon document") });
+  check("un proche ne peut pas déposer de document", r.status === 403, `statut ${r.status}`);
+  r = await familleA.request(`/api/documents/${docA}`, { method: "DELETE" });
+  check("un proche ne peut pas supprimer de document", r.status === 403, `statut ${r.status}`);
+  r = await celine.request(`/api/documents/${docA}`, { method: "DELETE" });
+  check("Céline supprime la facture", r.ok, `statut ${r.status}`);
+  r = await familleA.request(`/api/documents/${docA}`);
+  check("la facture supprimée n'est plus téléchargeable", r.status === 404, `statut ${r.status}`);
+
+  console.log("\nSécurité des pages (CSP)");
+  // Tout script doit être un fichier (src) ou porter le nonce : la CSP de production bloque le reste.
+  const inlineScripts = (html) =>
+    [...html.matchAll(/<script\b([^>]*)>/g)].filter(([, attrs]) => !/\bsrc=|\bnonce=|ld\+json/.test(attrs)).length;
+  const pages = ["", "/carnet", `/carnet/${visiteA}`, "/carnet/nouvelle", "/messages", "/album", "/agenda", "/documents", "/proches"];
+  let badPages = [];
+  for (const page of pages) {
+    const res = await celine.request(`/compte/dossier/${dossierA}${page}`);
+    const html = await res.text();
+    if (!res.ok || inlineScripts(html) > 0) badPages.push(`${page || "/"} (${res.status})`);
+  }
+  const home = await (await celine.request("/compte")).text();
+  if (inlineScripts(home) > 0) badPages.push("/compte");
+  check("aucun script intégré sans nonce dans les 10 pages de l'espace", badPages.length === 0, badPages.join(", "));
+  const csp = (await celine.request(`/compte/dossier/${dossierA}`)).headers.get("content-security-policy") ?? "";
+  check("la CSP de production est bien envoyée", csp.includes("script-src 'self' 'nonce-"));
 
   console.log("\nCompte existant invité dans un second dossier");
   const tokenA2 = await tokenOf(dossierA, "sa fille Anne");

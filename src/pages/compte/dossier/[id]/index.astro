@@ -1,0 +1,162 @@
+---
+import DossierShell from "@/components/espace/DossierShell.astro";
+import Icon from "@/components/espace/Icon.astro";
+import Tile from "@/components/espace/Tile.astro";
+import { appointmentLabel, cap, dossierOverview, excerpt, fmt } from "@/lib/dossier-data";
+import { loadDossierPage } from "@/lib/dossier-page";
+
+const ctx = await loadDossierPage(Astro);
+if (ctx instanceof Response) return ctx;
+const { user, admin, dossier } = ctx;
+const o = await dossierOverview(user.id, dossier.id);
+const base = `/compte/dossier/${dossier.id}`;
+const firstName = user.name.split(" ")[0];
+
+const plural = (n: number, one: string, many: string) => `${n} ${n > 1 ? many : one}`;
+const lastVisitInfo = o.lastVisit ? `Dernière visite : ${fmt.short.format(o.lastVisit.date)}` : "Aucune visite publiée pour l’instant";
+const messagesInfo =
+  o.unread > 0
+    ? plural(o.unread, "nouveau message", "nouveaux messages")
+    : o.lastMessage
+      ? `${o.lastMessage.authorId === user.id ? "Vous" : o.lastMessage.authorName.split(" ")[0]} : « ${excerpt(o.lastMessage.text, 60)} »`
+      : admin
+        ? "Écrivez à la famille"
+        : "Écrivez à Céline";
+const memberNames = o.members.map((m) => m.name.split(" ")[0]);
+---
+
+<DossierShell dossier={dossier} wide>
+  <p slot="intro" class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
+    {admin
+      ? "Votre tableau de bord pour ce dossier. Seuls vous et les proches invités y ont accès."
+      : `Bonjour ${firstName} ! Retrouvez ici les nouvelles, les photos et les prochaines visites de Céline.`}
+  </p>
+
+  {
+    admin && (
+      <a
+        href={`${base}/carnet/nouvelle`}
+        class="mt-6 flex min-h-[64px] items-center justify-center gap-3 rounded-2xl bg-marine px-6 text-lg font-semibold text-ivoire shadow-[0_12px_30px_rgba(29,53,87,0.25)] transition hover:bg-marine/90 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-marine sm:inline-flex"
+      >
+        <Icon name="plus" class="h-6 w-6" />
+        Publier une visite
+      </a>
+    )
+  }
+
+  {
+    o.nextVisit && (
+      <a
+        href={`${base}/agenda`}
+        class="mt-6 flex items-center gap-4 rounded-2xl border border-sauge/40 bg-sauge/15 px-5 py-4 text-marine transition hover:bg-sauge/25"
+      >
+        <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-[#5d7a61]">
+          <Icon name="agenda" class="h-6 w-6" />
+        </span>
+        <span>
+          <span class="block text-sm font-semibold uppercase tracking-wide text-marine/60">Prochaine visite</span>
+          <span class="block font-hero text-xl font-semibold">{appointmentLabel(o.nextVisit)}</span>
+        </span>
+      </a>
+    )
+  }
+
+  <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Les espaces du dossier">
+    <li>
+      <Tile
+        href={`${base}/carnet`}
+        icon="carnet"
+        tone="rose"
+        title="Carnet de sourires"
+        info={lastVisitInfo}
+        detail={o.visits > 0 ? plural(o.visits, "visite racontée", "visites racontées") : undefined}
+      />
+    </li>
+    <li>
+      <Tile
+        href={`${base}/messages`}
+        icon="messages"
+        tone="bleu"
+        title={admin ? "Messagerie" : "Écrire à Céline"}
+        info={messagesInfo}
+        detail={o.unread === 0 && o.lastMessage ? fmt.stamp.format(o.lastMessage.createdAt) : undefined}
+        badge={o.unread}
+        badgeLabel={plural(o.unread, "message non lu", "messages non lus")}
+      />
+    </li>
+    <li>
+      <Tile
+        href={`${base}/album`}
+        icon="album"
+        tone="jaune"
+        title="Album photos"
+        info={o.photos > 0 ? plural(o.photos, "photo", "photos") : "Les photos des visites arriveront ici"}
+      >
+        {
+          o.photoPreview.length > 0 && (
+            <span class="mt-3 flex gap-1.5" aria-hidden="true">
+              {o.photoPreview.map((id) => (
+                <img src={`/api/photos/${id}`} alt="" loading="lazy" class="h-12 w-12 rounded-lg object-cover ring-1 ring-marine/10" />
+              ))}
+            </span>
+          )
+        }
+      </Tile>
+    </li>
+    <li>
+      <Tile
+        href={`${base}/agenda`}
+        icon="agenda"
+        tone="sauge"
+        title="Agenda des visites"
+        info={o.nextVisit ? `Prochaine : ${appointmentLabel(o.nextVisit, false)}` : "Pas de visite prévue pour l’instant"}
+        detail={o.nextVisit?.note ? excerpt(o.nextVisit.note, 60) : undefined}
+      />
+    </li>
+    <li>
+      <Tile
+        href={`${base}/documents`}
+        icon="documents"
+        tone="marine"
+        title="Documents"
+        info={o.documents > 0 ? plural(o.documents, "document", "documents") : "Contrat, devis, factures…"}
+        detail={o.documents > 0 ? "Contrat, devis, factures, attestation fiscale" : undefined}
+      />
+    </li>
+    <li>
+      <Tile
+        href={`${base}/proches`}
+        icon="proches"
+        tone="rose"
+        title="Les proches"
+        info={o.members.length > 0 ? memberNames.join(", ") : admin ? "Invitez la famille" : "Vous seul·e pour l’instant"}
+        detail={admin ? "Inviter ou retirer un proche" : "Qui a accès à ce dossier"}
+      />
+    </li>
+  </ul>
+
+  {
+    o.lastVisit && (
+      <section class="mt-10" aria-labelledby="derniere-visite">
+        <h2 id="derniere-visite" class="font-display text-3xl text-marine">La dernière visite</h2>
+        <a
+          href={`${base}/carnet/${o.lastVisit.id}`}
+          class="mt-4 flex flex-col overflow-hidden rounded-3xl border border-marine/10 bg-white shadow-[0_10px_30px_rgba(29,53,87,0.07)] transition hover:shadow-[0_16px_40px_rgba(29,53,87,0.12)] sm:flex-row"
+        >
+          {o.lastVisit.coverPhotoId && (
+            <img
+              src={`/api/photos/${o.lastVisit.coverPhotoId}`}
+              alt=""
+              class="aspect-[4/3] w-full object-cover sm:aspect-auto sm:w-64"
+            />
+          )}
+          <span class="block p-5 sm:p-6">
+            <span class="block font-hero text-lg font-semibold text-marine">{cap(fmt.dayYear.format(o.lastVisit.date))}</span>
+            <span class="mt-2 block text-base leading-relaxed text-marine/85">{excerpt(o.lastVisit.text, 220)}</span>
+            <span class="mt-3 inline-block font-semibold text-aquarelle-bleu">Lire la visite →</span>
+          </span>
+        </a>
+      </section>
+    )
+  }
+</DossierShell>

@@ -1,0 +1,45 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Icon from "@/components/espace/Icon.astro";
+
+/** Cadre commun des pages d'un dossier : fil d'Ariane, retour au tableau de bord, titre. */
+interface Props {
+  dossier: { id: string; name: string };
+  /** Titre de la rubrique (absent sur le tableau de bord). */
+  section?: string;
+  /** Lien de retour personnalisé (ex. retour au carnet depuis une visite). */
+  back?: { href: string; label: string };
+  wide?: boolean;
+}
+const { dossier, section, back, wide = false } = Astro.props;
+const base = `/compte/dossier/${dossier.id}`;
+const backLink = back ?? (section ? { href: base, label: "Tableau de bord" } : { href: "/compte", label: "Espace familles" });
+const breadcrumb = [
+  { href: "/", label: "Accueil" },
+  { href: "/compte", label: "Espace familles" },
+  ...(section ? [{ href: base, label: dossier.name }, { label: section }] : [{ label: dossier.name }]),
+];
+---
+
+<BaseLayout
+  title={`${section ? `${section} — ` : ""}${dossier.name} — Espace familles`}
+  description="Dossier privé — Espace familles Le Sourire de Jojo."
+  breadcrumb={breadcrumb}
+  noindex
+>
+  <div class:list={["mx-auto px-4 pb-16 pt-6 md:px-6 md:pt-10", wide ? "max-w-6xl" : "max-w-4xl"]} data-reveal-skip>
+    <a
+      href={backLink.href}
+      class="inline-flex min-h-[44px] items-center gap-1.5 rounded-full pr-3 text-base font-semibold text-marine/75 hover:text-marine focus-visible:outline focus-visible:outline-2 focus-visible:outline-marine"
+    >
+      <Icon name="back" class="h-5 w-5" />
+      {backLink.label}
+    </a>
+    <header class="mt-2">
+      <p class="text-sm font-semibold uppercase tracking-[0.18em] text-marine/55">{section ? dossier.name : "Espace familles"}</p>
+      <h1 class="mt-1 font-display text-4xl leading-tight text-marine md:text-5xl">{section ?? dossier.name}</h1>
+      <slot name="intro" />
+    </header>
+    <slot />
+  </div>
+</BaseLayout>

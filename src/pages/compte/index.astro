@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Icon from "@/components/espace/Icon.astro";
+import { appointmentLabel, dossierCards, fmt } from "@/lib/dossier-data";
 import { acceptInvitation, isAdmin, listDossiersFor } from "@/lib/family-space";
 import { isDbConfigured } from "@/lib/db-config";
 
@@ -16,12 +18,16 @@ if (invitationToken && isDbConfigured()) {
 
 const dossiers = isDbConfigured() ? await listDossiersFor(user) : [];
 
-// Un proche qui n'a qu'un dossier arrive directement dessus.
+// Un proche qui n'a qu'un dossier arrive directement sur son tableau de bord.
 if (!admin && dossiers.length === 1 && !invitationResult) {
   return Astro.redirect(`/compte/dossier/${dossiers[0].id}`);
 }
 
+const cards = await dossierCards(user.id, dossiers);
+const totalUnread = cards.reduce((n, c) => n + c.unread, 0);
 const firstName = user.name.split(" ")[0];
+const inputClass =
+  "min-h-[52px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-lg text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30";
 ---
 
 <BaseLayout
@@ -30,19 +36,20 @@ const firstName = user.name.split(" ")[0];
   breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Espace familles" }]}
   noindex
 >
-  <div class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
-    <h1 class="font-display text-4xl text-marine md:text-5xl">Bonjour {firstName}</h1>
+  <div class="mx-auto max-w-6xl px-4 pb-16 pt-8 md:px-6 md:pt-12" data-reveal-skip>
+    <p class="text-sm font-semibold uppercase tracking-[0.18em] text-marine/55">Espace familles</p>
+    <h1 class="mt-1 font-display text-4xl text-marine md:text-5xl">Bonjour {firstName}</h1>
 
     {
       invitationResult?.ok && (
-        <p class="mt-6 rounded-2xl border border-sauge/40 bg-sauge/20 p-4 text-marine" role="status">
+        <p class="mt-6 rounded-2xl border border-sauge/40 bg-sauge/20 p-4 text-lg text-marine" role="status">
           Vous avez maintenant accès au dossier de <strong>{invitationResult.dossierName}</strong>.
         </p>
       )
     }
     {
       invitationResult && !invitationResult.ok && (
-        <p class="mt-6 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-4 text-marine" role="alert">
+        <p class="mt-6 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-4 text-lg text-marine" role="alert">
           Ce lien d’invitation n’est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau à Céline.
         </p>
       )
@@ -50,77 +57,103 @@ const firstName = user.name.split(" ")[0];
 
     {
       admin ? (
-        <>
-          <p class="mt-4 text-lg leading-relaxed text-marine/85">
-            Votre espace administratrice : un dossier par personne accompagnée. Dans chaque dossier, vous publiez vos
-            visites (mots, photos, pages du carnet) et vous invitez les proches.
-          </p>
-
-          <form id="new-dossier-form" class="mt-10 rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm" novalidate>
-            <h2 class="font-display text-2xl text-marine">Nouveau dossier</h2>
-            <label for="dossier-name" class="mt-4 block text-sm font-medium text-marine">
-              Nom de la personne accompagnée
-            </label>
-            <div class="mt-1 flex flex-col gap-3 sm:flex-row">
-              <input
-                id="dossier-name"
-                name="name"
-                type="text"
-                required
-                maxlength="120"
-                placeholder="Ex. : Monsieur Robert Durand"
-                class="min-h-[48px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-base text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
-              />
-              <button
-                type="submit"
-                class="min-h-[48px] shrink-0 rounded-xl bg-marine px-6 font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60"
-              >
-                Créer le dossier
-              </button>
-            </div>
-            <p id="new-dossier-status" class="mt-2 text-sm text-marine/80" role="status"></p>
-          </form>
-        </>
+        <p class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
+          {totalUnread > 0
+            ? `Vous avez ${totalUnread} message${totalUnread > 1 ? "s" : ""} non lu${totalUnread > 1 ? "s" : ""}.`
+            : "Pas de nouveau message. Bonne journée !"}
+        </p>
       ) : (
-        <p class="mt-4 text-lg leading-relaxed text-marine/85">
-          Retrouvez ici les nouvelles de vos proches : les comptes-rendus de visite, les photos et les pages du carnet de
-          sourires.
+        <p class="mt-3 max-w-2xl text-lg leading-relaxed text-marine/80">
+          Choisissez le dossier de votre proche pour voir les nouvelles, les photos et les prochaines visites.
         </p>
       )
     }
 
-    <h2 class="mt-12 font-display text-2xl text-marine">{admin ? "Tous les dossiers" : "Vos dossiers"}</h2>
     {
-      dossiers.length === 0 ? (
-        <p class="mt-4 rounded-2xl border border-dashed border-marine/25 bg-cream/80 p-6 text-marine/80">
+      admin && cards.length > 0 && (
+        <form action="/compte/publier" method="get" class="mt-6 rounded-3xl bg-marine p-5 text-ivoire shadow-[0_14px_36px_rgba(29,53,87,0.25)] sm:p-6">
+          <p class="flex items-center gap-2 font-hero text-xl font-semibold">
+            <Icon name="plus" class="h-6 w-6" /> Publier une visite
+          </p>
+          <div class="mt-3 flex flex-col gap-3 sm:flex-row">
+            <label for="publish-dossier" class="sr-only">Pour quel dossier ?</label>
+            <select id="publish-dossier" name="dossier" class="min-h-[56px] flex-1 rounded-2xl border-0 bg-ivoire px-4 text-lg text-marine">
+              {cards.map((c) => <option value={c.id}>{c.name}</option>)}
+            </select>
+            <button type="submit" class="min-h-[56px] rounded-2xl bg-aquarelle-jaune px-6 text-lg font-bold text-marine hover:bg-aquarelle-jaune/90">
+              Continuer
+            </button>
+          </div>
+        </form>
+      )
+    }
+
+    <h2 class="mt-10 font-display text-3xl text-marine">{admin ? "Vos dossiers" : "Vos dossiers"}</h2>
+    {
+      cards.length === 0 ? (
+        <p class="mt-4 rounded-3xl border border-dashed border-marine/25 bg-white/70 p-6 text-lg text-marine/80">
           {admin
-            ? "Aucun dossier pour l’instant. Créez le premier ci-dessus."
+            ? "Aucun dossier pour l’instant. Créez le premier ci-dessous."
             : "Vous n’avez encore accès à aucun dossier. Céline vous enverra un lien d’invitation."}
         </p>
       ) : (
-        <ul class="mt-4 grid gap-4 sm:grid-cols-2">
-          {dossiers.map((d) => (
-            <li>
-              <a
-                href={`/compte/dossier/${d.id}`}
-                class="flex min-h-[72px] items-center justify-between gap-3 rounded-2xl border border-marine/15 bg-white/95 p-5 shadow-sm transition hover:border-marine/30 hover:shadow-md"
-              >
-                <span class="font-display text-xl text-marine">{d.name}</span>
-                <span class="text-marine/50" aria-hidden="true">→</span>
+        <ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {cards.map((c) => (
+            <li class="flex flex-col rounded-3xl border border-marine/10 bg-white shadow-[0_10px_30px_rgba(29,53,87,0.07)]">
+              <a href={`/compte/dossier/${c.id}`} class="group block flex-1 rounded-t-3xl p-5 hover:bg-cream/60 sm:p-6">
+                <span class="flex items-start justify-between gap-3">
+                  <span class="font-display text-3xl leading-tight text-marine">{c.name}</span>
+                  {c.unread > 0 && (
+                    <span
+                      class="mt-1 inline-flex shrink-0 items-center gap-1 rounded-full bg-rose-vieux px-3 py-1 text-sm font-bold text-white"
+                      aria-label={`${c.unread} message${c.unread > 1 ? "s" : ""} non lu${c.unread > 1 ? "s" : ""}`}
+                    >
+                      {`${c.unread} message${c.unread > 1 ? "s" : ""}`}
+                    </span>
+                  )}
+                </span>
+                <span class="mt-4 flex items-center gap-2 text-base text-marine/80">
+                  <Icon name="agenda" class="h-5 w-5 shrink-0 text-[#5d7a61]" />
+                  {c.nextVisit ? appointmentLabel(c.nextVisit) : "Pas de visite prévue"}
+                </span>
+                <span class="mt-2 flex items-center gap-2 text-base text-marine/80">
+                  <Icon name="carnet" class="h-5 w-5 shrink-0 text-rose-vieux" />
+                  {c.lastPublication ? `Dernière visite racontée : ${fmt.short.format(c.lastPublication)}` : "Carnet encore vide"}
+                </span>
               </a>
+              {admin && (
+                <a
+                  href={`/compte/dossier/${c.id}/carnet/nouvelle`}
+                  class="flex min-h-[52px] items-center justify-center gap-2 rounded-b-3xl border-t border-marine/10 text-base font-semibold text-marine hover:bg-marine/5"
+                >
+                  <Icon name="plus" class="h-5 w-5" /> Publier une visite
+                </a>
+              )}
             </li>
           ))}
         </ul>
       )
     }
 
-    <div class="mt-12 border-t border-marine/10 pt-6 text-sm text-marine/70">
+    {
+      admin && (
+        <form id="new-dossier-form" class="mt-10 max-w-2xl rounded-3xl border border-marine/10 bg-white p-5 shadow-[0_10px_30px_rgba(29,53,87,0.07)] sm:p-6" novalidate>
+          <h2 class="font-display text-3xl text-marine">Nouveau dossier</h2>
+          <label for="dossier-name" class="mt-3 block text-base font-semibold text-marine">Nom de la personne accompagnée</label>
+          <div class="mt-2 flex flex-col gap-3 sm:flex-row">
+            <input id="dossier-name" name="name" type="text" required maxlength="120" placeholder="Ex. : Monsieur Robert Durand" class={inputClass} />
+            <button type="submit" class="min-h-[52px] shrink-0 rounded-xl bg-marine px-6 text-lg font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60">
+              Créer le dossier
+            </button>
+          </div>
+          <p id="new-dossier-status" class="mt-2 text-base text-marine/80" role="status"></p>
+        </form>
+      )
+    }
+
+    <div class="mt-12 border-t border-marine/10 pt-6 text-base text-marine/70">
       <p>Connecté·e : {user.email}</p>
-      <button
-        type="button"
-        id="logout-btn"
-        class="mt-3 min-h-[44px] rounded-xl border-2 border-marine/20 px-5 font-semibold text-marine hover:bg-marine/5"
-      >
+      <button type="button" id="logout-btn" class="mt-3 min-h-[48px] rounded-xl border-2 border-marine/20 px-5 font-semibold text-marine hover:bg-marine/5">
         Se déconnecter
       </button>
     </div>
@@ -128,8 +161,10 @@ const firstName = user.name.split(" ")[0];
 </BaseLayout>
 
 <script>
+  import { firstError, sendJson } from "@/scripts/espace-api";
+
   document.getElementById("logout-btn")?.addEventListener("click", async () => {
-    await fetch("/api/auth/logout", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+    await sendJson("/api/auth/logout");
     window.location.href = "/compte/connexion";
   });
 
@@ -144,16 +179,11 @@ const firstName = user.name.split(" ")[0];
       return;
     }
     status.textContent = "Création…";
-    const res = await fetch("/api/dossiers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    }).catch(() => null);
-    const data = res ? await res.json().catch(() => ({})) : {};
-    if (!res?.ok) {
-      status.textContent = data.error ?? data.errors?.name?.[0] ?? "Création impossible.";
+    const { ok, data } = await sendJson("/api/dossiers", { name });
+    if (!ok) {
+      status.textContent = firstError(data, "Création impossible.");
       return;
     }
-    window.location.href = `/compte/dossier/${data.dossier.id}`;
+    window.location.href = `/compte/dossier/${(data.dossier as { id: string }).id}`;
   });
 </script>
