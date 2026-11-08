@@ -45,6 +45,8 @@ const jobs = [
     out: `presentation/assets/${f.replace(/\.(jpe?g|png)$/, ".webp")}`,
     width: 1600,
   })),
+  // Diapositive 2 : Céline et sa maman, « mamie Jo ».
+  { src: "presentation/maman.jpg", out: "presentation/assets/maman.webp", width: 1200 },
 ];
 
 let before = 0;

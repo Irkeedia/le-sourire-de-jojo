@@ -39,10 +39,23 @@ const dev = spawn("npm", ["run", "dev", "--", "--port", String(port), "--host", 
   env: { ...process.env, BROWSER: "none" },
 });
 
+/**
+ * Utilise Google Chrome s'il est installé (Playwright n'a alors pas besoin
+ * de télécharger son propre navigateur), sinon le Chromium de Playwright.
+ */
+async function launchBrowser() {
+  try {
+    return await chromium.launch({ channel: "chrome" });
+  } catch (err) {
+    console.warn(`Google Chrome introuvable, repli sur le Chromium de Playwright (${err.message.split("\n")[0]})`);
+    return chromium.launch();
+  }
+}
+
 try {
   await waitForServer(baseUrl);
 
-  const browser = await chromium.launch();
+  const browser = await launchBrowser();
   const page = await browser.newPage();
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   await page.waitForTimeout(1500);

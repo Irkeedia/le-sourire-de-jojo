@@ -96,10 +96,10 @@ export const presentationSlides: PresentationSlide[] = [
     title: "Mon histoire, mon projet",
     text: "Né d’une épreuve personnelle : accompagner ma maman aux séances de chimiothérapie m’a révélé l’importance vitale d’une présence et d’un sourire. Maman, « mamie Jo » — Jojo pour mon papa : la joie incarnée. Un livre de Lanza Del Vasto : « Tiens-toi droit et souris » — une révélation. Porter cet héritage de bienveillance auprès de ceux qui vivent l’isolement ou l’immobilisation.",
     image: {
-      src: "/presentation/assets/image19.webp",
-      alt: "Portrait bienveillant — l’esprit mamie Jo",
-      fit: "contain",
-      position: "center center",
+      src: "/presentation/assets/maman.webp",
+      alt: "Céline et sa maman, mamie Jo, tout sourire",
+      fit: "cover",
+      position: "center 35%",
     },
   },
   {
@@ -129,8 +129,8 @@ export const presentationSlides: PresentationSlide[] = [
         },
       },
       {
-        title: "Convalescents",
-        text: "Soutenir les adultes immobilisés suite à un accident de la vie.",
+        title: "Personnes immobilisées",
+        text: "Soutenir adultes et enfants momentanément empêchés.",
         image: {
           src: "/presentation/assets/image15.webp",
           alt: "Lecture partagée et présence bienveillante",
@@ -139,11 +139,11 @@ export const presentationSlides: PresentationSlide[] = [
         },
       },
       {
-        title: "Enfants",
-        text: "Accompagner les plus jeunes momentanément empêchés.",
+        title: "Parents solos",
+        text: "Garde ponctuelle des plus de 3 ans, en journée hors week-end.",
         image: {
           src: "/images/enfant.webp",
-          alt: "Enfant souriant lors d’une activité à domicile",
+          alt: "Moment de devoirs partagé avec un enfant, à domicile",
           fit: "cover",
           position: "center 15%",
         },
@@ -226,7 +226,7 @@ export const presentationSlides: PresentationSlide[] = [
   {
     kind: "table",
     title: "Offres & forfaits",
-    intro: `Tarif horaire ${TARIF_HORAIRE_BRUT_EUR} € brut · ${tarifNetApresCredit(TARIF_HORAIRE_BRUT_EUR)} € après crédit d’impôt 50 % (SAP).`,
+    intro: `${tarifNetApresCredit(TARIF_HORAIRE_BRUT_EUR)} € / h après crédit d’impôt de 50 % (SAP) · ${TARIF_HORAIRE_BRUT_EUR} € / h avant crédit d’impôt.`,
     headers: ["Thème", "Heures", "Coût brut", "Après impôt"],
     rows: forfaitTableRows(),
     note: "Toutes les activités peuvent aussi se faire à l’heure. Hors zone : sur devis.",
@@ -237,7 +237,7 @@ export const presentationSlides: PresentationSlide[] = [
     text: "Crédit d’impôt de 50 % automatique (service à la personne) · APA via le Conseil départemental du Tarn-et-Garonne (dès 60 ans) · PCH via la MDPH (sans limite d’âge) · Chèques CESU des caisses de retraite (Agirc-Arrco, CARSAT, MSA…).",
     image: {
       src: "/presentation/assets/image26.webp",
-      alt: "Zone d’intervention — Montauban, Corbarieu, Tarn-et-Garonne",
+      alt: "Zone d’intervention — Corbarieu, Montauban et alentours (Tarn-et-Garonne)",
       fit: "contain",
       position: "center center",
     },

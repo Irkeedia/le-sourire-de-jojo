@@ -9,7 +9,7 @@ export const CONTACT_PHONE = "06 66 30 96 22";
 export const CONTACT_PHONE_E164 = "+33666309622";
 
 export const DEFAULT_DESCRIPTION =
-  "Accompagnement social et bienveillant à domicile (Céline Meunier Ben Neji) — lien, dignité, intergénérationnel. Montauban, Corbarieu, Tarn-et-Garonne.";
+  "Accompagnement social et bienveillant à domicile (Céline Meunier Ben Neji) — lien, dignité, intergénérationnel. Corbarieu, Montauban et alentours (Tarn-et-Garonne).";
 
 export const allowIndexing =
   import.meta.env.PUBLIC_ALLOW_INDEXING === "true" || import.meta.env.PUBLIC_ALLOW_INDEXING === "1";
@@ -87,13 +87,13 @@ export function buildLocalBusiness(siteUrl: string) {
       name: "Céline Meunier Ben Neji",
     },
     areaServed: [
-      { "@type": "City", name: "Montauban" },
       { "@type": "City", name: "Corbarieu" },
+      { "@type": "City", name: "Montauban" },
       { "@type": "AdministrativeArea", name: "Tarn-et-Garonne" },
     ],
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Montauban",
+      addressLocality: "Corbarieu",
       addressRegion: "Occitanie",
       addressCountry: "FR",
     },
