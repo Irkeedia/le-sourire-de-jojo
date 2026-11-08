@@ -1,10 +1,11 @@
 # Le Sourire de Jojo — Site Web
 
-Site vitrine Astro pour **Le Sourire de Jojo**, activité d’accompagnement social, relationnel et bienveillant à domicile autour de **Montauban**, **Corbarieu** et le **Tarn-et-Garonne**.
+Site vitrine Astro pour **Le Sourire de Jojo** (Céline Meunier Ben Neji), dame de compagnie à domicile au départ de **Corbarieu**, avec **Montauban** et le **Tarn-et-Garonne** autour. Lancement de l’activité : **2 janvier 2027**.
 
 Le site présente les services, les offres, le carnet de sourires, les documents juridiques, un formulaire de contact sécurisé et une page de contrat signable en ligne.
 
-**Dépôt :** [github.com/Irkeedia/le-sourire-de-jojo](https://github.com/Irkeedia/le-sourire-de-jojo)
+**Dépôt :** [github.com/Irkeedia/le-sourire-de-jojo](https://github.com/Irkeedia/le-sourire-de-jojo) (**public** : rien de confidentiel ici)
+**En ligne :** [le-sourire-de-jojo.vercel.app](https://le-sourire-de-jojo.vercel.app) — chaque push sur `main` est déployé en production par Vercel.
 
 Par défaut, le site reste en **noindex** tant que `PUBLIC_ALLOW_INDEXING` n’est pas défini à `true` ou `1`.
 
@@ -12,6 +13,8 @@ Par défaut, le site reste en **noindex** tant que `PUBLIC_ALLOW_INDEXING` n’e
 
 ## Sommaire
 
+1. [État du projet](#état-du-projet)
+1. [Règles de contenu à respecter](#règles-de-contenu-à-respecter)
 1. [Stack](#stack)
 2. [Installation](#installation)
 3. [Variables d’environnement](#variables-denvironnement)
@@ -26,6 +29,36 @@ Par défaut, le site reste en **noindex** tant que `PUBLIC_ALLOW_INDEXING` n’e
 12. [Sécurité, RGPD et indexation](#sécurité-rgpd-et-indexation)
 13. [Build et déploiement](#build-et-déploiement)
 14. [Documentation complémentaire](#documentation-complémentaire)
+
+---
+
+## État Du Projet
+
+*Mis à jour le 8 novembre 2026.*
+
+| Sujet | État |
+| --- | --- |
+| Site vitrine | En ligne, à jour des retours du call du 8 novembre (zone Corbarieu, parents solos, activités en pause retirées, prix TTC conforme) |
+| Formulaire de contact | Réparé en production (script et API) ; envoi d’e-mail selon la configuration SMTP |
+| Espace familles | Fusionné mais **inactif** : à brancher sur une base MongoDB Atlas (via le Marketplace Vercel) + `ADMIN_EMAIL`. Refonte « tableau de bord à tuiles » en cours sur une branche dédiée |
+| Numéros officiels | SIRET demandé le 7 novembre ; NOVA (déclaration SAP) et médiateur de la consommation à suivre. À reporter dans les mentions légales, CGV, contrat, conditions d’annulation |
+| Nom de domaine | `le-sourire-de-jojo.fr` prévu, pas encore acheté. Ensuite : `PUBLIC_SITE_URL`, puis `PUBLIC_ALLOW_INDEXING=true` |
+| À faire sur le site | Retirer l’option « senior avec perte d’autonomie » du formulaire, renommer le forfait « Biographie de vie », retirer le PowerPoint téléchargeable de `public/presentation/` (données internes) |
+
+Les supports imprimés (cartes, flyer, carnet, logos HD et vectoriels) sont générés dans un dossier local `print/`, **non versionné**.
+
+---
+
+## Règles De Contenu À Respecter
+
+Décisions prises avec Céline ; à garder en tête pour toute modification de texte.
+
+- **Prix** : le prix TTC (38 € / h) est toujours affiché **en plus gros** que le montant après crédit d’impôt (19 € / h), qui reste détaché du prix et marqué « sous conditions » (arrêté du 17 mars 2015, art. 5). Voir `src/lib/tarif.ts`.
+- **Publics** : simple déclaration SAP, donc **seniors autonomes** uniquement (pas de personnes âgées dépendantes / bénéficiaires de l’APA), personnes temporairement immobilisées, **parents solos** (garde ponctuelle d’enfants de plus de 3 ans, en journée hors week-end).
+- **En pause** (ne pas mentionner) : accompagnement PMR, fauteuil roulant, activités avec le chien (Lili, « visite duo »), post-opératoire, pack famille & aidants.
+- **Nom** : « Céline Meunier Ben Neji ». **Zone** : Corbarieu en premier, Montauban en ville voisine.
+- **Crédit d’impôt** : payé par la personne aidée, hors espèces ; sorties limitées aux heures passées au domicile sur l’année ; la rédaction d’une biographie n’y ouvre pas droit.
+- **Photos de clients** : uniquement avec un accord écrit (droit à l’image).
 
 ---
 
@@ -168,7 +201,11 @@ Pour ajouter ou remplacer une photo : déposer l’original dans `assets-src/ima
 | `/conditions-annulation` | `src/pages/conditions-annulation.astro` | Annulation et résiliation |
 | `/consentement` | `src/pages/consentement.astro` | Consentement imprimable |
 | `/plan-du-site` | `src/pages/plan-du-site.astro` | Plan du site |
+| `/presentation` | `src/pages/presentation.astro` | Présentation du projet en diapositives (contenu : `src/lib/presentation-slides.ts`) |
+| `/partenaires` | `src/pages/partenaires.astro` | Partenaires de confiance |
+| `/compte/*` | `src/pages/compte/` | Espace familles (voir plus bas) |
 | `POST /api/contact` | `src/pages/api/contact.ts` | API du formulaire contact |
+| `POST /api/docx` | `src/pages/api/docx.ts` | Export Word des documents juridiques |
 
 ---
 
@@ -298,7 +335,8 @@ Sécurité :
 - CSP configurable en mode report-only ;
 - rate limiting sur le formulaire ;
 - stockage MongoDB optionnel ;
-- chiffrement optionnel de champs sensibles.
+- chiffrement optionnel de champs sensibles ;
+- **aucun script intégré sans nonce** : `vite.build.assetsInlineLimit: 0` (dans `astro.config.mjs`) force Astro à servir scripts et polices en fichiers séparés, autorisés par la CSP. Sans ce réglage, le formulaire de contact était bloqué en production.
 
 RGPD :
 
@@ -327,7 +365,9 @@ Démarrage Node après build :
 npm run start
 ```
 
-Sur Vercel, l’adaptateur Vercel est sélectionné automatiquement par la variable `VERCEL=1`.
+Sur Vercel, l’adaptateur Vercel est sélectionné automatiquement par la variable `VERCEL=1`. Un push sur `main` met le site en production ; une autre branche crée seulement un aperçu.
+
+Avant de pousser, vérifier en mode production (CSP active) : `npm run build && npm run start`, puis le formulaire de contact et la console du navigateur. Le serveur de dev n’applique pas la CSP.
 
 Guide complet : [`docs/DEPLOIEMENT.md`](docs/DEPLOIEMENT.md).
 
