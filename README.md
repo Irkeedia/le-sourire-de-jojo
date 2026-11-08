@@ -97,6 +97,7 @@ Guide complet : [`docs/ENVIRONNEMENT.md`](docs/ENVIRONNEMENT.md).
 | `npm run build` | Build production dans `dist/` |
 | `npm run preview` | Prévisualisation du build |
 | `npm run start` | Démarrage Node après build |
+| `npm run images` | Regénère les images du site depuis `assets-src/` |
 
 ---
 
@@ -135,6 +136,18 @@ Fichiers transverses importants :
 
 ---
 
+## Images
+
+Les originaux en pleine résolution sont rangés dans `assets-src/` et **ne sont pas mis en ligne**. Les versions affichées sur le site (WebP redimensionnés, icônes, image de partage `og-image.jpg`) sont générées dans `public/` par :
+
+```bash
+npm run images
+```
+
+Pour ajouter ou remplacer une photo : déposer l’original dans `assets-src/images/`, ajouter une ligne dans `scripts/optimize-images.mjs`, lancer la commande, puis utiliser le fichier `.webp` produit dans le code.
+
+---
+
 ## Pages Principales
 
 | Route | Fichier | Rôle |
@@ -165,7 +178,9 @@ Fichiers transverses importants :
 - Navigation carrousel robuste basée sur `getBoundingClientRect()`.
 - Curseur personnalisé desktop via `CursorTracker.astro`.
 - Décor floral global via `BrandBackdrop.astro`.
-- Carte Google Maps via iframe, configurable par variables publiques.
+- Carte Google Maps chargée seulement au clic du visiteur (pas de cookie tiers sans accord, donc pas de bandeau cookies), configurable par variables publiques.
+- Polices hébergées par le site (`src/styles/fonts.ts`, paquets Fontsource) : aucune requête vers Google Fonts.
+- Images optimisées en WebP, générées depuis les originaux de `assets-src/` (voir [Images](#images)).
 - Formulaire de contact validé, protégé par honeypot, taille maximale et rate limiting.
 - Documents juridiques imprimables avec `LegalPrintChrome.astro` et `legal-document.css`.
 - Contrat signable en ligne avec double signature tactile et horodatage.

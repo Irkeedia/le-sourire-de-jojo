@@ -16,7 +16,7 @@ export default {
       },
       fontFamily: {
         display: ["'Dancing Script'", "cursive"],
-        hero: ["'Playfair Display'", "Georgia", "ui-serif", "serif"],
+        hero: ["'Playfair Display Variable'", "'Playfair Display'", "Georgia", "ui-serif", "serif"],
         sans: ["'Lato'", "system-ui", "sans-serif"],
       },
       backgroundImage: {

@@ -9,12 +9,16 @@
     "build": "npm run build:presentation-deck && astro build",
     "preview": "astro preview",
     "generate:presentation-pdf": "node scripts/generate-presentation-pdf.mjs",
-    "generate:encryption-key": "node scripts/generate-encryption-key.mjs"
+    "generate:encryption-key": "node scripts/generate-encryption-key.mjs",
+    "images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.5",
     "@astrojs/tailwind": "^6.0.0",
     "@astrojs/vercel": "^8.2.11",
+    "@fontsource-variable/playfair-display": "^5.3.0",
+    "@fontsource/dancing-script": "^5.3.0",
+    "@fontsource/lato": "^5.3.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "astro": "^5.18.2",
@@ -28,6 +32,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "playwright": "^1.60.0",
+    "sharp": "^0.34.5",
     "typescript": "^5.8.3"
   }
 }

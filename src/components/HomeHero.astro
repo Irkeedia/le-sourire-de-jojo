@@ -2,7 +2,9 @@
 import HomeAudienceCard from "@/components/HomeAudienceCard.astro";
 import LogoMark from "@/components/LogoMark.astro";
 /** Photo d’arrière-plan — duo / salon accueil. */
-const heroImage = "/images/personneagé.png";
+const heroImage = "/images/personne-agee-1600.webp";
+/** Deux tailles : les téléphones chargent la version 800 px. */
+const heroSrcset = "/images/personne-agee-800.webp 800w, /images/personne-agee-1600.webp 1600w";
 ---
 
 <section
@@ -16,6 +18,8 @@ const heroImage = "/images/personneagé.png";
     <div class="pointer-events-none absolute inset-0 z-0 hidden select-none md:block" aria-hidden="true">
       <img
         src={heroImage}
+        srcset={heroSrcset}
+        sizes="100vw"
         alt=""
         width={1856}
         height={2298}
@@ -33,11 +37,11 @@ const heroImage = "/images/personneagé.png";
 
     <!-- FLEURS DECO : Visibles à partir de md pour garder le mobile ultra clean -->
     <div class="pointer-events-none absolute inset-0 z-[1] hidden select-none md:block" aria-hidden="true">
-      <img src="/images/assets%20fleur/2.png" alt="" width="256" height="256" class="absolute -right-4 top-0 h-64 w-64 object-contain opacity-[0.14]" />
-      <img src="/images/assets%20fleur/5.png" alt="" width="200" height="200" class="absolute right-[18%] top-[8%] h-36 w-36 object-contain opacity-[0.1]" />
-      <img src="/images/assets%20fleur/3.png" alt="" width="256" height="256" class="absolute -left-6 bottom-0 h-72 w-72 object-contain opacity-[0.13]" />
-      <img src="/images/assets%20fleur/4.png" alt="" width="200" height="200" class="absolute bottom-[6%] left-[12%] h-40 w-40 object-contain opacity-[0.11]" />
-      <img src="/images/assets%20fleur/8.png" alt="" width="220" height="220" class="absolute -bottom-2 -right-4 h-52 w-52 object-contain opacity-[0.12]" />
+      <img src="/images/fleurs/2.webp" alt="" width="256" height="256" class="absolute -right-4 top-0 h-64 w-64 object-contain opacity-[0.14]" />
+      <img src="/images/fleurs/5.webp" alt="" width="200" height="200" class="absolute right-[18%] top-[8%] h-36 w-36 object-contain opacity-[0.1]" />
+      <img src="/images/fleurs/3.webp" alt="" width="256" height="256" class="absolute -left-6 bottom-0 h-72 w-72 object-contain opacity-[0.13]" />
+      <img src="/images/fleurs/4.webp" alt="" width="200" height="200" class="absolute bottom-[6%] left-[12%] h-40 w-40 object-contain opacity-[0.11]" />
+      <img src="/images/fleurs/8.webp" alt="" width="220" height="220" class="absolute -bottom-2 -right-4 h-52 w-52 object-contain opacity-[0.12]" />
     </div>
 
     <!-- MOBILE : photo + logo intégré qui casse le cadre -->
@@ -45,6 +49,8 @@ const heroImage = "/images/personneagé.png";
       <div class="aspect-[4/3] w-full overflow-hidden rounded-[2rem] shadow-[0_8px_30px_rgba(29,53,87,0.12)] ring-1 ring-marine/10">
         <img
           src={heroImage}
+          srcset={heroSrcset}
+          sizes="100vw"
           alt=""
           width={1856}
           height={2298}

@@ -85,7 +85,7 @@ export const presentationSlides: PresentationSlide[] = [
     tagline:
       "Le sourire de JoJo a vu le jour pour illuminer le quotidien à domicile. Parce que le lien social est essentiel, mon accompagnement intervient pour rompre la solitude — privilégier la rencontre, partager un sourire.",
     image: {
-      src: "/presentation/assets/image1.jpg",
+      src: "/presentation/assets/image1.webp",
       alt: "Arc-en-ciel au-dessus du Tarn-et-Garonne — symbole d’espoir",
       fit: "cover",
       position: "center 40%",
@@ -96,7 +96,7 @@ export const presentationSlides: PresentationSlide[] = [
     title: "Mon histoire, mon projet",
     text: "Né d’une épreuve personnelle : accompagner ma maman aux séances de chimiothérapie m’a révélé l’importance vitale d’une présence et d’un sourire. Maman, « mamie Jo » — Jojo pour mon papa : la joie incarnée. Un livre de Lanza Del Vasto : « Tiens-toi droit et souris » — une révélation. Porter cet héritage de bienveillance auprès de ceux qui vivent l’isolement ou l’immobilisation.",
     image: {
-      src: "/presentation/assets/image19.jpeg",
+      src: "/presentation/assets/image19.webp",
       alt: "Portrait bienveillant — l’esprit mamie Jo",
       fit: "contain",
       position: "center center",
@@ -107,7 +107,7 @@ export const presentationSlides: PresentationSlide[] = [
     title: "Pourquoi ce projet ?",
     text: "Après une carrière de cadre, j’ai choisi de revenir à l’essentiel : l’humain. Le Sourire de JoJo, c’est ma promesse : un regard attentif, une écoute complice, une joie de vivre pour transformer les « boiteries » du quotidien en une forme de danse — pour aînés, convalescents ou enfants momentanément empêchés.",
     image: {
-      src: "/images/image%20index/Unknown-4.jpg",
+      src: "/images/galerie/photo-4.webp",
       alt: "Céline Meunier Benneji en extérieur, dans un jardin",
       fit: "cover",
       position: "center 25%",
@@ -122,7 +122,7 @@ export const presentationSlides: PresentationSlide[] = [
         title: "Nos aînés",
         text: "Maintenir le lien social et l’autonomie par la joie de vivre.",
         image: {
-          src: "/images/personneagé.png",
+          src: "/images/personne-agee-1600.webp",
           alt: "Moment de lecture avec une personne âgée",
           fit: "cover",
           position: "center 20%",
@@ -132,7 +132,7 @@ export const presentationSlides: PresentationSlide[] = [
         title: "Convalescents",
         text: "Soutenir les adultes immobilisés suite à un accident de la vie.",
         image: {
-          src: "/presentation/assets/image15.jpg",
+          src: "/presentation/assets/image15.webp",
           alt: "Lecture partagée et présence bienveillante",
           fit: "cover",
           position: "center center",
@@ -142,7 +142,7 @@ export const presentationSlides: PresentationSlide[] = [
         title: "Enfants",
         text: "Accompagner les plus jeunes momentanément empêchés.",
         image: {
-          src: "/images/enfant.png",
+          src: "/images/enfant.webp",
           alt: "Enfant souriant lors d’une activité à domicile",
           fit: "cover",
           position: "center 15%",
@@ -155,7 +155,7 @@ export const presentationSlides: PresentationSlide[] = [
     title: "Le carnet des sourires",
     text: "Au cœur de la philosophie : l’accompagnement n’est jamais une simple prestation technique. Le Carnet rend visible l’invisible — photos, pétale pressé, citations, victoires du jour. Il relie les séances, valorise les progrès et rassure la famille. Numérisé sur un intranet sécurisé.",
     image: {
-      src: "/images/carnet2.jpg",
+      src: "/images/carnet2.webp",
       alt: "Carnet de Sourires ouvert — Le Sourire de JoJo",
       fit: "contain",
       position: "center center",
@@ -171,7 +171,7 @@ export const presentationSlides: PresentationSlide[] = [
         title: "Lecture & album",
         text: "Biographie de vie, récits et souvenirs partagés.",
         image: {
-          src: "/presentation/assets/image12.jpg",
+          src: "/presentation/assets/image12.webp",
           alt: "Lecture et roses — moment de douceur",
           fit: "cover",
           position: "center center",
@@ -181,7 +181,7 @@ export const presentationSlides: PresentationSlide[] = [
         title: "Jeux de société",
         text: "Plaisir sans performance, à la maison ou en sortie.",
         image: {
-          src: "/presentation/assets/image25.jpg",
+          src: "/presentation/assets/image25.webp",
           alt: "Jeux de société apportés pour l’accompagnement",
           fit: "cover",
           position: "center center",
@@ -191,7 +191,7 @@ export const presentationSlides: PresentationSlide[] = [
         title: "Promenades",
         text: "Sorties, courses et escapades sensorielles à son rythme.",
         image: {
-          src: "/images/balade.png",
+          src: "/images/balade.webp",
           alt: "Promenade bienveillante en plein air",
           fit: "cover",
           position: "center 35%",
@@ -236,7 +236,7 @@ export const presentationSlides: PresentationSlide[] = [
     title: "Les aides possibles",
     text: "Crédit d’impôt de 50 % automatique (service à la personne) · APA via le Conseil départemental du Tarn-et-Garonne (dès 60 ans) · PCH via la MDPH (sans limite d’âge) · Chèques CESU des caisses de retraite (Agirc-Arrco, CARSAT, MSA…).",
     image: {
-      src: "/presentation/assets/image26.png",
+      src: "/presentation/assets/image26.webp",
       alt: "Zone d’intervention — Montauban, Corbarieu, Tarn-et-Garonne",
       fit: "contain",
       position: "center center",
@@ -251,7 +251,7 @@ export const presentationSlides: PresentationSlide[] = [
     siteHref: "/",
     location: "Basée à Corbarieu et environs — Montauban, Tarn-et-Garonne (82)",
     image: {
-      src: "/images/carnet.png",
+      src: "/images/carnet.webp",
       alt: "Carnet de Sourires — Le Sourire de JoJo",
       fit: "contain",
       position: "center center",

@@ -45,8 +45,8 @@ export function applySecurityHeaders(
     ? `script-src 'self' 'nonce-${nonce}'`
     : "script-src 'self' 'unsafe-inline'";
 
-  const fontSrc = "font-src 'self' https://fonts.gstatic.com";
-  const styleSrc = "style-src 'self' https://fonts.googleapis.com 'unsafe-inline'";
+  const fontSrc = "font-src 'self'";
+  const styleSrc = "style-src 'self' 'unsafe-inline'";
   const imgSrc = "img-src 'self' data: blob: https:";
   const connectSrc = "connect-src 'self' https://*.upstash.io";
   const frameSrc = "frame-src https://www.google.com https://maps.google.com";

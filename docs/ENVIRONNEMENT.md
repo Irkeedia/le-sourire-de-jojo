@@ -11,6 +11,8 @@ Copier `env.example` vers `.env` à la racine du projet (non versionné).
 
 ## Google Maps (carte intégrée)
 
+La carte ne se charge qu’au clic du visiteur sur « Afficher la carte » (`src/components/GoogleMapEmbed.astro`) : aucun cookie Google n’est déposé sans son accord, ce qui évite un bandeau cookies.
+
 La carte est **toujours affichée dans une iframe** sur le site (pas de simple lien de redirection).
 
 | Variable | Obligatoire | Description |

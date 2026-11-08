@@ -1,2 +1,6 @@
-/** Logo officiel — fichier dans public/images/ */
-export const LOGO_SRC = "/images/logo%20le%20sourire%20de%20jojo.png";
+/** Logo officiel — fichiers générés par `npm run images` depuis assets-src/images/. */
+export const LOGO_SRC = "/images/logo.webp";
+/** Version PNG du logo pour Google (données structurées), qui n'accepte pas toujours le WebP. */
+export const LOGO_PNG = "/images/logo-512.png";
+export const FAVICON_SRC = "/favicon-64.png";
+export const APPLE_TOUCH_ICON_SRC = "/apple-touch-icon.png";

@@ -1,6 +1,7 @@
 ---
 /**
- * Carte Google Maps toujours intégrée en iframe sur le site.
+ * Carte Google Maps intégrée en iframe, chargée seulement au clic du visiteur
+ * (aucun cookie Google déposé sans son accord, donc pas besoin de bandeau cookies).
  *
  * Ordre de priorité pour l’URL de l’iframe :
  * 1. PUBLIC_GOOGLE_MAPS_EMBED_URL — URL complète copiée depuis Google Maps (Partager → Intégrer une carte).
@@ -47,22 +48,43 @@ if (customEmbedUrl) {
   embedMode = "legacy";
 }
 
+/** Lien direct vers Google Maps : simple lien, aucun cookie tant qu'on ne clique pas. */
+const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 ---
 
-<div class:list={["w-full", className]}>
+<div class:list={["w-full", className]} data-map-consent>
   <div class="overflow-hidden rounded-2xl border border-marine/15 bg-marine/5 shadow-sm">
-    <div class="relative aspect-[16/10] w-full min-h-[220px] md:min-h-[280px]">
-      <iframe
-        title={title}
-        src={embedSrc}
-        class="absolute inset-0 h-full w-full border-0"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        allowfullscreen
-      />
+    <div class="relative aspect-[16/10] w-full min-h-[220px] md:min-h-[280px]" data-map-frame data-map-src={embedSrc} data-map-title={title}>
+      <!-- Aucune requête vers Google tant que le visiteur n'a pas cliqué : pas de cookie tiers sans accord. -->
+      <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-cream via-ivoire to-marine/10 px-6 text-center" data-map-placeholder>
+        <svg class="h-10 w-10 text-marine/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" stroke-linejoin="round" />
+          <circle cx="12" cy="9.5" r="2.5" />
+        </svg>
+        <p class="max-w-sm text-sm leading-relaxed text-marine/80">
+          La carte est fournie par Google Maps, qui peut déposer des cookies. Elle ne s’affiche que si vous le souhaitez.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            class="inline-flex min-h-[44px] items-center justify-center rounded-full bg-marine px-5 text-sm font-semibold text-ivoire shadow-md transition hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
+            data-map-load
+          >
+            Afficher la carte
+          </button>
+          <a
+            href={mapsLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex min-h-[44px] items-center justify-center rounded-full border-2 border-marine/15 bg-white px-5 text-sm font-semibold text-marine transition hover:border-marine/30"
+          >
+            Ouvrir dans Google Maps
+          </a>
+        </div>
+      </div>
     </div>
   </div>
-  <p class="mt-3 text-center text-xs text-marine/60">Carte intégrée — Google Maps.</p>
+  <p class="mt-3 text-center text-xs text-marine/60">Carte fournie par Google Maps, chargée uniquement à votre demande.</p>
   {
     embedMode === "legacy" && import.meta.env.DEV ? (
       <p class="mt-1 text-center text-[0.65rem] leading-snug text-marine/50">
@@ -73,3 +95,32 @@ if (customEmbedUrl) {
     ) : null
   }
 </div>
+
+<script is:inline nonce={Astro.locals.cspNonce}>
+  (function () {
+    document.querySelectorAll("[data-map-consent]").forEach(function (root) {
+      var frame = root.querySelector("[data-map-frame]");
+      var button = root.querySelector("[data-map-load]");
+      if (!frame || !button || root.dataset.mapReady) return;
+      root.dataset.mapReady = "1";
+      button.addEventListener("click", function () {
+        var iframe = document.createElement("iframe");
+        iframe.src = frame.getAttribute("data-map-src") || "";
+        iframe.title = frame.getAttribute("data-map-title") || "Carte";
+        iframe.className = "absolute inset-0 h-full w-full border-0";
+        iframe.referrerPolicy = "no-referrer-when-downgrade";
+        iframe.allowFullscreen = true;
+        // Message d'attente le temps que Google réponde (souvent 2 à 3 secondes).
+        var placeholder = frame.querySelector("[data-map-placeholder]");
+        if (placeholder) {
+          placeholder.innerHTML = '<p class="text-sm text-marine/70">Chargement de la carte…</p>';
+          iframe.addEventListener("load", function () {
+            placeholder.remove();
+          });
+        }
+        frame.appendChild(iframe);
+        iframe.focus();
+      });
+    });
+  })();
+</script>

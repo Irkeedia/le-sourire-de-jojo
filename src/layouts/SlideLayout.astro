@@ -1,6 +1,7 @@
 ---
+import "../styles/fonts";
 import "../styles/global.css";
-import { LOGO_SRC } from "@/lib/brand";
+import { FAVICON_SRC } from "@/lib/brand";
 import { absoluteUrl, DEFAULT_LOCALE, DEFAULT_OG_IMAGE, resolveSiteUrl, SITE_NAME } from "@/lib/seo";
 
 interface Props {
@@ -38,14 +39,8 @@ const ogImageUrl = absoluteUrl(DEFAULT_OG_IMAGE, siteUrl);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
-    <link rel="icon" type="image/png" href={LOGO_SRC} />
+    <link rel="icon" type="image/png" href={FAVICON_SRC} />
     <title>{title}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400..800;1,400..800&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body class="bg-cream text-marine antialiased">
     <slot />

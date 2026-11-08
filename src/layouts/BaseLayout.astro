@@ -1,10 +1,11 @@
 ---
+import "../styles/fonts";
 import "../styles/global.css";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import BrandBackdrop from "@/components/BrandBackdrop.astro";
 import CursorTracker from "@/components/CursorTracker.astro";
-import { LOGO_SRC } from "@/lib/brand";
+import { APPLE_TOUCH_ICON_SRC, FAVICON_SRC } from "@/lib/brand";
 import {
   allowIndexing,
   absoluteUrl,
@@ -74,8 +75,8 @@ const structured = mergeJsonLd(schemas);
     {!shouldIndex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="fr" href={canonical} />
-    <link rel="icon" type="image/png" href={LOGO_SRC} />
-    <link rel="apple-touch-icon" href={LOGO_SRC} />
+    <link rel="icon" type="image/png" href={FAVICON_SRC} />
+    <link rel="apple-touch-icon" href={APPLE_TOUCH_ICON_SRC} />
     <title>{title}</title>
     <meta property="og:locale" content={DEFAULT_LOCALE} />
     <meta property="og:type" content={ogType} />
@@ -89,12 +90,6 @@ const structured = mergeJsonLd(schemas);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400..800;1,400..800&display=swap"
-      rel="stylesheet"
-    />
     {shouldIndex && Object.keys(structured).length > 0 && (
       <script type="application/ld+json" set:html={JSON.stringify(structured)} />
     )}

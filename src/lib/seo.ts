@@ -1,8 +1,8 @@
-import { LOGO_SRC } from "@/lib/brand";
+import { LOGO_PNG } from "@/lib/brand";
 
 export const SITE_NAME = "Le Sourire de Jojo";
 export const SITE_TAGLINE = "Présence, Écoute & Sourires";
-export const DEFAULT_OG_IMAGE = "/images/personneagé.png";
+export const DEFAULT_OG_IMAGE = "/images/og-image.jpg";
 export const DEFAULT_LOCALE = "fr_FR";
 
 export const CONTACT_PHONE = "06 66 30 96 22";
@@ -78,8 +78,8 @@ export function buildLocalBusiness(siteUrl: string) {
     name: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
     url: siteUrl,
-    image: absoluteUrl(LOGO_SRC, siteUrl),
-    logo: absoluteUrl(LOGO_SRC, siteUrl),
+    image: absoluteUrl(LOGO_PNG, siteUrl),
+    logo: absoluteUrl(LOGO_PNG, siteUrl),
     telephone: CONTACT_PHONE_E164,
     ...(contactEmail ? { email: contactEmail } : {}),
     founder: {
