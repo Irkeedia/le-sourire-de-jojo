@@ -1,34 +1,47 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { isDbConfigured } from "@/lib/db-config";
+import { findValidInvitation } from "@/lib/family-space";
 
-const title = "Connexion — Mon compte";
-const description = "Espace famille — connexion au carnet de sourires en ligne.";
+const title = "Connexion — Espace familles";
+const description = "Espace familles — nouvelles, photos et carnet de sourires.";
 const dbReady = isDbConfigured();
+const invitationToken = Astro.url.searchParams.get("invitation") ?? "";
+const invitation = dbReady && invitationToken ? await findValidInvitation(invitationToken) : null;
+const rawNext = Astro.url.searchParams.get("next") ?? "";
+// Seulement des chemins internes (jamais « //autre-site »).
+const next = /^\/(?!\/)/.test(rawNext) ? rawNext : "/compte";
 ---
 
 <BaseLayout
   title={title}
   description={description}
-  breadcrumb={[{ href: "/", label: "Accueil" }, { href: "/compte", label: "Mon compte" }, { label: "Connexion" }]}
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Espace familles" }, { label: "Connexion" }]}
   noindex
 >
   <div class="mx-auto max-w-md px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
     <h1 class="font-display text-4xl text-marine">Connexion</h1>
     <p class="mt-4 text-marine/85 leading-relaxed">
-      Accédez à votre espace famille et au carnet de sourires en ligne.
+      Retrouvez les nouvelles de vos proches : comptes-rendus de visite, photos et carnet de sourires.
     </p>
+    {
+      invitation && (
+        <p class="mt-6 rounded-2xl border border-sauge/40 bg-sauge/20 p-4 text-marine">
+          Vous êtes invité·e au dossier de <strong>{invitation.dossierName}</strong>. Connectez-vous avec votre compte
+          habituel : l’accès sera ajouté automatiquement.
+        </p>
+      )
+    }
 
     {
       !dbReady && (
         <div class="mt-8 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-5 text-sm text-marine/85">
-          Les comptes ne sont pas encore activés sur ce serveur (base de données à configurer). Contactez l’administratrice du
-          site.
+          L’espace familles n’est pas encore ouvert. Il le sera très bientôt !
         </div>
       )
     }
 
-    <form id="login-form" class="mt-8 space-y-5 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm" novalidate>
+    <form id="login-form" data-invitation={invitationToken} data-next={next} class="mt-8 space-y-5 rounded-2xl border border-marine/15 bg-white/90 p-6 shadow-sm" novalidate>
       <div>
         <label for="login-email" class="block text-sm font-medium text-marine">E-mail</label>
         <input
@@ -37,7 +50,7 @@ const dbReady = isDbConfigured();
           type="email"
           required
           autocomplete="email"
-          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+          class="mt-1 min-h-[48px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-base text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
         />
         <p class="mt-1 hidden text-sm text-red-800" data-error-for="email"></p>
       </div>
@@ -49,13 +62,13 @@ const dbReady = isDbConfigured();
           type="password"
           required
           autocomplete="current-password"
-          class="mt-1 w-full rounded-lg border border-marine/25 bg-ivoire px-3 py-2 text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+          class="mt-1 min-h-[48px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-base text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
         />
         <p class="mt-1 hidden text-sm text-red-800" data-error-for="password"></p>
       </div>
       <button
         type="submit"
-        class="w-full rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60"
+        class="min-h-[48px] w-full rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60"
         disabled={!dbReady}
       >
         Se connecter
@@ -64,10 +77,17 @@ const dbReady = isDbConfigured();
     </form>
 
     <p class="mt-8 text-center text-sm text-marine/75">
-      Pas encore de compte ?
-      <a href="/compte/inscription" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">
-        Créer un compte
-      </a>
+      Pas encore de compte ? Il se crée avec le lien d’invitation envoyé par Céline.
+      {
+        invitation && (
+          <a
+            href={`/compte/inscription?invitation=${encodeURIComponent(invitationToken)}`}
+            class="mt-2 block font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+          >
+            Créer mon compte avec cette invitation
+          </a>
+        )
+      }
     </p>
   </div>
 </BaseLayout>
@@ -102,6 +122,7 @@ const dbReady = isDbConfigured();
         body: JSON.stringify({
           email: String(fd.get("email") ?? ""),
           password: String(fd.get("password") ?? ""),
+          invitation: form.dataset.invitation || undefined,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -110,7 +131,7 @@ const dbReady = isDbConfigured();
         status.textContent = data.error ?? "Erreur de connexion.";
         return;
       }
-      window.location.href = "/compte";
+      window.location.href = form.dataset.invitation ? "/compte" : form.dataset.next || "/compte";
     } catch {
       status.textContent = "Erreur réseau.";
     }

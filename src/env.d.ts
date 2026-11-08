@@ -32,8 +32,8 @@ interface ImportMetaEnv {
   readonly SMTP_USER?: string;
   readonly SMTP_PASS?: string;
   readonly MONGODB_URI?: string;
-  /** Code d’invitation obligatoire pour créer un compte (après le premier admin). */
-  readonly REGISTRATION_INVITE_CODE?: string;
+  /** E-mail de Céline : seul compte créé sans invitation, avec le rôle administratrice de l’espace familles. */
+  readonly ADMIN_EMAIL?: string;
   /** Durée de session en jours (défaut 30). */
   readonly SESSION_TTL_DAYS?: string;
   /** Max tentatives login/register par IP par fenêtre (défaut 8). */

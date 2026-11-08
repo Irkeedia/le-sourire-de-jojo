@@ -46,7 +46,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
       return redirect(`/compte/connexion?next=${nextPath}`);
     }
     if (isPublic && context.locals.user) {
-      return redirect("/compte");
+      // Déjà connecté et nouveau lien d'invitation : /compte rattache le compte au dossier.
+      const invitation = url.searchParams.get("invitation");
+      return redirect(invitation ? `/compte?invitation=${encodeURIComponent(invitation)}` : "/compte");
     }
   }
 
@@ -112,7 +114,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (!allowIndexing) {
     out.set("X-Robots-Tag", "noindex, nofollow");
   }
-  if (url.pathname.startsWith("/compte") || url.pathname.startsWith("/api/auth") || url.pathname.startsWith("/api/carnet")) {
+  const privatePrefixes = ["/compte", "/api/auth", "/api/dossiers", "/api/posts", "/api/photos"];
+  if (privatePrefixes.some((p) => url.pathname.startsWith(p))) {
     out.set("X-Robots-Tag", "noindex, nofollow");
   }
 

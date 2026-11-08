@@ -22,9 +22,10 @@ Par défaut, le site reste en **noindex** tant que `PUBLIC_ALLOW_INDEXING` n’e
 8. [API contact](#api-contact)
 9. [Signature et contrat](#signature-et-contrat)
 10. [Export Word des documents](#export-word-des-documents)
-11. [Sécurité, RGPD et indexation](#sécurité-rgpd-et-indexation)
-12. [Build et déploiement](#build-et-déploiement)
-13. [Documentation complémentaire](#documentation-complémentaire)
+11. [Espace familles](#espace-familles)
+12. [Sécurité, RGPD et indexation](#sécurité-rgpd-et-indexation)
+13. [Build et déploiement](#build-et-déploiement)
+14. [Documentation complémentaire](#documentation-complémentaire)
 
 ---
 
@@ -38,7 +39,7 @@ Par défaut, le site reste en **noindex** tant que `PUBLIC_ALLOW_INDEXING` n’e
 | **@astrojs/vercel** | Adaptateur Vercel lorsque `VERCEL=1` |
 | **Tailwind CSS 3** | Design system et styles utilitaires |
 | **Zod** | Validation des données du formulaire |
-| **Mongoose** | Stockage optionnel des messages contact |
+| **Mongoose** | Espace familles (comptes, dossiers, photos) et stockage optionnel des messages contact |
 | **Nodemailer** | Notifications e-mail SMTP |
 
 Alias import : `@/*` pointe vers `src/*`.
@@ -75,7 +76,8 @@ Les variables principales sont :
 | `PUBLIC_ALLOW_INDEXING` | Active l’indexation si `true` ou `1` |
 | `CONTACT_TO_EMAIL` | Destinataire des messages contact |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` | Configuration SMTP |
-| `MONGODB_URI` | Stockage optionnel des messages |
+| `MONGODB_URI` | Base de l’espace familles (et stockage optionnel des messages contact) |
+| `ADMIN_EMAIL` | E-mail de Céline : seul compte créé sans invitation, administratrice de l’espace familles |
 | `ENCRYPTION_KEY` | Chiffrement optionnel de champs sensibles |
 | `CONTACT_RATE_LIMIT`, `CONTACT_RATE_WINDOW_MS` | Limitation du débit contact |
 | `HSTS_ENABLE`, `CSP_REPORT_ONLY`, `CSP_REPORT_URI` | Durcissement HTTP / CSP |
@@ -98,6 +100,8 @@ Guide complet : [`docs/ENVIRONNEMENT.md`](docs/ENVIRONNEMENT.md).
 | `npm run preview` | Prévisualisation du build |
 | `npm run start` | Démarrage Node après build |
 | `npm run images` | Regénère les images du site depuis `assets-src/` |
+| `npm run dev:familles` | Site + base MongoDB locale (`.local-db/`) pour essayer l’espace familles |
+| `npm run test:familles` | Test de bout en bout de l’espace familles (à lancer après `npm run build`) |
 
 ---
 
@@ -249,6 +253,40 @@ Conséquences pratiques :
 - aucun contenu n’est dupliqué : le `.docx` suit automatiquement toute modification du texte des pages ;
 - le bouton est branché via la prop `docx` de `LegalPrintChrome.astro`, donc un nouveau document imprimable l’obtient en une ligne ;
 - limite anti-abus : `DOCX_RATE_LIMIT` / `DOCX_RATE_WINDOW_MS` (middleware), corps limité à 4 Mo.
+
+---
+
+## Espace Familles
+
+Espace privé où Céline publie ses comptes-rendus de visite (mot, photos, pages du carnet de sourires numérisées) et où les proches suivent les nouvelles, même de loin.
+
+**Fonctionnement**
+
+- **Un dossier par personne accompagnée** (ex. « Monsieur Robert »), créé par Céline depuis `/compte`.
+- **Invitations** : depuis un dossier, Céline crée un lien pour chaque proche (usage unique, valable 14 jours) et l’envoie par SMS, WhatsApp ou e-mail. Il n’y a **pas d’inscription libre** : seul l’e-mail `ADMIN_EMAIL` peut créer un compte sans invitation (celui de Céline). Un proche qui a déjà un compte et reçoit un nouveau lien est simplement rattaché au nouveau dossier.
+- **Cloisonnement** : un proche ne voit que les dossiers auxquels il est rattaché. Pages, API et photos vérifient l’accès à chaque requête ; un dossier inaccessible répond « introuvable » sans révéler son existence.
+- **Photos** : réduites dans le navigateur avant l’envoi (1600 px, une par une pour rester sous la limite de 4,5 Mo de Vercel), puis ré-encodées en WebP côté serveur, ce qui **efface les métadonnées** (position GPS, modèle du téléphone). Elles sont stockées dans MongoDB (GridFS) et servies uniquement aux membres du dossier, avec un cache privé.
+- **Messages** : un proche peut « Écrire à Céline » dans le fil du dossier (visible par Céline et les autres proches de ce dossier).
+- Code : `src/lib/family-space.ts` (règles d’accès), `src/models/` (Dossier, Membership, Invitation, Post), `src/pages/compte/`, `src/pages/api/dossiers|posts|photos/`.
+
+**Essayer en local**
+
+```bash
+npm run dev:familles
+```
+
+Puis créer le compte de Céline sur `/compte/inscription` avec l’e-mail `celine@test.local`. Les données de test restent dans `.local-db/` (ignoré par Git).
+
+**Mise en service en ligne**
+
+1. Créer une base gratuite **MongoDB Atlas** (offre M0) en **région UE** (ex. Paris ou Francfort), avec un utilisateur dédié et l’accès réseau autorisé pour Vercel.
+2. Sur Vercel, ajouter `MONGODB_URI` (chaîne de connexion Atlas) et `ADMIN_EMAIL` (e-mail de Céline), puis redéployer.
+3. Le lien **« Espace familles »** réapparaît alors automatiquement dans le menu.
+4. Céline crée son compte sur `/compte/inscription` avec son e-mail, puis ses dossiers et ses invitations.
+
+L’offre gratuite d’Atlas (512 Mo) suffit pour plusieurs milliers de photos, une photo pesant environ 100 à 300 Ko.
+
+**À prévoir côté juridique** : publier des photos des personnes accompagnées, même dans un espace privé, demande leur **accord écrit (droit à l’image)**. Il faut ajouter une clause photos et espace familles au contrat et au consentement, à faire relire par le juriste de la CCI, et le mentionner dans la politique RGPD (données traitées, durée de conservation, droit de suppression).
 
 ---
 

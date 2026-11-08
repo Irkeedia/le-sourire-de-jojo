@@ -10,7 +10,9 @@
     "preview": "astro preview",
     "generate:presentation-pdf": "node scripts/generate-presentation-pdf.mjs",
     "generate:encryption-key": "node scripts/generate-encryption-key.mjs",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "dev:familles": "node scripts/dev-familles.mjs",
+    "test:familles": "node scripts/test-espace-familles.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^9.5.5",

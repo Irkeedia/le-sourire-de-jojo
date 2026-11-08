@@ -90,7 +90,7 @@ Voir [SECURITY.md](../SECURITY.md) à la racine du dépôt (contact responsable 
 - [ ] Proxy : en-têtes forwarded corrects  
 - [ ] `PUBLIC_SITE_URL` en **https**  
 - [ ] SMTP fonctionnel et test du formulaire  
-- [ ] `REGISTRATION_INVITE_CODE` défini après le 1er admin
+- [ ] `ADMIN_EMAIL` défini (e-mail de Céline) avant l’ouverture de l’espace familles
 - [ ] Tester CSP avec `CSP_REPORT_ONLY=true` si doute  
 - [ ] `npm audit` traité dans la mesure du raisonnable  
 

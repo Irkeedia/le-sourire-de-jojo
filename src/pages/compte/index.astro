@@ -1,66 +1,159 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { acceptInvitation, isAdmin, listDossiersFor } from "@/lib/family-space";
+import { isDbConfigured } from "@/lib/db-config";
 
 const user = Astro.locals.user!;
-const title = `Mon compte — ${user.name}`;
-const description = "Espace famille Le Sourire de Jojo — carnet de sourires en ligne.";
+const admin = isAdmin(user);
+
+// Un proche déjà connecté qui clique sur un nouveau lien d'invitation : on le rattache au dossier.
+const invitationToken = Astro.url.searchParams.get("invitation");
+let invitationResult: { ok: true; dossierName: string } | { ok: false } | null = null;
+if (invitationToken && isDbConfigured()) {
+  const inv = await acceptInvitation(invitationToken, user.id);
+  invitationResult = inv ? { ok: true, dossierName: inv.dossierName } : { ok: false };
+}
+
+const dossiers = isDbConfigured() ? await listDossiersFor(user) : [];
+
+// Un proche qui n'a qu'un dossier arrive directement dessus.
+if (!admin && dossiers.length === 1 && !invitationResult) {
+  return Astro.redirect(`/compte/dossier/${dossiers[0].id}`);
+}
+
+const firstName = user.name.split(" ")[0];
 ---
 
 <BaseLayout
-  title={title}
-  description={description}
-  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Mon compte" }]}
+  title="Espace familles — Le Sourire de Jojo"
+  description="Espace privé des familles accompagnées par Le Sourire de Jojo."
+  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Espace familles" }]}
   noindex
 >
   <div class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
-    <h1 class="font-display text-4xl text-marine md:text-5xl">Bonjour, {user.name}</h1>
-    <p class="mt-4 text-marine/85 leading-relaxed">
-      Bienvenue dans votre espace famille. Ici vous pourrez consulter et enrichir le{' '}
-      <strong class="text-marine">carnet de sourires en ligne</strong> — journal de liaison entre les séances.
-    </p>
+    <h1 class="font-display text-4xl text-marine md:text-5xl">Bonjour {firstName}</h1>
 
-    <div class="mt-10 grid gap-5 sm:grid-cols-2">
-      <a
-        href="/compte/carnet"
-        class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm transition hover:border-marine/30 hover:shadow-md"
-      >
-        <h2 class="font-display text-xl text-marine">Carnet de sourires</h2>
-        <p class="mt-2 text-sm leading-relaxed text-marine/80">
-          Lire et ajouter des entrées — souvenirs, préférences, messages pour la famille.
+    {
+      invitationResult?.ok && (
+        <p class="mt-6 rounded-2xl border border-sauge/40 bg-sauge/20 p-4 text-marine" role="status">
+          Vous avez maintenant accès au dossier de <strong>{invitationResult.dossierName}</strong>.
         </p>
-      </a>
-      <div class="rounded-2xl border border-dashed border-marine/25 bg-cream/80 p-6">
-        <h2 class="font-display text-xl text-marine">Profil</h2>
-        <p class="mt-2 text-sm text-marine/75">{user.email}</p>
-        {
-          user.role === "admin" && (
-            <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-aquarelle-bleu">Compte administrateur</p>
-          )
-        }
-      </div>
-    </div>
+      )
+    }
+    {
+      invitationResult && !invitationResult.ok && (
+        <p class="mt-6 rounded-2xl border border-rose-vieux/30 bg-rose-vieux/10 p-4 text-marine" role="alert">
+          Ce lien d’invitation n’est plus valable (déjà utilisé ou expiré). Demandez-en un nouveau à Céline.
+        </p>
+      )
+    }
 
-    <div class="mt-10 flex flex-wrap gap-4">
+    {
+      admin ? (
+        <>
+          <p class="mt-4 text-lg leading-relaxed text-marine/85">
+            Votre espace administratrice : un dossier par personne accompagnée. Dans chaque dossier, vous publiez vos
+            visites (mots, photos, pages du carnet) et vous invitez les proches.
+          </p>
+
+          <form id="new-dossier-form" class="mt-10 rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm" novalidate>
+            <h2 class="font-display text-2xl text-marine">Nouveau dossier</h2>
+            <label for="dossier-name" class="mt-4 block text-sm font-medium text-marine">
+              Nom de la personne accompagnée
+            </label>
+            <div class="mt-1 flex flex-col gap-3 sm:flex-row">
+              <input
+                id="dossier-name"
+                name="name"
+                type="text"
+                required
+                maxlength="120"
+                placeholder="Ex. : Monsieur Robert Durand"
+                class="min-h-[48px] w-full rounded-xl border border-marine/25 bg-ivoire px-4 text-base text-marine focus:border-marine focus:outline-none focus:ring-2 focus:ring-marine/30"
+              />
+              <button
+                type="submit"
+                class="min-h-[48px] shrink-0 rounded-xl bg-marine px-6 font-semibold text-ivoire shadow hover:bg-marine/90 disabled:opacity-60"
+              >
+                Créer le dossier
+              </button>
+            </div>
+            <p id="new-dossier-status" class="mt-2 text-sm text-marine/80" role="status"></p>
+          </form>
+        </>
+      ) : (
+        <p class="mt-4 text-lg leading-relaxed text-marine/85">
+          Retrouvez ici les nouvelles de vos proches : les comptes-rendus de visite, les photos et les pages du carnet de
+          sourires.
+        </p>
+      )
+    }
+
+    <h2 class="mt-12 font-display text-2xl text-marine">{admin ? "Tous les dossiers" : "Vos dossiers"}</h2>
+    {
+      dossiers.length === 0 ? (
+        <p class="mt-4 rounded-2xl border border-dashed border-marine/25 bg-cream/80 p-6 text-marine/80">
+          {admin
+            ? "Aucun dossier pour l’instant. Créez le premier ci-dessus."
+            : "Vous n’avez encore accès à aucun dossier. Céline vous enverra un lien d’invitation."}
+        </p>
+      ) : (
+        <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+          {dossiers.map((d) => (
+            <li>
+              <a
+                href={`/compte/dossier/${d.id}`}
+                class="flex min-h-[72px] items-center justify-between gap-3 rounded-2xl border border-marine/15 bg-white/95 p-5 shadow-sm transition hover:border-marine/30 hover:shadow-md"
+              >
+                <span class="font-display text-xl text-marine">{d.name}</span>
+                <span class="text-marine/50" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="mt-12 border-t border-marine/10 pt-6 text-sm text-marine/70">
+      <p>Connecté·e : {user.email}</p>
       <button
         type="button"
         id="logout-btn"
-        class="rounded-xl border-2 border-marine/20 px-6 py-3 font-semibold text-marine hover:bg-marine/5"
+        class="mt-3 min-h-[44px] rounded-xl border-2 border-marine/20 px-5 font-semibold text-marine hover:bg-marine/5"
       >
         Se déconnecter
       </button>
-      <a
-        href="/carnet"
-        class="rounded-xl border-2 border-marine/20 px-6 py-3 font-semibold text-marine hover:bg-marine/5"
-      >
-        Page publique du carnet
-      </a>
     </div>
   </div>
 </BaseLayout>
 
 <script>
   document.getElementById("logout-btn")?.addEventListener("click", async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
     window.location.href = "/compte/connexion";
+  });
+
+  const form = document.getElementById("new-dossier-form") as HTMLFormElement | null;
+  const status = document.getElementById("new-dossier-status");
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!status) return;
+    const name = String(new FormData(form).get("name") ?? "").trim();
+    if (name.length < 2) {
+      status.textContent = "Indiquez le nom de la personne accompagnée.";
+      return;
+    }
+    status.textContent = "Création…";
+    const res = await fetch("/api/dossiers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    }).catch(() => null);
+    const data = res ? await res.json().catch(() => ({})) : {};
+    if (!res?.ok) {
+      status.textContent = data.error ?? data.errors?.name?.[0] ?? "Création impossible.";
+      return;
+    }
+    window.location.href = `/compte/dossier/${data.dossier.id}`;
   });
 </script>

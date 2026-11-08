@@ -210,8 +210,13 @@ export function isSameOriginRequest(request: Request, url: URL): boolean {
   if (fetchSite) return fetchSite === "same-origin";
   const origin = request.headers.get("origin");
   if (!origin) return false;
+  // Noms d'hôte acceptés : celui vu par Astro et ceux réellement reçus (Host, ou X-Forwarded-Host derrière un proxy).
+  const hostnameOf = (host: string | null) => (host ? host.split(",")[0].trim().replace(/:\d+$/, "").toLowerCase() : "");
+  const accepted = new Set(
+    [url.hostname, hostnameOf(request.headers.get("host")), hostnameOf(request.headers.get("x-forwarded-host"))].filter(Boolean),
+  );
   try {
-    return new URL(origin).hostname === url.hostname;
+    return accepted.has(new URL(origin).hostname.toLowerCase());
   } catch {
     return false;
   }
@@ -222,4 +227,36 @@ export function json(data: unknown, status = 200): Response {
     status,
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
+}
+
+/* ---------- Garde commune des routes d'API ---------- */
+
+type GuardContext = { request: Request; url: URL; locals: App.Locals };
+type GuardOptions = { write?: boolean; adminOnly?: boolean; dossierId?: string };
+
+/**
+ * Vérifie, dans cet ordre : base configurée, même origine (pour les écritures), connexion,
+ * rôle administrateur si demandé, accès au dossier si un dossier est visé.
+ * Renvoie une réponse d'erreur, ou null si tout est en ordre.
+ */
+export async function guard(ctx: GuardContext, opts: GuardOptions = {}): Promise<Response | null> {
+  const { isDbConfigured } = await import("@/lib/db-config");
+  if (!isDbConfigured()) return json({ ok: false, error: "Espace familles pas encore activé." }, 503);
+  if (opts.write && !isSameOriginRequest(ctx.request, ctx.url)) {
+    return json({ ok: false, error: "Requête refusée." }, 403);
+  }
+  const user = ctx.locals.user;
+  if (!user) return json({ ok: false, error: "Veuillez vous connecter." }, 401);
+  if (opts.adminOnly && !isAdmin(user)) return json({ ok: false, error: "Réservé à Céline." }, 403);
+  if (opts.dossierId !== undefined && !(await canAccessDossier(user, opts.dossierId))) {
+    // 404 plutôt que 403 : on ne révèle pas l'existence d'un dossier auquel on n'a pas accès.
+    return json({ ok: false, error: "Dossier introuvable." }, 404);
+  }
+  return null;
+}
+
+export async function readJson(request: Request): Promise<unknown> {
+  const len = Number(request.headers.get("content-length") ?? "0");
+  if (len > 65536) throw new Error("too-large");
+  return request.json();
 }

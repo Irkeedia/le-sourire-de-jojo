@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { connectDb, getMongoUri } from "@/lib/db";
+import { getAdminEmail } from "@/lib/db-config";
 import { hashPassword } from "@/lib/auth-crypto";
 import { createUserSession } from "@/lib/auth-session";
 import { acceptInvitation, findValidInvitation, isSameOriginRequest, json } from "@/lib/family-space";
@@ -35,7 +36,7 @@ export const POST: APIRoute = async ({ request, cookies, url }) => {
 
   const { name, password, invitation } = parsed.data;
   const email = parsed.data.email.toLowerCase();
-  const adminEmail = import.meta.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const adminEmail = getAdminEmail();
   const isAdminSignup = Boolean(adminEmail) && email === adminEmail;
 
   try {

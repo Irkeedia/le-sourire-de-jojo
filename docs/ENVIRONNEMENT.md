@@ -43,7 +43,7 @@ La carte est **toujours affichée dans une iframe** sur le site (pas de simple l
 
 | Variable | Défaut | Description |
 |----------|--------|-------------|
-| `REGISTRATION_INVITE_CODE` | vide | Après le premier compte admin, code obligatoire pour toute nouvelle inscription. |
+| `ADMIN_EMAIL` | vide | E-mail de Céline : seul compte créé sans invitation, avec le rôle administratrice de l’espace familles. Les proches s’inscrivent uniquement via un lien d’invitation. |
 | `SESSION_TTL_DAYS` | `30` | Durée de la session (cookie) en jours. |
 | `AUTH_RATE_LIMIT` | `8` | Tentatives max login/inscription par IP par fenêtre. |
 | `AUTH_RATE_WINDOW_MS` | `900000` | Fenêtre anti-abus auth (15 min). |
