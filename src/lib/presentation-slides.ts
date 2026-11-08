@@ -226,10 +226,10 @@ export const presentationSlides: PresentationSlide[] = [
   {
     kind: "table",
     title: "Offres & forfaits",
-    intro: `${tarifNetApresCredit(TARIF_HORAIRE_BRUT_EUR)} € / h après crédit d’impôt de 50 % (SAP) · ${TARIF_HORAIRE_BRUT_EUR} € / h avant crédit d’impôt.`,
-    headers: ["Thème", "Heures", "Coût brut", "Après impôt"],
+    intro: `Tarif horaire : ${TARIF_HORAIRE_BRUT_EUR} € TTC. Devis gratuit.`,
+    headers: ["Thème", "Heures", "Prix TTC", "Après crédit d’impôt*"],
     rows: forfaitTableRows(),
-    note: "Toutes les activités peuvent aussi se faire à l’heure. Hors zone : sur devis.",
+    note: `* Soit ${tarifNetApresCredit(TARIF_HORAIRE_BRUT_EUR)} € / h après crédit d’impôt de 50 % (services à la personne), sous conditions d’éligibilité. Toutes les activités peuvent aussi se faire à l’heure. Hors zone : sur devis.`,
   },
   {
     kind: "split",

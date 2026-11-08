@@ -32,9 +32,8 @@ function fmtEuro(n: number) {
     Simulateur de coût (crédit d’impôt 50&nbsp;%)
   </h2>
   <p class="mt-2 text-marine/85">
-    Choisissez une durée : le montant brut est calculé sur la base de <strong class="text-marine"
-      >{rate}&nbsp;€ / h</strong
-    > indicatif, puis le coût net après crédit d’impôt sur les dépenses éligibles (réglementation en vigueur).
+    Choisissez une durée : le prix est calculé sur la base de <strong class="text-marine">{rate}&nbsp;€ TTC / heure</strong>,
+    puis le coût après crédit d’impôt sur les dépenses éligibles.
   </p>
   <div class="mt-6 grid gap-4 md:grid-cols-2">
     <div>
@@ -52,16 +51,15 @@ function fmtEuro(n: number) {
           ))
         }
       </select>
-      <p class="mt-3 text-sm text-marine/80">
-        Montant brut estimé : <span id="sim-brut-display" data-sim-brut class="font-semibold text-marine">{fmtEuro(initialBrut)}</span>
-      </p>
     </div>
-    <div class="rounded-xl bg-sauge/25 p-4">
-      <p class="text-sm font-medium text-marine">Coût net estimé après 50&nbsp;%</p>
-      <p class="mt-2 font-display text-3xl text-marine" id="sim-net" data-sim-net aria-live="polite">{fmtEuro(initialNet)}</p>
+    <div class="rounded-xl bg-ivoire p-4 ring-1 ring-marine/10">
+      <p class="text-sm font-medium text-marine">Prix TTC</p>
+      <p class="mt-1 font-display text-4xl text-marine" id="sim-brut-display" data-sim-brut aria-live="polite">{fmtEuro(initialBrut)}</p>
+      <p class="mt-3 inline-block rounded-full bg-sauge/25 px-3 py-1 text-sm font-semibold text-marine/85">
+        soit <span id="sim-net" data-sim-net>{fmtEuro(initialNet)}</span> après crédit d’impôt de 50&nbsp;%*
+      </p>
       <p class="mt-2 text-xs text-marine/70">
-        Simulation indicative — vérifiez votre situation avec un conseiller ou les informations officielles des
-        services à la personne.
+        * Sous conditions d’éligibilité (voir la grille tarifaire). Simulation indicative.
       </p>
     </div>
   </div>

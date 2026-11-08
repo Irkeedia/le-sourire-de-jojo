@@ -4,7 +4,10 @@ export const TARIF_HORAIRE_BRUT_EUR = 38;
 /** Taux crédit d’impôt SAP (50 %). */
 export const CREDIT_IMPOT_SAP_TAUX = 0.5;
 
-/** Ce que l’heure coûte réellement après le crédit d’impôt de 50 % (19 €) : le chiffre mis en avant sur le site. */
+/**
+ * Coût après crédit d’impôt de 50 % (19 €). À afficher détaché du prix et toujours en plus petit que lui
+ * (arrêté du 17 mars 2015, art. 5) : le prix TTC (38 €) reste l’information principale.
+ */
 export const TARIF_HORAIRE_NET_EUR = TARIF_HORAIRE_BRUT_EUR * (1 - CREDIT_IMPOT_SAP_TAUX);
 
 export type ForfaitActivite = {
