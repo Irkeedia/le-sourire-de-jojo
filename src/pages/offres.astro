@@ -3,7 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import CostSimulator from "@/components/CostSimulator.astro";
 import SealBadge from "@/components/SealBadge.astro";
 import type { PackId } from "@/lib/packs";
-import { FORFAITS_ACTIVITES, TARIF_HORAIRE_BRUT_EUR, tarifNetApresCredit } from "@/lib/tarif";
+import { FORFAITS_ACTIVITES, TARIF_HORAIRE_BRUT_EUR, TARIF_HORAIRE_NET_EUR, tarifNetApresCredit } from "@/lib/tarif";
 
 const title = "Offres & forfaits — Le Sourire de Jojo";
 const description =
@@ -35,8 +35,10 @@ const packs: {
   highlight?: boolean;
   tarifs: {
     resume: string;
-    brut: string;
-    netIndicatif: string;
+    /** Montant après crédit d’impôt : affiché en grand. */
+    net: string;
+    /** Prix de base avant crédit d’impôt : affiché en petit dessous. */
+    base: string;
     detail?: string;
   };
 }[] = [
@@ -52,9 +54,9 @@ const packs: {
     ],
     tarifs: {
       resume: "Exemple : 8 h / mois",
-      brut: `${8 * TARIF_HORAIRE_BRUT_EUR} € / mois brut`,
-      netIndicatif: `env. ${(8 * TARIF_HORAIRE_BRUT_EUR) / 2} € / mois net après crédit d’impôt (simulation 50 %)`,
-      detail: `Base : ${TARIF_HORAIRE_BRUT_EUR} € brut / heure — volume mensuel ajustable avec vous.`,
+      net: `${8 * TARIF_HORAIRE_NET_EUR} € / mois`,
+      base: `après crédit d’impôt — prix de base ${8 * TARIF_HORAIRE_BRUT_EUR} € / mois`,
+      detail: `Soit ${TARIF_HORAIRE_NET_EUR} € / heure après crédit d’impôt — volume mensuel ajustable avec vous.`,
     },
   },
   {
@@ -68,8 +70,8 @@ const packs: {
     ],
     tarifs: {
       resume: "Forfait fixe indicatif : 3 h",
-      brut: `${3 * TARIF_HORAIRE_BRUT_EUR} € brut`,
-      netIndicatif: `env. ${(3 * TARIF_HORAIRE_BRUT_EUR) / 2} € net après crédit (simulation 50 %)`,
+      net: `${3 * TARIF_HORAIRE_NET_EUR} €`,
+      base: `après crédit d’impôt — prix de base ${3 * TARIF_HORAIRE_BRUT_EUR} €`,
       detail: "Soit 3 séances d’1 h ou 2 séances d’1 h 30 — à calendrier selon disponibilités.",
     },
   },
@@ -83,24 +85,9 @@ const packs: {
     ],
     tarifs: {
       resume: "À l’heure",
-      brut: `${TARIF_HORAIRE_BRUT_EUR} € brut / heure`,
-      netIndicatif: `env. ${TARIF_HORAIRE_BRUT_EUR / 2} € net / h après crédit (simulation 50 %)`,
+      net: `${TARIF_HORAIRE_NET_EUR} € / heure`,
+      base: `après crédit d’impôt — prix de base ${TARIF_HORAIRE_BRUT_EUR} € / heure`,
       detail: "Facturation au quart d’heure près après le 1er heure pleine (indicatif — précisé au devis).",
-    },
-  },
-  {
-    id: "famille",
-    name: "Pack famille & aidants",
-    tagline: "Pour coordonner et soulager sans remplacer le lien familial.",
-    bullets: [
-      "Temps de répit pour les aidants avec compte-rendu bienveillant dans le carnet.",
-      "Échanges possibles sur les priorités de la semaine.",
-    ],
-    tarifs: {
-      resume: "Même base horaire + forfait suivi",
-      brut: `${TARIF_HORAIRE_BRUT_EUR} € brut / heure + forfait dossier 15 € brut / mois`,
-      netIndicatif: `net mensuel : à titre indicatif, diviser par deux les montants SAP éligibles (simulateur ci-dessous).`,
-      detail: "Le forfait dossier couvre la mise à jour du carnet partagé et la coordination courte avec la famille (indicatif).",
     },
   },
   {
@@ -113,9 +100,9 @@ const packs: {
     ],
     tarifs: {
       resume: "Devis après entretien",
-      brut: "Selon prestations",
-      netIndicatif: "Selon éligibilité SAP et plafonds",
-      detail: `Référence interne : nous nous alignons sur la même grille horaire indicatif ${TARIF_HORAIRE_BRUT_EUR} € brut / h sauf accord contraire écrit.`,
+      net: "Sur devis",
+      base: `même base : ${TARIF_HORAIRE_NET_EUR} € / h après crédit d’impôt (${TARIF_HORAIRE_BRUT_EUR} € / h avant)`,
+      detail: "Sauf accord contraire écrit.",
     },
   },
 ];
@@ -140,20 +127,22 @@ const packs: {
       aria-labelledby="grille-title"
     >
       <h2 id="grille-title" class="font-display text-2xl text-marine md:text-3xl">Grille tarifaire indicative</h2>
-      <dl class="mt-6 grid gap-4 sm:grid-cols-2">
-        <div class="rounded-xl bg-sauge/15 px-4 py-3">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-marine/65">Tarif horaire brut (référence)</dt>
-          <dd class="mt-1 font-display text-3xl text-marine">{TARIF_HORAIRE_BRUT_EUR}&nbsp;€ / h</dd>
-          <dd class="mt-1 text-sm text-marine/75">Hors majorations éventuelles (week-end, urgence) précisées au devis.</dd>
+      <div class="mt-6 flex flex-col gap-6 rounded-2xl bg-sauge/20 px-6 py-6 ring-1 ring-marine/10 sm:flex-row sm:items-center sm:justify-between md:px-8">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-marine/65">Ce que vous payez réellement</p>
+          <p class="mt-1 font-display text-6xl leading-none text-marine md:text-7xl">
+            {TARIF_HORAIRE_NET_EUR}&nbsp;€<span class="text-3xl md:text-4xl"> / heure</span>
+          </p>
+          <p class="mt-3 font-medium text-marine/90">après le crédit d’impôt de 50&nbsp;% (services à la personne)</p>
         </div>
-        <div class="rounded-xl bg-ivoire px-4 py-3 ring-1 ring-marine/10">
-          <dt class="text-xs font-semibold uppercase tracking-wide text-marine/65">Net après crédit d’impôt (ordre de grandeur)</dt>
-          <dd class="mt-1 text-sm leading-relaxed text-marine/90">
-            En cas d’éligibilité SAP à 50&nbsp;% : <strong class="text-marine">diviser par deux</strong> les montants
-            bruts éligibles (plafonds et règles fiscales en vigueur — voir le simulateur ci-dessous).
-          </dd>
+        <div class="rounded-xl bg-white/80 px-5 py-4 text-marine/85 sm:max-w-xs">
+          <p class="text-sm">
+            Prix de base : <strong class="text-marine">{TARIF_HORAIRE_BRUT_EUR}&nbsp;€ / heure</strong>, dont la moitié vous est
+            remboursée par l’État (ou déduite directement avec l’Avance immédiate URSSAF).
+          </p>
+          <p class="mt-2 text-xs text-marine/70">Hors majorations éventuelles (week-end, urgence) précisées au devis.</p>
         </div>
-      </dl>
+      </div>
     </section>
 
     <section
@@ -163,8 +152,8 @@ const packs: {
     >
       <h2 id="forfaits-title" class="font-display text-2xl text-marine md:text-3xl">Forfaits activités</h2>
       <p class="mt-4 max-w-3xl text-marine/90 leading-relaxed">
-        Grille alignée sur la présentation du projet — tarif horaire de référence
-        <strong class="text-marine">{TARIF_HORAIRE_BRUT_EUR}&nbsp;€ brut / h</strong>, forfaits par thème. Toutes les activités
+        Grille alignée sur la présentation du projet — <strong class="text-marine">{TARIF_HORAIRE_NET_EUR}&nbsp;€ / h après crédit
+        d’impôt</strong> ({TARIF_HORAIRE_BRUT_EUR}&nbsp;€ / h avant), forfaits par thème. Toutes les activités
         peuvent aussi se faire à l’heure. Hors zone : sur devis.
       </p>
       <div class="mt-6 overflow-x-auto rounded-xl border border-marine/12">
@@ -173,8 +162,8 @@ const packs: {
             <tr class="bg-marine/8 text-left">
               <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Thème</th>
               <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Durée</th>
-              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Coût brut</th>
-              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Après impôt (50&nbsp;%)</th>
+              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine">Vous payez (après crédit d’impôt)</th>
+              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/60">Prix de base</th>
             </tr>
           </thead>
           <tbody>
@@ -183,8 +172,8 @@ const packs: {
                 <tr class:list={[i % 2 === 1 && "bg-sauge/10"]}>
                   <td class="px-4 py-2.5 font-medium text-marine">{f.label}</td>
                   <td class="px-4 py-2.5 text-marine/85">{f.duree}</td>
-                  <td class="px-4 py-2.5 font-semibold text-marine">{f.brutEur}&nbsp;€</td>
-                  <td class="px-4 py-2.5 font-medium text-aquarelle-bleu">{tarifNetApresCredit(f.brutEur)}&nbsp;€</td>
+                  <td class="px-4 py-2.5 text-base font-bold text-marine">{tarifNetApresCredit(f.brutEur)}&nbsp;€</td>
+                  <td class="px-4 py-2.5 text-marine/60">{f.brutEur}&nbsp;€</td>
                 </tr>
               ))
             }
@@ -282,21 +271,16 @@ const packs: {
       fait foi.
     </p>
 
-    <ul class="mt-14 grid gap-8 lg:grid-cols-2">
+    <ul class="mt-14 grid gap-8 lg:grid-cols-3">
       {
         packs.map((p) => (
           <li
             class:list={[
               "jojo-paper flex flex-col rounded-3xl p-8 shadow-md",
-              p.highlight && "ring-2 ring-marine/20 lg:col-span-2 lg:flex-row lg:items-stretch lg:gap-10",
+              p.highlight && "ring-2 ring-marine/20 lg:col-span-3 lg:flex-row lg:items-stretch lg:gap-10",
             ]}
           >
             <div class:list={["relative z-[1] flex-1", p.highlight && "lg:max-w-xl"]}>
-              {p.highlight && (
-                <p class="mb-3 inline-block rounded-full bg-marine px-3 py-1 text-xs font-bold uppercase tracking-wide text-ivoire">
-                  Le plus demandé
-                </p>
-              )}
               <h2 class="font-display text-3xl text-marine">{p.name}</h2>
               <p class="mt-3 text-marine/85">{p.tagline}</p>
               <ul class="mt-6 space-y-3 text-marine/90">
@@ -310,8 +294,8 @@ const packs: {
               <div class="mt-8 rounded-2xl border border-marine/12 bg-white/75 p-5 shadow-inner">
                 <p class="text-xs font-semibold uppercase tracking-wide text-marine/55">Tarifs affichés (indicatifs)</p>
                 <p class="mt-2 font-medium text-marine">{p.tarifs.resume}</p>
-                <p class="mt-2 font-display text-2xl text-marine">{p.tarifs.brut}</p>
-                <p class="mt-2 text-sm font-medium text-aquarelle-bleu">{p.tarifs.netIndicatif}</p>
+                <p class="mt-2 font-display text-4xl text-marine">{p.tarifs.net}</p>
+                <p class="mt-1 text-sm text-marine/70">{p.tarifs.base}</p>
                 {p.tarifs.detail && <p class="mt-3 border-t border-marine/10 pt-3 text-xs leading-relaxed text-marine/75">{p.tarifs.detail}</p>}
               </div>
             </div>

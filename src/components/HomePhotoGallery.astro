@@ -19,12 +19,6 @@ const photos = [
     caption: "Dehors, à son rythme",
     accent: "bleu",
   },
-  {
-    src: "/images/galerie/photo-2.webp",
-    alt: "Promenade avec un chien en laisse dans un parc ensoleillé",
-    caption: "Balades & compagnie",
-    accent: "jaune",
-  },
 ];
 ---
 
@@ -101,15 +95,9 @@ const photos = [
       grid-row: span 2;
     }
 
-    .home-gallery__item:nth-child(2) {
-      grid-column: span 4;
-    }
-
+    /* Trois photos : la grande à gauche, les deux autres empilées à droite. */
+    .home-gallery__item:nth-child(2),
     .home-gallery__item:nth-child(3) {
-      grid-column: span 3;
-    }
-
-    .home-gallery__item:nth-child(4) {
       grid-column: span 7;
     }
   }

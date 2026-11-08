@@ -1,7 +1,10 @@
 ---
 import LogoMark from "@/components/LogoMark.astro";
+import { isDbConfigured } from "@/lib/db-config";
 
 const user = Astro.locals.user;
+/** L'espace familles n'apparaît dans le menu qu'une fois la base de données branchée. */
+const showFamilySpace = Boolean(user) || isDbConfigured();
 
 const links = [
   { href: "/", label: "Accueil", shortLabel: "Accueil", desktopLabel: "Accueil", icon: "home" },
@@ -25,9 +28,9 @@ const links = [
   },
   {
     href: user ? "/compte" : "/compte/connexion",
-    label: user ? "Mon compte" : "Connexion",
-    shortLabel: user ? "Compte" : "Connexion",
-    desktopLabel: user ? "Mon compte" : "Connexion",
+    label: user ? "Mon espace famille" : "Espace familles",
+    shortLabel: user ? "Mon espace" : "Espace familles",
+    desktopLabel: user ? "Mon espace" : "Espace familles",
     icon: "user",
   },
   {
@@ -44,7 +47,7 @@ const links = [
     desktopLabel: "Juridique",
     icon: "doc",
   },
-] as const;
+].filter((l) => showFamilySpace || !l.href.startsWith("/compte"));
 
 const secondaryLinks = [
   { href: "/a-propos#mon-histoire", label: "Mon histoire" },
@@ -52,6 +55,10 @@ const secondaryLinks = [
 ];
 
 type NavLink = (typeof links)[number];
+
+function linkTo(href: string): NavLink[] {
+  return links.filter((l) => l.href === href);
+}
 
 type DesktopNavGroup = {
   kind: "group";
@@ -64,29 +71,31 @@ type DesktopNavGroup = {
 
 type DesktopNavEntry = { kind: "link"; link: NavLink } | DesktopNavGroup;
 
+const accountLinks = links.filter((l) => l.href.startsWith("/compte"));
+
 const desktopNav: DesktopNavEntry[] = [
-  { kind: "link", link: links[0] },
+  ...linkTo("/").map((link) => ({ kind: "link" as const, link })),
   {
     kind: "group",
     label: "Prestations",
     title: "Services, offres et carnet",
-    items: [links[1], links[2], links[3]],
+    items: [...linkTo("/services"), ...linkTo("/offres"), ...linkTo("/carnet")],
   },
   {
     kind: "group",
     label: "Découvrir",
     title: "À propos, présentation et partenaires",
-    items: [links[4], links[5], links[6]],
+    items: [...linkTo("/a-propos"), ...linkTo("/presentation"), ...linkTo("/partenaires")],
   },
-  { kind: "link", link: links[7] },
-  { kind: "link", link: links[8] },
+  ...accountLinks.map((link) => ({ kind: "link" as const, link })),
+  ...linkTo("/contact").map((link) => ({ kind: "link" as const, link })),
   {
     kind: "group",
     label: "Infos",
     title: "Documents juridiques et accès rapides",
     menuAlign: "end",
     items: [
-      links[9],
+      ...linkTo("/legal"),
       {
         href: secondaryLinks[0].href,
         label: secondaryLinks[0].label,
@@ -167,7 +176,7 @@ const desktopLinkIdle =
           Le Sourire de Jojo
         </span>
         <span class="mt-0.5 hidden text-[clamp(0.65rem,2vw,0.875rem)] leading-snug text-marine/65 sm:block">
-          Rayon de soleil à domicile — Montauban &amp; alentours
+          Rayon de soleil à domicile — Corbarieu &amp; alentours
         </span>
       </span>
     </a>

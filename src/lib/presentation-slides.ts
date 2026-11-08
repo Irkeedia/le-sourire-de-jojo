@@ -108,7 +108,7 @@ export const presentationSlides: PresentationSlide[] = [
     text: "Après une carrière de cadre, j’ai choisi de revenir à l’essentiel : l’humain. Le Sourire de JoJo, c’est ma promesse : un regard attentif, une écoute complice, une joie de vivre pour transformer les « boiteries » du quotidien en une forme de danse — pour aînés, convalescents ou enfants momentanément empêchés.",
     image: {
       src: "/images/galerie/photo-4.webp",
-      alt: "Céline Meunier Benneji en extérieur, dans un jardin",
+      alt: "Céline Meunier Ben Neji en extérieur, dans un jardin",
       fit: "cover",
       position: "center 25%",
     },
@@ -217,7 +217,7 @@ export const presentationSlides: PresentationSlide[] = [
     rightTitle: "Ce que je propose",
     rightItems: [
       "Posture active : stimulation, jeux, perles et sorties",
-      "Autonomie technique : fauteuil, déambulateur Georgette",
+      "Autonomie technique : déambulateur Georgette",
       "Carnet de Sourires : traçabilité vivante et rassurante",
       "Flexibilité — même 1 h 30 pour rompre la solitude",
       "Local & personnalisé : Céline, pas une administration",

@@ -4,7 +4,7 @@ import { buildServiceList, resolveSiteUrl } from "@/lib/seo";
 
 const title = "Nos services — Le Sourire de Jojo";
 const description =
-  "La dame de compagnie moderne — lecture, sorties, jeux, biographie de vie, numérique, créations et visites duo. Matériel apporté : fauteuil roulant, déambulateur Georgette, jeux, perles. Montauban et Tarn-et-Garonne.";
+  "La dame de compagnie moderne — lecture, sorties, jeux, biographie de vie, numérique et créations. Matériel apporté : déambulateur Georgette, jeux, perles. Montauban et Tarn-et-Garonne.";
 
 const siteUrl = resolveSiteUrl(Astro.site?.href, Astro.url.origin);
 
@@ -16,7 +16,7 @@ const services = [
     imageAlt:
       "Moment de lecture et d’échange avec une personne âgée, dans un cadre chaleureux et attentionné.",
     text:
-      "Romans, poésie, articles du jour : des moments partagés qui ouvrent la parole. Exemples : pour un senior, relire ensemble une biographie de vie ; pour un jeune en convalescence ou alité, histoires courtes à voix haute ; pour une personne PMR, aide à trier le courrier et à comprendre les courriers importants.",
+      "Romans, poésie, articles du jour : des moments partagés qui ouvrent la parole. Exemples : pour un senior, relire ensemble une biographie de vie ; pour un jeune en convalescence ou alité, histoires courtes à voix haute.",
   },
   {
     name: "Sorties & promenades",
@@ -25,7 +25,7 @@ const services = [
     imageAlt:
       "Promenade ou sortie en plein air, à son rythme, pour prendre l’air et profiter du quartier.",
     text:
-      "Air du quartier, marché, parc accessible : bouger à son rythme. Senior : sortie digestive et repères du voisinage. Enfant ou adolescent : petites marches ludiques ou sorties très courtes selon l’avis médical. PMR : trajets planifiés avec pauses et accessibilité — nous pouvons vous accompagner avec votre fauteuil roulant ou votre déambulateur lorsque c’est convenu ensemble.",
+      "Air du quartier, marché, parc accessible : bouger à son rythme. Senior : sortie digestive et repères du voisinage. Enfant ou adolescent : petites marches ludiques ou sorties très courtes selon l’avis médical.",
   },
   {
     name: "Jeux & rires",
@@ -34,7 +34,7 @@ const services = [
     imageAlt:
       "Enfant souriant lors d’un jeu ou d’une activité ludique partagée à domicile.",
     text:
-      "Jeux de société calmes, énigmes, dessins, perles ou petites activités manuelles : le plaisir sans performance. Senior : cartes et mémoire douce. Jeune : aide aux devoirs ludique et défis courts. PMR : activités à la table adaptées à la mobilité. Nous pouvons apporter des jeux ou du matériel créatif (perles, etc.) sur demande.",
+      "Jeux de société calmes, énigmes, dessins, perles ou petites activités manuelles : le plaisir sans performance. Senior : cartes et mémoire douce. Jeune : aide aux devoirs ludique et défis courts. Nous pouvons apporter des jeux ou du matériel créatif (perles, etc.) sur demande.",
   },
   {
     name: "Nature & cueillette",
@@ -46,7 +46,7 @@ const services = [
     name: "Photos & souvenirs",
     icon: "camera",
     text:
-      "Albums, tri de photos, récits capturés : consolider la mémoire familiale. Senior : rédiger des légendes pour les petits-enfants. Jeune : création d’un carnet visuel de la convalescence ou de l’immobilisation. PMR : organisation numérique simple et sauvegardes.",
+      "Albums, tri de photos, récits capturés : consolider la mémoire familiale. Senior : rédiger des légendes pour les petits-enfants. Jeune : création d’un carnet visuel de la convalescence ou de l’immobilisation.",
   },
   {
     name: "Présence & écoute",
@@ -72,12 +72,6 @@ const services = [
     text:
       "Création d’objets faits main pour faire plaisir à la famille : bricolages, petites attentions, cadeaux de Noël personnalisés — des moments créatifs qui laissent une trace tangible et joyeuse.",
   },
-  {
-    name: "Visite duo avec Lili",
-    icon: "presence",
-    text:
-      "Une présence renforcée à deux : visite en duo avec Lili pour des moments de lien, de conversation ou d’activité partagée — idéal lorsque la famille souhaite une présence plus soutenue ou une dynamique intergénérationnelle.",
-  },
 ];
 ---
 
@@ -91,7 +85,7 @@ const services = [
     <h1 class="font-display text-4xl text-marine md:text-5xl">Nos services</h1>
     <p class="mt-6 max-w-3xl text-lg text-marine/90">
       <strong class="text-marine">La dame de compagnie moderne</strong> : lecture, sorties, jeux, nature, photos, présence,
-      biographie de vie, numérique, créations et visites duo — toujours en lien avec votre réalité du moment, avec le matériel
+      biographie de vie, numérique et créations — toujours en lien avec votre réalité du moment, avec le matériel
       apporté sur place lorsque c’est convenu ensemble.
     </p>
 
@@ -171,10 +165,6 @@ const services = [
         tout à prévoir chez vous :
       </p>
       <ul class="mt-4 space-y-2 text-marine/90 leading-relaxed">
-        <li class="flex gap-2">
-          <span class="text-rose-vieux" aria-hidden="true">✿</span>
-          <span><strong class="text-marine">Fauteuil roulant</strong> pour les sorties planifiées et accessibles.</span>
-        </li>
         <li class="flex gap-2">
           <span class="text-rose-vieux" aria-hidden="true">✿</span>
           <span>

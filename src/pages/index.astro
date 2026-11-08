@@ -10,7 +10,7 @@ import { absoluteUrl, buildFaqPage, HOME_FAQ, resolveSiteUrl } from "@/lib/seo";
 
 const title = "Le Sourire de Jojo — Rayon de soleil à domicile";
 const description =
-  "Accompagnement social et bienveillant (Céline Meunier Benneji) — lien, dignité, intergénérationnel : aînés, convalescents, enfants temporairement immobilisés. Montauban, Corbarieu, Tarn-et-Garonne.";
+  "Accompagnement social et bienveillant (Céline Meunier Ben Neji) — lien, dignité, intergénérationnel : aînés, convalescents, enfants temporairement immobilisés. Montauban, Corbarieu, Tarn-et-Garonne.";
 
 const siteUrl = resolveSiteUrl(Astro.site?.href, Astro.url.origin);
 const homeUrl = absoluteUrl("/", siteUrl);
@@ -85,8 +85,8 @@ const homeUrl = absoluteUrl("/", siteUrl);
   <section class="mx-auto max-w-6xl scroll-mt-28 px-4 py-16 md:px-6 md:py-20" aria-labelledby="axes-title" id="detail-services">
     <h2 id="axes-title" class="font-display text-3xl text-marine md:text-4xl">Ce que nous proposons</h2>
     <p class="mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
-      Lecture, sorties, biographie de vie, numérique, créations, visites duo avec Lili… le détail ci-dessous complète les
-      entrées du bandeau d’accueil. Matériel apporté sur place (fauteuil, déambulateur Georgette, jeux, perles). Voir aussi la
+      Lecture, sorties, biographie de vie, numérique, créations… le détail ci-dessous complète les
+      entrées du bandeau d’accueil. Matériel apporté sur place (déambulateur Georgette, jeux, perles). Voir aussi la
       page <a class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine" href="/services">Nos services</a>.
     </p>
     <ul
@@ -153,7 +153,7 @@ const homeUrl = absoluteUrl("/", siteUrl);
     <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
       <h2 id="cibles-title" class="font-display text-3xl text-marine md:text-4xl">Missions &amp; publics</h2>
       <p class="mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
-        <strong class="text-marine">Accompagnement intergénérationnel</strong> — aînés, convalescents, enfants immobilisés — avec la
+        <strong class="text-marine">Accompagnement intergénérationnel</strong> — aînés, personnes immobilisées, parents solos — avec la
         même exigence : <strong class="text-marine">écouter avant d’agir</strong>, respecter le silence comme la parole, et
         construire la confiance pas à pas. Voici comment nous adaptons notre présence.
       </p>
@@ -191,7 +191,7 @@ const homeUrl = absoluteUrl("/", siteUrl);
         >
           <h3 class="font-display text-2xl text-marine">Enfants &amp; adolescents (convalescence ou immobilisation)</h3>
           <p class="mt-4 leading-relaxed text-marine/85">
-            Après une maladie, une intervention ou une période où le corps impose le repos au lit ou au fauteuil, le quotidien peut
+            Après une maladie ou une période où le corps impose le repos, le quotidien peut
             sembler gris : nous réinjectons du jeu, du sens et des objectifs atteignables, sans nier la fatigue.
           </p>
           <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
@@ -210,27 +210,27 @@ const homeUrl = absoluteUrl("/", siteUrl);
           </ul>
         </article>
         <article
-          id="missions-pmr"
+          id="missions-parents-solos"
           class="scroll-mt-28 flex min-w-[86%] snap-start flex-col rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm sm:min-w-[70%] lg:min-w-0"
         >
-          <h3 class="font-display text-2xl text-marine">Personnes à mobilité réduite (PMR)</h3>
+          <h3 class="font-display text-2xl text-marine">Parents solos</h3>
           <p class="mt-4 leading-relaxed text-marine/85">
-            L’autonomie ne se mesure pas à la vitesse : nous planifions avec vous les trajets, les temps de repos et les
-            aides matérielles — fauteuil roulant, déambulateur Georgette, jeux et perles apportés — pour que chaque sortie
-            reste un succès.
+            Élever seul·e ses enfants, c’est tenir sur tous les fronts. Pour répondre à la fatigue, parfois extrême, nous
+            prenons le relais ponctuellement : <strong class="text-marine">garde d’enfants de plus de 3 ans</strong>, en
+            journée et hors week-end.
           </p>
           <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
             <li class="flex gap-2">
               <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Accompagnement aux démarches (courrier, rendez-vous) avec pédagogie.</span>
+              <span>Des moments de relais pour souffler, sans culpabilité.</span>
             </li>
             <li class="flex gap-2">
               <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Nature accessible : chemins adaptés, observation, pas de sur-sollicitation.</span>
+              <span>Accompagnement lors de sorties culturelles ou au parc.</span>
             </li>
             <li class="flex gap-2">
               <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Respect absolu de votre rythme et de vos « non » pour aujourd’hui.</span>
+              <span>Accompagnement aux démarches administratives.</span>
             </li>
           </ul>
         </article>
@@ -299,8 +299,7 @@ const homeUrl = absoluteUrl("/", siteUrl);
       <h2 id="difference-title" class="relative font-display text-3xl text-marine md:text-4xl">Ce qui nous différencie</h2>
       <ul class="relative mt-8 grid gap-4 text-sm leading-relaxed text-marine/85 md:grid-cols-3 md:text-base">
         <li class="rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <strong class="text-marine">Dame de compagnie moderne</strong> — présence humaine, matériel apporté (fauteuil,
-          déambulateur Georgette, jeux, perles…).
+          <strong class="text-marine">Dame de compagnie moderne</strong> — présence humaine, matériel apporté (déambulateur Georgette, jeux, perles…).
         </li>
         <li class="rounded-2xl border border-marine/15 bg-white/90 p-5">
           <strong class="text-marine">Lien social</strong> au centre — pas seulement « faire les courses ».
@@ -351,8 +350,8 @@ const homeUrl = absoluteUrl("/", siteUrl);
       <div class="mt-10 grid gap-10 lg:grid-cols-2">
         <div class="space-y-4 leading-relaxed text-marine/85">
           <p>
-            Nous intervenons principalement autour de <strong class="text-marine">Montauban</strong> et
-            <strong class="text-marine">Corbarieu</strong>, ainsi que dans une partie du
+            Nous intervenons principalement autour de <strong class="text-marine">Corbarieu</strong> et de
+            <strong class="text-marine">Montauban</strong>, ainsi que dans une partie du
             <strong class="text-marine">Tarn-et-Garonne (82)</strong> selon les créneaux disponibles et les temps de
             trajet raisonnables.
           </p>
@@ -364,12 +363,12 @@ const homeUrl = absoluteUrl("/", siteUrl);
         </div>
         <ul class="rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm">
           <li class="flex justify-between gap-4 border-b border-marine/10 py-3 text-marine/85">
-            <span>Ville-centre &amp; quartiers</span>
-            <span class="font-medium text-marine">Montauban</span>
+            <span>Point de départ</span>
+            <span class="font-medium text-marine">Corbarieu</span>
           </li>
           <li class="flex justify-between gap-4 border-b border-marine/10 py-3 text-marine/85">
-            <span>Commune voisine</span>
-            <span class="font-medium text-marine">Corbarieu</span>
+            <span>Ville voisine</span>
+            <span class="font-medium text-marine">Montauban</span>
           </li>
           <li class="flex justify-between gap-4 py-3 text-marine/85">
             <span>Département</span>
@@ -378,7 +377,7 @@ const homeUrl = absoluteUrl("/", siteUrl);
         </ul>
       </div>
       <div class="mt-12">
-        <GoogleMapEmbed title="Zone d’intervention — Montauban et Tarn-et-Garonne" />
+        <GoogleMapEmbed title="Zone d’intervention — Corbarieu et alentours" query="Corbarieu, Tarn-et-Garonne, France" zoom={10} />
       </div>
     </div>
   </section>
