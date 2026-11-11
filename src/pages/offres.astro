@@ -3,27 +3,35 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import CostSimulator from "@/components/CostSimulator.astro";
 import SealBadge from "@/components/SealBadge.astro";
 import type { PackId } from "@/lib/packs";
-import { FORFAITS_ACTIVITES, TARIF_HORAIRE_BRUT_EUR, TARIF_HORAIRE_NET_EUR, tarifNetApresCredit } from "@/lib/tarif";
+import {
+  FORFAITS_ACTIVITES,
+  FORFAIT_MENSUEL,
+  PACK_DECOUVERTE,
+  TARIF_HORAIRE_BRUT_EUR,
+  TARIF_HORAIRE_NET_EUR,
+  tarifNetApresCredit,
+} from "@/lib/tarif";
+import { EXCLUSIONS, INCLUS } from "@/lib/catalogue";
 
 const title = "Offres & forfaits — Le Sourire de Jojo";
 const description =
-  "Tarifs indicatifs (SAP), crédit d'impôt 50 %, APA, PCH, CESU, simulateur, forfaits — Corbarieu, Montauban et alentours (Tarn-et-Garonne). Devis personnalisé.";
+  "Tarifs indicatifs (SAP), crédit d'impôt 50 %, Avance immédiate, CESU, simulateur, forfaits — Corbarieu, Montauban et alentours (Tarn-et-Garonne). Devis personnalisé.";
 
 const aidesFinancement = [
   {
+    id: "avance-immediate",
+    title: "L’Avance immédiate URSSAF",
+    body: "Avec l’Avance immédiate, vous ne payez que la moitié de la facture : l’URSSAF verse directement l’autre moitié, au titre du crédit d’impôt. Plus besoin d’attendre l’année suivante pour être remboursé.",
+  },
+  {
+    id: "cesu",
+    title: "Les CESU préfinancés",
+    body: "Certaines caisses de retraite, mutuelles ou employeurs offrent des chèques CESU préfinancés. Ils sont acceptés pour régler les prestations, quand le devis ou le contrat le prévoit.",
+  },
+  {
     id: "apa",
-    title: "L’APA (Allocation Personnalisée d’Autonomie)",
-    body: "Versée par le Conseil départemental du Tarn-et-Garonne pour les personnes de plus de 60 ans en perte d’autonomie. Le bénéficiaire peut utiliser son enveloppe APA pour financer des prestations de dame de compagnie, dans le cadre de son plan d’aide.",
-  },
-  {
-    id: "pch",
-    title: "La PCH (Prestation de Compensation du Handicap)",
-    body: "L’équivalent de l’APA pour les personnes en situation de handicap, sans limite d’âge, gérée par la MDPH. L’enveloppe PCH peut couvrir une partie des prestations d’accompagnement à domicile, selon le projet de vie et les besoins validés.",
-  },
-  {
-    id: "retraite",
-    title: "Les caisses de retraite (Agirc-Arrco, CARSAT, MSA…)",
-    body: "Certaines caisses accordent à leurs retraités des budgets annuels ou des chèques CESU pour financer de la compagnie à domicile ou de l’aide aux sorties. Vous pouvez régler vos prestations avec ces titres lorsque le contrat le prévoit.",
+    title: "Avec l’APA ou la PCH",
+    body: "Le Sourire de Jojo n’est ni autorisé ni agréé par le Département : l’APA et la PCH ne financent donc pas ses prestations. Céline peut en revanche intervenir en complément des aides déjà en place, pour des moments de compagnie et de lien social.",
   },
 ];
 
@@ -53,10 +61,10 @@ const packs: {
       "Idéal pour aînés, convalescence longue ou soutien familial durable.",
     ],
     tarifs: {
-      resume: "Exemple : 8 h / mois",
-      prix: `${8 * TARIF_HORAIRE_BRUT_EUR} € TTC / mois`,
-      credit: `soit ${8 * TARIF_HORAIRE_NET_EUR} € / mois après crédit d’impôt*`,
-      detail: `Base : ${TARIF_HORAIRE_BRUT_EUR} € TTC / heure — volume mensuel ajustable avec vous.`,
+      resume: `Exemple : ${FORFAIT_MENSUEL.heures} h / mois`,
+      prix: `${FORFAIT_MENSUEL.brutEur} € TTC / mois`,
+      credit: `soit ${tarifNetApresCredit(FORFAIT_MENSUEL.brutEur)} € / mois après crédit d’impôt*`,
+      detail: `Soit ${FORFAIT_MENSUEL.brutEur / FORFAIT_MENSUEL.heures} € TTC de l’heure au lieu de ${TARIF_HORAIRE_BRUT_EUR} € : une remise pour l’engagement régulier. Volume mensuel ajustable avec vous.`,
     },
   },
   {
@@ -69,10 +77,10 @@ const packs: {
       "Sans engagement sur la suite : vous décidez après échange.",
     ],
     tarifs: {
-      resume: "Forfait fixe indicatif : 3 h",
-      prix: `${3 * TARIF_HORAIRE_BRUT_EUR} € TTC`,
-      credit: `soit ${3 * TARIF_HORAIRE_NET_EUR} € après crédit d’impôt*`,
-      detail: "Soit 3 séances d’1 h ou 2 séances d’1 h 30 — à calendrier selon disponibilités.",
+      resume: `Forfait fixe indicatif : ${PACK_DECOUVERTE.heures} h`,
+      prix: `${PACK_DECOUVERTE.brutEur} € TTC`,
+      credit: `soit ${tarifNetApresCredit(PACK_DECOUVERTE.brutEur)} € après crédit d’impôt*`,
+      detail: "À répartir selon vos disponibilités (par exemple 3 séances d’1 h). Sans engagement sur la suite.",
     },
   },
   {
@@ -155,15 +163,15 @@ const packs: {
     >
       <h2 id="forfaits-title" class="font-display text-2xl text-marine md:text-3xl">Forfaits activités</h2>
       <p class="mt-4 max-w-3xl text-marine/90 leading-relaxed">
-        Grille alignée sur la présentation du projet — tarif horaire <strong class="text-marine">{TARIF_HORAIRE_BRUT_EUR}&nbsp;€ TTC</strong>,
-        forfaits par thème. Toutes les activités
-        peuvent aussi se faire à l’heure. Hors zone : sur devis.
+        Le tarif de base est de <strong class="text-marine">{TARIF_HORAIRE_BRUT_EUR}&nbsp;€ TTC de l’heure</strong>. Plus la séance
+        est longue, plus l’heure revient moins cher. Les sorties durent au moins 2&nbsp;h. Le détail des activités de chaque pôle
+        est sur la page <a href="/services" class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine">Nos services</a>.
       </p>
       <div class="mt-6 overflow-x-auto rounded-xl border border-marine/12">
         <table class="w-full min-w-[28rem] border-collapse text-sm">
           <thead>
             <tr class="bg-marine/8 text-left">
-              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Thème</th>
+              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Pôle</th>
               <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Durée</th>
               <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine">Prix TTC</th>
               <th scope="col" class="px-4 py-3 text-[0.65rem] font-semibold uppercase tracking-wide text-marine/60">Après crédit d’impôt*</th>
@@ -182,6 +190,37 @@ const packs: {
             }
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <section
+      id="inclus"
+      class="mt-10 scroll-mt-24 grid gap-6 md:grid-cols-2"
+      aria-label="Ce qui est compris, ce qui ne l’est pas"
+    >
+      <div class="rounded-2xl border border-marine/15 bg-sauge/15 p-6 md:p-8">
+        <h2 class="font-display text-2xl text-marine">Compris dans toutes les formules</h2>
+        <ul class="mt-4 space-y-2 text-marine/90">
+          {INCLUS.map((item) => (
+            <li class="flex gap-2">
+              <span class="text-rose-vieux" aria-hidden="true">✿</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="mt-4 text-sm text-marine/75">Hors de la zone d’intervention, les déplacements sont facturés selon le barème kilométrique de l’administration.</p>
+      </div>
+      <div class="rounded-2xl border border-marine/15 bg-white/90 p-6 md:p-8">
+        <h2 class="font-display text-2xl text-marine">Ce que je ne fais pas</h2>
+        <ul class="mt-4 space-y-2 text-marine/90">
+          {EXCLUSIONS.map((item) => (
+            <li class="flex gap-2">
+              <span class="text-marine/50" aria-hidden="true">–</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="mt-4 text-sm text-marine/75">Pour ces besoins, j’oriente vers les professionnels de santé et les services d’aide à domicile.</p>
       </div>
     </section>
 
@@ -219,9 +258,8 @@ const packs: {
     >
       <h2 id="aides-title" class="font-display text-3xl text-marine">Les aides pour financer l’accompagnement</h2>
       <p class="mt-4 max-w-3xl leading-relaxed text-marine/90">
-        Outre le crédit d’impôt SAP, les personnes accompagnées peuvent mobiliser d’autres dispositifs pour régler tout ou partie des
-        prestations de dame de compagnie. Les montants, conditions d’éligibilité et démarches relèvent des organismes concernés — nous
-        vous aidons à y voir clair lors du premier échange.
+        En plus du crédit d’impôt de 50&nbsp;%, voici ce qui peut alléger le coût. Nous en parlons ensemble lors de la visite
+        d’évaluation.
       </p>
       <ul class="mt-8 grid gap-6 md:grid-cols-3">
         {
@@ -234,8 +272,8 @@ const packs: {
         }
       </ul>
       <p class="mt-6 text-sm text-marine/75">
-        Ces informations sont données à titre indicatif. Seuls les organismes payeurs (département, MDPH, caisses de retraite, URSSAF,
-        administration fiscale…) confirment vos droits et les modalités de prise en charge.
+        Ces informations sont données à titre indicatif. Seuls les organismes concernés (URSSAF, caisses de retraite,
+        administration fiscale…) confirment vos droits.
       </p>
     </section>
 

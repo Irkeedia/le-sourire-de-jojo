@@ -169,7 +169,7 @@ export const presentationSlides: PresentationSlide[] = [
     tiles: [
       {
         title: "Lecture & album",
-        text: "Biographie de vie, récits et souvenirs partagés.",
+        text: "Lecture à voix haute, récits et souvenirs partagés.",
         image: {
           src: "/presentation/assets/image12.webp",
           alt: "Lecture et roses — moment de douceur",
@@ -227,14 +227,14 @@ export const presentationSlides: PresentationSlide[] = [
     kind: "table",
     title: "Offres & forfaits",
     intro: `Tarif horaire : ${TARIF_HORAIRE_BRUT_EUR} € TTC. Devis gratuit.`,
-    headers: ["Thème", "Heures", "Prix TTC", "Après crédit d’impôt*"],
+    headers: ["Pôle", "Heures", "Prix TTC", "Après crédit d’impôt*"],
     rows: forfaitTableRows(),
     note: `* Soit ${tarifNetApresCredit(TARIF_HORAIRE_BRUT_EUR)} € / h après crédit d’impôt de 50 % (services à la personne), sous conditions d’éligibilité. Toutes les activités peuvent aussi se faire à l’heure. Hors zone : sur devis.`,
   },
   {
     kind: "split",
     title: "Les aides possibles",
-    text: "Crédit d’impôt de 50 % automatique (service à la personne) · APA via le Conseil départemental du Tarn-et-Garonne (dès 60 ans) · PCH via la MDPH (sans limite d’âge) · Chèques CESU des caisses de retraite (Agirc-Arrco, CARSAT, MSA…).",
+    text: "Crédit d’impôt de 50 % automatique (service à la personne) · Avance immédiate URSSAF : vous ne payez que la moitié · CESU préfinancés acceptés (caisses de retraite, mutuelles, employeurs) · En complément de l’APA ou de la PCH déjà en place.",
     image: {
       src: "/presentation/assets/image26.webp",
       alt: "Zone d’intervention — Corbarieu, Montauban et alentours (Tarn-et-Garonne)",

@@ -45,7 +45,7 @@ export const HOME_FAQ = [
   {
     question: "Quelles aides pour financer l’accompagnement ?",
     answer:
-      "Le crédit d’impôt de 50 % s’applique automatiquement aux prestations SAP éligibles (Avance immédiate possible). Selon la situation, l’APA, la PCH ou des chèques CESU des caisses de retraite peuvent aussi couvrir une partie des factures.",
+      "Le crédit d’impôt de 50 % s’applique automatiquement aux prestations SAP éligibles (Avance immédiate possible : vous ne payez que la moitié). Les CESU préfinancés sont acceptés. L’APA et la PCH ne financent pas ces prestations, qui peuvent venir en complément des aides déjà en place.",
   },
   {
     question: "Comment fixez-vous les durées et la fréquence ?",
@@ -168,12 +168,10 @@ export function buildFaqPage(faqs: readonly { question: string; answer: string }
 
 export function buildServiceList(siteUrl: string) {
   const services = [
-    "Lecture et discussion",
-    "Sorties et promenades",
-    "Jeux et activités",
-    "Biographie de vie",
-    "Accompagnement numérique",
-    "Créations et loisirs",
+    "Compagnie et lien social",
+    "Sorties à thème et vie sociale",
+    "Répit des parents solos et des aidants",
+    "Aide aux papiers et au numérique",
   ];
 
   return services.map((name) => ({

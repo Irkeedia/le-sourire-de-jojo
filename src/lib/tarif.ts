@@ -1,4 +1,4 @@
-/** Tarif horaire brut SAP indicatif (€/h) — aligné présentation Céline 18.05. */
+/** Tarif horaire brut SAP indicatif (€/h), confirmé dans le business plan v3. */
 export const TARIF_HORAIRE_BRUT_EUR = 38;
 
 /** Taux crédit d’impôt SAP (50 %). */
@@ -10,6 +10,10 @@ export const CREDIT_IMPOT_SAP_TAUX = 0.5;
  */
 export const TARIF_HORAIRE_NET_EUR = TARIF_HORAIRE_BRUT_EUR * (1 - CREDIT_IMPOT_SAP_TAUX);
 
+/** Forfaits du business plan (version 3, novembre 2026) : volumes et prix TTC fixés par Céline. */
+export const FORFAIT_MENSUEL = { heures: 8, brutEur: 280 } as const;
+export const PACK_DECOUVERTE = { heures: 3, brutEur: 108 } as const;
+
 export type ForfaitActivite = {
   label: string;
   duree: string;
@@ -17,17 +21,17 @@ export type ForfaitActivite = {
   brutEur: number;
 };
 
-/** Forfaits activités — grille commune site / présentation (montants bruts SAP). */
+/**
+ * Prix par pôle d'activité (business plan v3) : 38 € l'heure, 74 € les 2 h (37 €/h),
+ * 108 € les 3 h (36 €/h). Les sorties durent au moins 2 h.
+ */
 export const FORFAITS_ACTIVITES: ForfaitActivite[] = [
-  { label: "Le pont numérique", duree: "1 h", heures: 1, brutEur: 38 },
-  { label: "Biographie de vie", duree: "2 h", heures: 2, brutEur: 74 },
-  { label: "Atelier créatif", duree: "2 h", heures: 2, brutEur: 74 },
-  { label: "Escapade sensorielle", duree: "2 h", heures: 2, brutEur: 74 },
-  { label: "Jeux de société", duree: "2 h", heures: 2, brutEur: 74 },
-  { label: "Moment de détente", duree: "2 h", heures: 2, brutEur: 74 },
-  { label: "On se raconte nos vies", duree: "3 h", heures: 3, brutEur: 108 },
-  { label: "Lecture & album photo", duree: "3 h", heures: 3, brutEur: 108 },
-  { label: "Promenade & courses", duree: "3 h", heures: 3, brutEur: 108 },
+  { label: "Compagnie & lien social", duree: "1 h", heures: 1, brutEur: 38 },
+  { label: "Compagnie & lien social", duree: "2 h", heures: 2, brutEur: 74 },
+  { label: "Mobilité & vie sociale (sorties)", duree: "2 h", heures: 2, brutEur: 74 },
+  { label: "Mobilité & vie sociale (sorties)", duree: "3 h", heures: 3, brutEur: 108 },
+  { label: "Répit & vie pratique", duree: "1 h", heures: 1, brutEur: 38 },
+  { label: "Répit & vie pratique", duree: "2 h", heures: 2, brutEur: 74 },
 ];
 
 export function tarifNetApresCredit(brutEur: number): number {

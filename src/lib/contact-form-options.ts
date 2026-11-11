@@ -2,7 +2,6 @@
 
 export const AUDIENCE_IDS = [
   "senior_autonome",
-  "perte_autonomie",
   "convalescence",
   "parent_solo",
   "adulte_isole",
@@ -13,7 +12,6 @@ export type AudienceId = (typeof AUDIENCE_IDS)[number];
 
 export const AUDIENCE_LABELS: Record<AudienceId, string> = {
   senior_autonome: "Personne senior, plutôt autonome",
-  perte_autonomie: "Personne senior avec perte d’autonomie",
   convalescence: "Convalescence / retour à domicile",
   parent_solo: "Parent solo (garde ponctuelle d’enfants de plus de 3 ans)",
   adulte_isole: "Adulte isolé (hors senior)",
@@ -47,8 +45,11 @@ export const ZONE_IDS = [
   "lamothe_capdeville",
   "albias",
   "labastide_saint_pierre",
-  "saint_nauphary",
+  "bressols",
   "reynies",
+  "saint_nauphary",
+  "orgueil",
+  "campsas",
   "montbeton",
   "villeneuve_les_bouloc",
   "autre_82",
@@ -64,8 +65,11 @@ export const ZONE_LABELS: Record<ZoneId, string> = {
   lamothe_capdeville: "Lamothe-Capdeville",
   albias: "Albias",
   labastide_saint_pierre: "Labastide-Saint-Pierre",
-  saint_nauphary: "Saint-Nauphary",
+  bressols: "Bressols",
   reynies: "Reyniès",
+  saint_nauphary: "Saint-Nauphary",
+  orgueil: "Orgueil",
+  campsas: "Campsas",
   montbeton: "Montbeton",
   villeneuve_les_bouloc: "Villeneuve-lès-Bouloc",
   autre_82: "Autre commune du Tarn-et-Garonne (82)",
@@ -101,6 +105,7 @@ export const HORIZON_LABELS: Record<HorizonId, string> = {
  */
 const LEGACY_AUDIENCE_LABELS: Record<string, string> = {
   handicap_ou_pmr: "Handicap ou mobilité réduite (PMR) — ancienne option",
+  perte_autonomie: "Personne senior avec perte d’autonomie — ancienne option",
 };
 
 export function audienceLabel(id: string): string {
