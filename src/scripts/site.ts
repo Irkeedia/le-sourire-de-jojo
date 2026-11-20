@@ -2,14 +2,37 @@
 // sous-navigation, simulateur indicatif. Chargé comme fichier (compatible CSP).
 document.documentElement.classList.remove("no-js");
 
-// Menu mobile
+// Menu mobile : panneau plein écran, fermeture par la croix, le fond, Échap ou un lien
 const menuBtn = document.querySelector<HTMLButtonElement>("[data-menu-btn]");
-const mobileNav = document.querySelector("[data-mobile-nav]");
-if (menuBtn && mobileNav) {
-  menuBtn.addEventListener("click", () => {
-    const open = mobileNav.classList.toggle("is-open");
+const mobileNav = document.querySelector<HTMLElement>("[data-mobile-nav]");
+const header = document.querySelector<HTMLElement>(".header");
+if (menuBtn && mobileNav && header) {
+  let closeTimer = 0;
+  const setOpen = (open: boolean) => {
+    window.clearTimeout(closeTimer);
     menuBtn.setAttribute("aria-expanded", String(open));
+    menuBtn.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
+    document.documentElement.classList.toggle("menu-open", open);
+    if (open) {
+      mobileNav.style.setProperty("--menu-top", `${Math.max(0, header.getBoundingClientRect().bottom)}px`);
+      mobileNav.hidden = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => mobileNav.classList.add("is-open")));
+      mobileNav.querySelector<HTMLElement>(".mnav__link")?.focus({ preventScroll: true });
+    } else {
+      mobileNav.classList.remove("is-open");
+      closeTimer = window.setTimeout(() => (mobileNav.hidden = true), 380);
+    }
+  };
+  menuBtn.addEventListener("click", () => setOpen(menuBtn.getAttribute("aria-expanded") !== "true"));
+  mobileNav.querySelector("[data-menu-close]")?.addEventListener("click", () => setOpen(false));
+  mobileNav.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menuBtn.getAttribute("aria-expanded") === "true") {
+      setOpen(false);
+      menuBtn.focus();
+    }
   });
+  window.matchMedia("(min-width: 1081px)").addEventListener("change", (m) => m.matches && setOpen(false));
 }
 
 // Apparition douce au défilement
