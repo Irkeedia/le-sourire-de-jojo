@@ -3,12 +3,15 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Page introuvable — Le Sourire de Jojo" description="La page demandée n’existe pas." noindex>
-  <div class="mx-auto max-w-xl px-4 py-24 text-center md:px-6">
-    <p class="font-display text-5xl text-marine">404</p>
-    <h1 class="mt-4 font-display text-3xl text-marine">Page introuvable</h1>
-    <p class="mt-6 text-marine/85">Ce lien mène peut-être à une ancienne adresse.</p>
-    <p class="mt-10">
-      <a href="/" class="rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire hover:bg-marine/90">Retour à l’accueil</a>
-    </p>
-  </div>
+  <section class="section">
+    <div class="wrap stack center" style="max-width: 640px">
+      <span class="eyebrow" style="justify-self: center">Erreur 404</span>
+      <h1 class="display">Page <em>introuvable</em></h1>
+      <p class="lead" style="margin-inline: auto">Ce lien mène peut-être à une ancienne adresse : le site a été simplifié en cinq pages.</p>
+      <div class="btn-row" style="justify-content: center; margin-top: 24px">
+        <a class="btn btn--primary" href="/">Retour à l’accueil</a>
+        <a class="btn btn--secondary" href="/contact">Nous contacter</a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>

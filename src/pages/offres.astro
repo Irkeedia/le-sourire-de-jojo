@@ -1,383 +1,148 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import CostSimulator from "@/components/CostSimulator.astro";
-import SealBadge from "@/components/SealBadge.astro";
-import type { PackId } from "@/lib/packs";
 import {
-  FORFAITS_ACTIVITES,
   FORFAIT_MENSUEL,
+  FORFAITS_ACTIVITES,
   PACK_DECOUVERTE,
-  TARIF_HORAIRE_BRUT_EUR,
-  TARIF_HORAIRE_NET_EUR,
-  tarifNetApresCredit,
+  TARIF_HORAIRE_BRUT_EUR as H,
+  TARIF_HORAIRE_NET_EUR as HN,
+  tarifNetApresCredit as net,
 } from "@/lib/tarif";
-import { EXCLUSIONS, INCLUS } from "@/lib/catalogue";
 
-const title = "Offres & forfaits — Le Sourire de Jojo";
+const title = "Tarifs & aides — Le Sourire de Jojo";
 const description =
-  "Tarifs indicatifs (SAP), crédit d'impôt 50 %, Avance immédiate, CESU, simulateur, forfaits — Corbarieu, Montauban et alentours (Tarn-et-Garonne). Devis personnalisé.";
-
-const aidesFinancement = [
-  {
-    id: "avance-immediate",
-    title: "L’Avance immédiate URSSAF",
-    body: "Avec l’Avance immédiate, vous ne payez que la moitié de la facture : l’URSSAF verse directement l’autre moitié, au titre du crédit d’impôt. Plus besoin d’attendre l’année suivante pour être remboursé.",
-  },
-  {
-    id: "cesu",
-    title: "Les CESU préfinancés",
-    body: "Certaines caisses de retraite, mutuelles ou employeurs offrent des chèques CESU préfinancés. Ils sont acceptés pour régler les prestations, quand le devis ou le contrat le prévoit.",
-  },
-  {
-    id: "apa",
-    title: "Avec l’APA ou la PCH",
-    body: "Le Sourire de Jojo n’est ni autorisé ni agréé par le Département : l’APA et la PCH ne financent donc pas ses prestations. Céline peut en revanche intervenir en complément des aides déjà en place, pour des moments de compagnie et de lien social.",
-  },
-];
-
-const packs: {
-  id: PackId;
-  name: string;
-  tagline: string;
-  bullets: string[];
-  highlight?: boolean;
-  tarifs: {
-    resume: string;
-    /** Prix TTC réellement facturé : affiché en grand (arrêté du 17 mars 2015, art. 5). */
-    prix: string;
-    /** Avantage fiscal : détaché du prix et toujours en plus petit. */
-    credit?: string;
-    detail?: string;
-  };
-}[] = [
-  {
-    id: "mensuel",
-    name: "Forfait mensuel",
-    tagline: "Des créneaux réguliers pour ancrer le lien dans le temps.",
-    highlight: true,
-    bullets: [
-      "Planning prévisible (fréquence à définir ensemble).",
-      "Continuité du carnet de sourires et des préférences.",
-      "Idéal pour aînés, convalescence longue ou soutien familial durable.",
-    ],
-    tarifs: {
-      resume: `Exemple : ${FORFAIT_MENSUEL.heures} h / mois`,
-      prix: `${FORFAIT_MENSUEL.brutEur} € TTC / mois`,
-      credit: `soit ${tarifNetApresCredit(FORFAIT_MENSUEL.brutEur)} € / mois après crédit d’impôt*`,
-      detail: `Soit ${FORFAIT_MENSUEL.brutEur / FORFAIT_MENSUEL.heures} € TTC de l’heure au lieu de ${TARIF_HORAIRE_BRUT_EUR} € : une remise pour l’engagement régulier. Volume mensuel ajustable avec vous.`,
-    },
-  },
-  {
-    id: "decouverte",
-    name: "Pack découverte",
-    tagline: "Accroche douce avant un engagement plus long.",
-    bullets: [
-      "Une ou plusieurs séances pour faire connaissance.",
-      "Repérage des envies, du rythme et du cadre à domicile.",
-      "Sans engagement sur la suite : vous décidez après échange.",
-    ],
-    tarifs: {
-      resume: `Forfait fixe indicatif : ${PACK_DECOUVERTE.heures} h`,
-      prix: `${PACK_DECOUVERTE.brutEur} € TTC`,
-      credit: `soit ${tarifNetApresCredit(PACK_DECOUVERTE.brutEur)} € après crédit d’impôt*`,
-      detail: "À répartir selon vos disponibilités (par exemple 3 séances d’1 h). Sans engagement sur la suite.",
-    },
-  },
-  {
-    id: "ponctuel",
-    name: "Accompagnement ponctuel",
-    tagline: "À la demande, selon vos besoins du moment.",
-    bullets: [
-      "Sortie, lecture, démarche, moment de jeu — ponctuel.",
-      "Utile en complément des aidants ou après une période chargée.",
-    ],
-    tarifs: {
-      resume: "À l’heure",
-      prix: `${TARIF_HORAIRE_BRUT_EUR} € TTC / heure`,
-      credit: `soit ${TARIF_HORAIRE_NET_EUR} € / heure après crédit d’impôt*`,
-      detail: "Facturation au quart d’heure près après le 1er heure pleine (indicatif — précisé au devis).",
-    },
-  },
-  {
-    id: "sur_mesure",
-    name: "Sur-mesure",
-    tagline: "Parcours adapté à votre situation.",
-    bullets: [
-      "Après un échange, nous montons une proposition personnalisée (rythme, durée, activités).",
-      "Pour situations atypiques ou besoins multiples à composer.",
-    ],
-    tarifs: {
-      resume: "Devis après entretien",
-      prix: "Sur devis gratuit",
-      credit: `même base horaire : ${TARIF_HORAIRE_BRUT_EUR} € TTC / heure`,
-      detail: "Sauf accord contraire écrit.",
-    },
-  },
-];
+  "38 € TTC de l’heure, forfaits, crédit d’impôt de 50 % sous conditions, Avance immédiate URSSAF et CESU préfinancés — Corbarieu, Montauban et alentours.";
+const HM = FORFAIT_MENSUEL.brutEur / FORFAIT_MENSUEL.heures;
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Offres & forfaits" }]}
->
-  <article class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16">
-    <h1 class="font-display text-4xl text-marine md:text-5xl">Offres &amp; forfaits</h1>
-    <p class="mt-6 max-w-3xl text-lg leading-relaxed text-marine/90">
-      Les montants ci-dessous sont <strong class="text-marine">indicatifs</strong> : ils servent de base transparente pour
-      discuter avec vous (durée réelle, zone, contraintes). Un <strong class="text-marine">devis fermé</strong> vous est
-      communiqué après échange.
-    </p>
-
-    <section
-      id="grille-tarifaire"
-      class="mt-10 rounded-2xl border border-marine/15 bg-white/80 p-6 shadow-sm md:p-8"
-      aria-labelledby="grille-title"
-    >
-      <h2 id="grille-title" class="font-display text-2xl text-marine md:text-3xl">Grille tarifaire indicative</h2>
-      <div class="mt-6 flex flex-col gap-5 rounded-2xl bg-ivoire px-6 py-6 ring-1 ring-marine/10 sm:flex-row sm:items-center sm:justify-between md:px-8">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wide text-marine/65">Tarif horaire</p>
-          <p class="mt-1 font-display text-6xl leading-none text-marine md:text-7xl">
-            {TARIF_HORAIRE_BRUT_EUR}&nbsp;€<span class="text-3xl md:text-4xl"> TTC / heure</span>
-          </p>
-          <p class="mt-3 text-sm text-marine/75">Devis gratuit et personnalisé. Hors majorations éventuelles (week-end, urgence) précisées au devis.</p>
-        </div>
-        <div class="rounded-2xl bg-sauge/25 px-5 py-4 text-marine sm:max-w-xs">
-          <p class="text-lg font-semibold leading-snug">Soit {TARIF_HORAIRE_NET_EUR}&nbsp;€ / heure après crédit d’impôt de 50&nbsp;%*</p>
-          <p class="mt-1 text-sm text-marine/75">La moitié vous est remboursée par l’État, ou déduite tout de suite avec l’Avance immédiate URSSAF.</p>
+<BaseLayout title={title} description={description} breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Tarifs & aides" }]}>
+    <section class="page-hero" aria-labelledby="page-title">
+      <img class="page-hero__flower" src="/images/fleurs/3.webp" alt="" aria-hidden="true" />
+      <div class="wrap">
+        <nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Tarifs &amp; aides</span></nav>
+        <div class="split split--7-5" style="align-items: end">
+          <div class="stack">
+            <span class="eyebrow">Tarifs &amp; forfaits</span>
+            <h1 class="display" id="page-title">Des tarifs <em>clairs</em>, et la moitié remboursée</h1>
+          </div>
+          <p class="lead">Une seule base horaire : {H} € TTC. Les déplacements dans la zone d’intervention sont compris. Le crédit d’impôt de 50 % s’applique sous conditions.</p>
         </div>
       </div>
-      <p class="mt-4 text-xs leading-relaxed text-marine/70">
-        * Crédit d’impôt services à la personne, sous conditions : les prestations doivent être payées par la personne
-        qui en bénéficie (ou son foyer fiscal), autrement qu’en espèces ; les sorties et accompagnements hors du domicile
-        ne sont pris en compte qu’avec des heures au domicile, et dans la limite de celles-ci ; plafonds annuels en
-        vigueur. TVA non applicable, article 293 B du CGI.
-      </p>
     </section>
 
-    <section
-      id="forfaits-activites"
-      class="mt-10 scroll-mt-24 rounded-2xl border border-marine/15 bg-white/80 p-6 shadow-sm md:p-8"
-      aria-labelledby="forfaits-title"
-    >
-      <h2 id="forfaits-title" class="font-display text-2xl text-marine md:text-3xl">Forfaits activités</h2>
-      <p class="mt-4 max-w-3xl text-marine/90 leading-relaxed">
-        Le tarif de base est de <strong class="text-marine">{TARIF_HORAIRE_BRUT_EUR}&nbsp;€ TTC de l’heure</strong>. Plus la séance
-        est longue, plus l’heure revient moins cher. Les sorties durent au moins 2&nbsp;h. Le détail des activités de chaque pôle
-        est sur la page <a href="/services" class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine">Nos services</a>.
-      </p>
-      <div class="mt-6 overflow-x-auto rounded-xl border border-marine/12">
-        <table class="w-full min-w-[28rem] border-collapse text-sm">
-          <thead>
-            <tr class="bg-marine/8 text-left">
-              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Pôle</th>
-              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine/70">Durée</th>
-              <th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wide text-marine">Prix TTC</th>
-              <th scope="col" class="px-4 py-3 text-[0.65rem] font-semibold uppercase tracking-wide text-marine/60">Après crédit d’impôt*</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              FORFAITS_ACTIVITES.map((f, i) => (
-                <tr class:list={[i % 2 === 1 && "bg-sauge/10"]}>
-                  <td class="px-4 py-2.5 font-medium text-marine">{f.label}</td>
-                  <td class="px-4 py-2.5 text-marine/85">{f.duree}</td>
-                  <td class="px-4 py-2.5 text-base font-bold text-marine">{f.brutEur}&nbsp;€</td>
-                  <td class="px-4 py-2.5 text-xs text-marine/65">soit {tarifNetApresCredit(f.brutEur)}&nbsp;€</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section
-      id="inclus"
-      class="mt-10 scroll-mt-24 grid gap-6 md:grid-cols-2"
-      aria-label="Ce qui est compris, ce qui ne l’est pas"
-    >
-      <div class="rounded-2xl border border-marine/15 bg-sauge/15 p-6 md:p-8">
-        <h2 class="font-display text-2xl text-marine">Compris dans toutes les formules</h2>
-        <ul class="mt-4 space-y-2 text-marine/90">
-          {INCLUS.map((item) => (
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-        <p class="mt-4 text-sm text-marine/75">Hors de la zone d’intervention, les déplacements sont facturés selon le barème kilométrique de l’administration.</p>
-      </div>
-      <div class="rounded-2xl border border-marine/15 bg-white/90 p-6 md:p-8">
-        <h2 class="font-display text-2xl text-marine">Ce que je ne fais pas</h2>
-        <ul class="mt-4 space-y-2 text-marine/90">
-          {EXCLUSIONS.map((item) => (
-            <li class="flex gap-2">
-              <span class="text-marine/50" aria-hidden="true">–</span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-        <p class="mt-4 text-sm text-marine/75">Pour ces besoins, j’oriente vers les professionnels de santé et les services d’aide à domicile.</p>
-      </div>
-    </section>
-
-    <section
-      class="mt-12 scroll-mt-24 rounded-2xl border border-marine/15 bg-white/90 p-8 shadow-sm"
-      id="credit-impot"
-      aria-labelledby="ci-title"
-    >
-      <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-        <div class="max-w-3xl">
-          <h2 id="ci-title" class="font-display text-3xl text-marine">Crédit d’impôt 50&nbsp;% (SAP)</h2>
-          <p class="mt-4 text-marine/90 leading-relaxed">
-            C’est <strong class="text-marine">automatique</strong> : dès que la micro-entreprise est déclarée <strong class="text-marine">service à la personne</strong>,
-            vos factures éligibles ouvrent droit à un crédit d’impôt de <strong class="text-marine">50&nbsp;%</strong> sur les montants admissibles,
-            dans les limites fixées par la loi. Vous déduisez la moitié de vos dépenses de vos impôts, ou l’URSSAF vous l’avance
-            directement via l’<strong class="text-marine">Avance immédiate</strong> (selon votre situation). C’est valable pour vous comme pour la personne
-            accompagnée lorsque les conditions légales sont réunies.
-          </p>
-          <p class="mt-4 text-marine/90 leading-relaxed">
-            Les <strong class="text-marine">CESU préfinancés</strong> et chèques emploi service universel sont acceptés lorsque le devis ou le contrat le
-            prévoit. Conservez vos justificatifs et renseignez-vous sur les plafonds annuels et votre situation fiscale.
-          </p>
-          <p class="mt-4 text-sm text-marine/75">
-            Information générale : elle ne remplace pas un conseil comptable ou fiscal personnalisé.
-          </p>
+    <section class="section" aria-labelledby="formules-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow"><span class="eyebrow__num">01</span>Formules</span>
+          <h2 class="h2" id="formules-title">Choisissez <em>votre rythme</em></h2>
         </div>
-        <SealBadge />
+        <div class="plans">
+          <article class="plan reveal">
+            <div class="stack"><h3 class="h3">Pack découverte</h3><p class="muted small">Accroche douce avant un engagement plus long.</p></div>
+            <div class="price"><span class="price__label">Forfait {PACK_DECOUVERTE.heures} heures</span><span class="price__main"><span class="price__amount">{PACK_DECOUVERTE.brutEur}&nbsp;€</span><span class="price__unit">TTC</span></span><p class="price__note">Soit <strong>{net(PACK_DECOUVERTE.brutEur)} €</strong> après crédit d’impôt, sous conditions*.</p></div>
+            <ul class="checklist"><li>Une ou plusieurs séances pour faire connaissance</li><li>Repérage des envies et du rythme</li><li>Sans engagement sur la suite</li></ul>
+            <a class="btn btn--secondary" href="/contact?pack=decouverte#formulaire">Choisir</a>
+          </article>
+          <article class="plan plan--featured reveal">
+            <span class="plan__ribbon">Recommandé</span>
+            <div class="stack"><h3 class="h3">Forfait mensuel</h3><p class="muted small">Des créneaux réguliers pour ancrer le lien.</p></div>
+            <div class="price"><span class="price__label">Exemple : {FORFAIT_MENSUEL.heures} h / mois</span><span class="price__main"><span class="price__amount">{FORFAIT_MENSUEL.brutEur}&nbsp;€</span><span class="price__unit">TTC / mois</span></span><p class="price__note">Soit <strong>{net(FORFAIT_MENSUEL.brutEur)} € / mois</strong> après crédit d’impôt, sous conditions*.</p></div>
+            <ul class="checklist"><li>{HM} € TTC l’heure au lieu de {H} €</li><li>Planning prévisible</li><li>Continuité du carnet de sourires</li></ul>
+            <a class="btn btn--light" href="/contact?pack=mensuel#formulaire">Choisir</a>
+          </article>
+          <article class="plan reveal">
+            <div class="stack"><h3 class="h3">Ponctuel</h3><p class="muted small">À la demande, selon vos besoins du moment.</p></div>
+            <div class="price"><span class="price__label">À l’heure</span><span class="price__main"><span class="price__amount">{H}&nbsp;€</span><span class="price__unit">TTC / h</span></span><p class="price__note">Soit <strong>{HN} € / h</strong> après crédit d’impôt, sous conditions*.</p></div>
+            <ul class="checklist"><li>Sortie, lecture, démarche, jeu</li><li>En complément des aidants</li></ul>
+            <a class="btn btn--secondary" href="/contact?pack=ponctuel#formulaire">Choisir</a>
+          </article>
+          <article class="plan reveal">
+            <div class="stack"><h3 class="h3">Sur-mesure</h3><p class="muted small">Un parcours adapté à votre situation.</p></div>
+            <div class="price"><span class="price__label">Devis après entretien</span><span class="price__main"><span class="price__amount" style="font-size: 2rem">Sur devis</span></span><p class="price__note">Même base horaire : <strong>{H} € TTC / h</strong>. Devis gratuit.</p></div>
+            <ul class="checklist"><li>Situations atypiques</li><li>Besoins multiples à composer</li></ul>
+            <a class="btn btn--secondary" href="/contact?pack=sur_mesure#formulaire">Demander un devis</a>
+          </article>
+        </div>
+
+        <div class="card card--muted reveal" style="margin-top: 24px; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px 28px">
+          <strong class="h4">Inclus dans toutes les formules</strong>
+          <ul class="checklist small" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); flex: 1">
+            <li>Visite d’évaluation offerte (≈ 45 min)</li><li>Carnet des sourires, rempli à chaque visite</li><li>Espace familles en ligne</li><li>Déplacements dans la zone</li>
+          </ul>
+        </div>
       </div>
     </section>
 
-    <section
-      class="mt-12 scroll-mt-24 rounded-2xl border border-marine/15 bg-sauge/15 p-8 shadow-sm md:p-10"
-      id="aides-financement"
-      aria-labelledby="aides-title"
-    >
-      <h2 id="aides-title" class="font-display text-3xl text-marine">Les aides pour financer l’accompagnement</h2>
-      <p class="mt-4 max-w-3xl leading-relaxed text-marine/90">
-        En plus du crédit d’impôt de 50&nbsp;%, voici ce qui peut alléger le coût. Nous en parlons ensemble lors de la visite
-        d’évaluation.
-      </p>
-      <ul class="mt-8 grid gap-6 md:grid-cols-3">
-        {
-          aidesFinancement.map((aide) => (
-            <li class="flex flex-col rounded-2xl border border-marine/12 bg-white/90 p-6 shadow-sm">
-              <h3 id={aide.id} class="font-display text-xl text-marine">{aide.title}</h3>
-              <p class="mt-3 flex-1 text-sm leading-relaxed text-marine/85">{aide.body}</p>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="mt-6 text-sm text-marine/75">
-        Ces informations sont données à titre indicatif. Seuls les organismes concernés (URSSAF, caisses de retraite,
-        administration fiscale…) confirment vos droits.
-      </p>
+    <section class="section section--white rule-y" aria-labelledby="grille-title">
+      <div class="wrap">
+        <div class="section-head section-head--row">
+          <div class="stack">
+            <span class="eyebrow"><span class="eyebrow__num">02</span>Grille par pôle</span>
+            <h2 class="h2" id="grille-title">Plus la visite est longue, <em>plus l’heure est douce</em></h2>
+          </div>
+          <p class="muted small" style="max-width: 40ch">Les sorties durent au moins 2 heures. Prix TTC, déplacements compris dans la zone.</p>
+        </div>
+        <div class="table-wrap reveal">
+          <table class="table">
+            <thead><tr><th scope="col">Pôle d’activité</th><th scope="col">Durée</th><th scope="col" class="num">Prix TTC</th><th scope="col" class="num">Après crédit d’impôt*</th></tr></thead>
+            <tbody>
+              {FORFAITS_ACTIVITES.map((f) => (
+                <tr><td>{f.label}</td><td>{f.duree}</td><td class="num ttc">{f.brutEur} €</td><td class="num net">{net(f.brutEur)} €</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
-    <div class="mt-12 scroll-mt-28" id="simulateur-cout">
-      <CostSimulator />
-    </div>
-
-    <section
-      id="consentement-pdf"
-      class="mt-10 scroll-mt-28 rounded-2xl border border-marine/15 bg-sauge/15 p-6 md:p-8"
-      aria-labelledby="consent-offres-title"
-    >
-      <h2 id="consent-offres-title" class="font-display text-xl text-marine md:text-2xl">Formulaire de consentement (PDF)</h2>
-      <p class="mt-3 max-w-3xl leading-relaxed text-marine/85">
-        Avant ou pendant la mise en place d’un accompagnement, vous pouvez utiliser le document type sur la nature de la prestation,
-        les urgences sanitaires et le traitement des données — à imprimer ou à enregistrer en PDF depuis votre navigateur. Les bases
-        juridiques détaillées figurent aussi sur la page <a
-          href="/contact#mentions"
-          class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine">Contact &amp; informations légales</a
-        >. CGV, conditions d’annulation et versions PDF imprimables sont regroupées sous <a
-          href="/legal"
-          class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine">Documents juridiques</a
-        >.
-      </p>
-      <p class="mt-6">
-        <a
-          href="/consentement"
-          class="inline-flex items-center justify-center rounded-xl bg-marine px-5 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
-          >Ouvrir le formulaire de consentement</a
-        >
-      </p>
-    </section>
-
-    <p class="mt-8 text-xs leading-relaxed text-marine/65">
-      Informations non contractuelles. Tarifs indicatifs susceptibles d’évolution ; seul un écrit de consultation ou devis
-      fait foi.
-    </p>
-
-    <ul class="mt-14 grid gap-8 lg:grid-cols-3">
-      {
-        packs.map((p) => (
-          <li
-            class:list={[
-              "jojo-paper flex flex-col rounded-3xl p-8 shadow-md",
-              p.highlight && "ring-2 ring-marine/20 lg:col-span-3 lg:flex-row lg:items-stretch lg:gap-10",
-            ]}
-          >
-            <div class:list={["relative z-[1] flex-1", p.highlight && "lg:max-w-xl"]}>
-              <h2 class="font-display text-3xl text-marine">{p.name}</h2>
-              <p class="mt-3 text-marine/85">{p.tagline}</p>
-              <ul class="mt-6 space-y-3 text-marine/90">
-                {p.bullets.map((b) => (
-                  <li class="flex gap-2">
-                    <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-vieux" aria-hidden="true" />
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
-              <div class="mt-8 rounded-2xl border border-marine/12 bg-white/75 p-5 shadow-inner">
-                <p class="text-xs font-semibold uppercase tracking-wide text-marine/55">Tarifs affichés (indicatifs)</p>
-                <p class="mt-2 font-medium text-marine">{p.tarifs.resume}</p>
-                <p class="mt-2 font-display text-4xl text-marine">{p.tarifs.prix}</p>
-                {p.tarifs.credit && (
-                  <p class="mt-3 inline-block rounded-full bg-sauge/25 px-3 py-1 text-sm font-semibold text-marine/85">{p.tarifs.credit}</p>
-                )}
-                {p.tarifs.detail && <p class="mt-3 border-t border-marine/10 pt-3 text-xs leading-relaxed text-marine/75">{p.tarifs.detail}</p>}
+    <section class="section" aria-labelledby="sim-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow"><span class="eyebrow__num">03</span>Simulateur</span>
+          <h2 class="h2" id="sim-title">Estimez <em>votre budget</em> mensuel</h2>
+          <p class="lead">Une estimation indicative, sur la base horaire de {H} € TTC. Le devis précis est établi après la visite d’évaluation.</p>
+        </div>
+        <div class="sim reveal" data-sim data-rate={H}>
+          <div class="sim__form">
+            <div class="range">
+              <div class="range__head"><label for="sim-h">Durée de chaque visite</label><output data-sim-hours-out>2 h</output></div>
+              <input id="sim-h" type="range" min="1" max="4" step="1" value="2" data-sim-hours />
+              <div class="range__head xs muted" style="font-weight: 400"><span>1 h</span><span>4 h</span></div>
+            </div>
+            <div class="field">
+              <span class="field__label small" style="font-weight: 600">Fréquence</span>
+              <div class="seg" role="group" aria-label="Fréquence des visites">
+                <button type="button" data-freq="1" aria-pressed="false">1 / mois</button>
+                <button type="button" data-freq="2" aria-pressed="false">2 / mois</button>
+                <button type="button" data-freq="4" aria-pressed="true">1 / semaine</button>
+                <button type="button" data-freq="8" aria-pressed="false">2 / semaine</button>
               </div>
             </div>
-            <div class:list={["relative z-[1] mt-8 flex shrink-0 flex-col justify-end gap-3", p.highlight && "lg:mt-0 lg:w-72 lg:border-l lg:border-marine/10 lg:pl-10"]}>
-              <a
-                href={`/contact?pack=${p.id}#formulaire`}
-                class="inline-flex items-center justify-center rounded-full bg-marine px-6 py-3 text-center font-semibold text-ivoire shadow transition hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
-              >
-                Demander un devis — {p.name}
-              </a>
-              <p class="text-center text-xs text-marine/65 lg:text-left">Vous serez redirigé vers le formulaire avec la formule présélectionnée.</p>
-            </div>
-          </li>
-        ))
-      }
-    </ul>
-
-    <section class="mt-16 rounded-2xl border border-marine/15 bg-sauge/20 p-8 md:p-10" aria-labelledby="compare-title">
-      <h2 id="compare-title" class="font-display text-2xl text-marine md:text-3xl">Comment choisir ?</h2>
-      <div class="mt-6 grid gap-6 md:grid-cols-3">
-        <div>
-          <h3 class="font-semibold text-marine">Besoin dans la durée</h3>
-          <p class="mt-2 text-sm text-marine/85">Isolement, régularité, continuité du carnet → privilégier le <strong>forfait mensuel</strong>.</p>
-        </div>
-        <div>
-          <h3 class="font-semibold text-marine">Tester sans pression</h3>
-          <p class="mt-2 text-sm text-marine/85">Premier contact, hésitation → <strong>pack découverte</strong>.</p>
-        </div>
-        <div>
-          <h3 class="font-semibold text-marine">Besoin ponctuel ou atypique</h3>
-          <p class="mt-2 text-sm text-marine/85">Une sortie, une démarche, un montage complexe → <strong>ponctuel</strong> ou <strong>sur-mesure</strong>.</p>
+            <div class="sim__line"><span class="muted">Prix d’une visite</span><strong data-sim-ttc>76 €</strong></div>
+          </div>
+          <div class="sim__result" aria-live="polite">
+            <span class="price__label">Budget mensuel estimé</span>
+            <div><span class="sim__total" data-sim-month>304 €</span> <span class="muted small">TTC / mois</span></div>
+            <p class="price__note" style="font-size: var(--fs-sm)">Soit <strong data-sim-net>152 €</strong> / mois après crédit d’impôt de 50 %, sous conditions*.</p>
+            <a class="btn btn--primary" href="/contact#formulaire" style="justify-self: start">Recevoir un devis gratuit</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <p class="mt-12 text-center">
-      <a href="/contact#formulaire" class="font-semibold text-aquarelle-bleu underline decoration-2 underline-offset-4 hover:text-marine">
-        Accéder au formulaire de contact
-      </a>
-    </p>
-  </article>
+    <section class="section section--sauge rule-y" id="aides" aria-labelledby="aides-title" style="scroll-margin-top: 80px">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow"><span class="eyebrow__num">04</span>Aides &amp; financement</span>
+          <h2 class="h2" id="aides-title">Trois façons d’<em>alléger la facture</em></h2>
+        </div>
+        <div class="grid grid-3">
+          <article class="card reveal"><span class="card__icon card__icon--sauge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 15l8-8M8.5 8.5h.01M15.5 15.5h.01"/></svg></span><h3 class="h3">Crédit d’impôt de 50 %</h3><p class="muted small">La moitié des sommes versées vous est remboursée par l’État, dans la limite des plafonds en vigueur, que vous soyez imposable ou non.</p></article>
+          <article class="card reveal"><span class="card__icon card__icon--bleu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><h3 class="h3">L’Avance immédiate URSSAF</h3><p class="muted small">Vous ne payez que la moitié de la facture : l’URSSAF verse directement l’autre moitié. Plus besoin d’attendre l’année suivante.</p></article>
+          <article class="card reveal"><span class="card__icon card__icon--jaune"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg></span><h3 class="h3">Les CESU préfinancés</h3><p class="muted small">Offerts par certaines caisses de retraite, mutuelles ou employeurs : acceptés lorsque le devis ou le contrat le prévoit.</p></article>
+        </div>
+        <div class="notice reveal" style="margin-top: 24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>L’APA et la PCH ne financent pas ces prestations, mais Céline peut intervenir en complément des aides déjà en place.</span></div>
+        <p class="footnote" style="margin-top: 20px">* Crédit d’impôt prévu à l’article 199 sexdecies du CGI : payé par la personne aidée, hors espèces. Pour les sorties, il est limité aux heures passées au domicile sur l’année. La rédaction d’une biographie n’y ouvre pas droit. Montants indicatifs, précisés au devis.</p>
+      </div>
+    </section>
 </BaseLayout>

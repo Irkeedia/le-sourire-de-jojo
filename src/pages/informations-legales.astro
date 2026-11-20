@@ -1,0 +1,84 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import MentionsContent from "@/components/legal/MentionsContent.astro";
+import CgvContent from "@/components/legal/CgvContent.astro";
+import AnnulationContent from "@/components/legal/AnnulationContent.astro";
+
+const title = "Informations légales — Le Sourire de Jojo";
+const description =
+  "Mentions légales, RGPD, conditions générales de vente, annulation et résiliation, consentement et contrat : tous les documents du Sourire de Jojo sur une seule page.";
+---
+
+<BaseLayout title={title} description={description} breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Informations légales" }]}>
+  <section class="page-hero" aria-labelledby="page-title">
+    <img class="page-hero__flower" src="/images/fleurs/3.webp" alt="" aria-hidden="true" />
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Informations légales</span></nav>
+      <div class="split split--7-5" style="align-items: end">
+        <div class="stack">
+          <span class="eyebrow">Informations légales</span>
+          <h1 class="display" id="page-title">Tous les documents, <em>sur une seule page</em></h1>
+        </div>
+        <p class="lead">Mentions légales, conditions générales, annulation et consentement. Chaque document se lit ici et s’imprime ou s’enregistre en PDF ou en Word.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap doc-layout">
+      <nav class="doc-toc" aria-label="Documents">
+        <span class="doc-toc__title">Sur cette page</span>
+        <a href="#mentions" class="is-active">Mentions &amp; RGPD <span>01</span></a>
+        <a href="#cgv">Conditions générales <span>02</span></a>
+        <a href="#annulation">Annulation &amp; résiliation <span>03</span></a>
+        <a href="#consentement">Consentement <span>04</span></a>
+        <a href="#contrat">Contrat de prestation <span>05</span></a>
+      </nav>
+
+      <div class="doc">
+        <article class="doc-block" id="mentions" aria-labelledby="t-mentions">
+          <div class="doc-block__head">
+            <div><h2 class="h2" id="t-mentions" style="font-size: var(--fs-xl)">Mentions légales &amp; RGPD</h2><p class="doc-block__meta">Éditeur, hébergement, données personnelles, cadre de la prestation</p></div>
+          </div>
+          <dl class="kv">
+            <dt>SIRET</dt><dd><span class="tag-todo">En cours d’attribution</span></dd>
+            <dt>Déclaration SAP (NOVA)</dt><dd><span class="tag-todo">À compléter</span></dd>
+            <dt>Médiateur de la consommation</dt><dd><span class="tag-todo">À compléter</span></dd>
+          </dl>
+          <MentionsContent />
+        </article>
+
+        <article class="doc-block" id="cgv" aria-labelledby="t-cgv">
+          <div class="doc-block__head">
+            <div><h2 class="h2" id="t-cgv" style="font-size: var(--fs-xl)">Conditions générales de vente</h2><p class="doc-block__meta">11 articles</p></div>
+            <div class="doc-block__dl"><a class="btn btn--secondary btn--sm" href="/imprimer/cgv">PDF / Word</a></div>
+          </div>
+          <CgvContent />
+        </article>
+
+        <article class="doc-block" id="annulation" aria-labelledby="t-annul">
+          <div class="doc-block__head">
+            <div><h2 class="h2" id="t-annul" style="font-size: var(--fs-xl)">Annulation &amp; résiliation</h2><p class="doc-block__meta">5 articles · délais, préavis et effets</p></div>
+            <div class="doc-block__dl"><a class="btn btn--secondary btn--sm" href="/imprimer/conditions-annulation">PDF / Word</a></div>
+          </div>
+          <AnnulationContent />
+        </article>
+
+        <article class="doc-block" id="consentement" aria-labelledby="t-cons">
+          <div class="doc-block__head">
+            <div><h2 class="h2" id="t-cons" style="font-size: var(--fs-xl)">Formulaire de consentement</h2><p class="doc-block__meta">Nature de la prestation, urgences, données personnelles</p></div>
+            <div class="doc-block__dl"><a class="btn btn--secondary btn--sm" href="/consentement">Ouvrir le document</a></div>
+          </div>
+          <p class="muted small">Le consentement se donne en ligne, par les cases du <a class="link" href="/contact#formulaire">formulaire de contact</a>, ou sur papier avec ce document à compléter, imprimer ou enregistrer en PDF, puis à signer à la main.</p>
+        </article>
+
+        <article class="doc-block" id="contrat" aria-labelledby="t-contrat" style="background: var(--ivoire)">
+          <div class="doc-block__head" style="border: 0; padding: 0">
+            <div class="stack"><h2 class="h2" id="t-contrat" style="font-size: var(--fs-xl)">Contrat de prestation</h2><p class="muted small">Après la visite d’évaluation, Céline prépare votre contrat. Vous le relisez, le signez en ligne (au doigt, au stylet ou à la souris), puis l’imprimez ou l’enregistrez en PDF ou en Word.</p></div>
+            <a class="btn btn--primary" href="/contrat">Ouvrir le contrat</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

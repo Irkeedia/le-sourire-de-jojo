@@ -1,30 +1,14 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
-
-const title = "Conditions générales — Le Sourire de Jojo";
-const description =
-  "CGV, tarifs, annulation, résiliation et cadre juridique — accompagnement à domicile, Tarn-et-Garonne.";
+/** Conditions générales de vente (texte repris de l’ancienne page /cgv). */
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Conditions générales" }]}
->
-  <article class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
-    <p class="text-sm font-medium text-aquarelle-bleu">
-      <a href="/legal" class="underline underline-offset-2 hover:text-marine">← Tous les documents juridiques</a>
-      ·
-      <a href="/imprimer/cgv" class="underline underline-offset-2 hover:text-marine">Version PDF / Word</a>
-    </p>
-
-    <h1 class="mt-6 font-display text-4xl text-marine md:text-5xl">Conditions générales de vente et d’utilisation</h1>
-    <p class="mt-6 leading-relaxed text-marine/85">
+<div class="legal-prose" style="padding-bottom: 8px">
+  <p class="mt-6 leading-relaxed text-marine/85">
       Les présentes CGV encadrent les relations entre la clientèle et l’activité <strong class="text-marine">Le Sourire de Jojo</strong>,
       représentée par <strong>Céline Meunier Ben Neji</strong>. Elles complètent tout <strong>devis ou convention écrite</strong> qui vous
       est remis : en cas d’écart, les stipulations du contrat signé prévalent. Pour le détail des modalités d’<strong
         >annulation et de résiliation</strong>, voir aussi la page dédiée :{' '}
-      <a href="/conditions-annulation" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+      <a href="#annulation" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
         >Conditions d’annulation</a
       >
       et sa{' '}
@@ -32,9 +16,11 @@ const description =
         >version PDF</a
       >.
     </p>
-
-    <section class="mt-12 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">1. Objet et documents contractuels</h2>
+</div>
+<div class="articles">
+  <details open>
+    <summary><span class="n">1</span>Objet et documents contractuels</summary>
+    <div class="legal-prose">
       <p>
         Les présentes CGV définissent les conditions dans lesquelles sont fournis les services d’<strong
           >accompagnement à domicile</strong
@@ -42,18 +28,20 @@ const description =
         de nature sociale, relationnelle et ludique (SAP lorsque applicable). Chaque mission fait l’objet d’un échange préalable et,
         le cas échéant, d’un <strong>devis ou contrat</strong> précisant volume, fréquence, zone et tarif.
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">2. Nature de la prestation</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">2</span>Nature de la prestation</summary>
+    <div class="legal-prose">
       <p>
         La prestation <strong>ne constitue pas des soins médicaux ou infirmiers</strong> (frontière avec l’art. L. 4311-1 du Code de la
         santé publique et textes d’application). Elle relève d’une <strong>obligation de moyens</strong>, non de résultat.
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">3. Tarifs et paiement</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">3</span>Tarifs et paiement</summary>
+    <div class="legal-prose">
       <p>
         Les <strong>tarifs indicatifs</strong> figurent sur la page Offres. Les montants définitifs sont ceux du <strong
           >devis ou de la facture</strong
@@ -62,31 +50,34 @@ const description =
         <strong class="text-marine">CESU préfinancés</strong> lorsque la réglementation et le contrat le permettent, ou tout moyen prévu au contrat et
         conforme à la réglementation).
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">4. Durée et exécution</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">4</span>Durée et exécution</summary>
+    <div class="legal-prose">
       <p>
         La prestation est fournie selon le <strong>planning convenu</strong> (ponctuel, forfait mensuel, etc.). Toute modification de
         créneau est soumise à <strong>accord mutuel</strong> et aux disponibilités de la Prestataire.
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">5. Annulation, modification et résiliation</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">5</span>Annulation, modification et résiliation</summary>
+    <div class="legal-prose">
       <p>
         Les règles détaillées (préavis, séances annulées, fin de contrat, cas de force majeure) sont exposées sur la page{' '}
-        <a href="/conditions-annulation" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
+        <a href="#annulation" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
           >Conditions d’annulation et de résiliation</a
         >
         et dans le document imprimable associé. En résumé : toute annulation doit être <strong>signalée dans les meilleurs délais</strong> ;
         des créneaux répétitivement annulés sans justification peuvent conduire à un réajustement ou à une fin de prestation, selon les
         termes du contrat écrit.
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">6. Responsabilité civile</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">6</span>Responsabilité civile</summary>
+    <div class="legal-prose">
       <p>
         Conformément à l’<strong>art. 1240 du Code civil</strong>, la responsabilité de la Prestataire ne peut être engagée qu’en cas de
         <strong>faute</strong> dans l’exécution de la prestation, dans la limite du lien causal. Une assurance <strong
@@ -94,26 +85,29 @@ const description =
         >
         est souscrite ; les garanties réelles sont celles du contrat d’assurance.
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">7. Urgences (art. 223-6 du Code pénal)</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">7</span>Urgences (art. 223-6 du Code pénal)</summary>
+    <div class="legal-prose">
       <p>
         En cas de péril pour la vie ou l’intégrité physique, la <strong>priorité est l’appel aux secours</strong> (15, 18, 112, 114 selon
         les situations) avant les contacts non urgents, comme précisé au formulaire de contact et au consentement.
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">8. Capacité juridique (art. 1145 et s. C. civ.)</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">8</span>Capacité juridique (art. 1145 et s. C. civ.)</summary>
+    <div class="legal-prose">
       <p>
         Le Client garantit disposer de la <strong>capacité juridique</strong> ou d’un <strong>mandat légal valide</strong> pour engager
         le foyer ou la personne accompagnée.
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">9. Données personnelles</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">9</span>Données personnelles</summary>
+    <div class="legal-prose">
       <p>
         Voir la section RGPD des{' '}
         <a href="/contact#rgpd" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">mentions légales</a
@@ -121,27 +115,24 @@ const description =
           >ENCRYPTION_KEY</code
         >).
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">10. Litiges et droit applicable</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">10</span>Litiges et droit applicable</summary>
+    <div class="legal-prose">
       <p>
         Les présentes CGV sont soumises au <strong>droit français</strong>. À défaut de résolution amiable, compétence attribuée aux
         tribunaux du ressort du siège social de la Prestataire ou, le cas échéant, aux juridictions prévues par le contrat signé.
       </p>
-    </section>
-
-    <section class="mt-10 space-y-4 leading-relaxed text-marine/90">
-      <h2 class="font-display text-2xl text-marine">11. Force majeure</h2>
+    </div>
+  </details>
+  <details>
+    <summary><span class="n">11</span>Force majeure</summary>
+    <div class="legal-prose">
       <p>
         Conformément au Code civil, les parties ne pourront être tenues pour responsables en cas de force majeure au sens juridique,
         dès lors qu’elle rend l’exécution de la prestation temporairement ou définitivement impossible.
       </p>
-    </section>
-
-    <p class="mt-14 border-t border-marine/15 pt-8 text-xs text-marine/65">
-      Le Sourire de Jojo — Céline Meunier Ben Neji — Montauban / Tarn-et-Garonne (82). —{' '}
-      <a href="/legal" class="underline hover:text-marine">Hub documents juridiques</a>
-    </p>
-  </article>
-</BaseLayout>
+    </div>
+  </details>
+</div>

@@ -17,18 +17,13 @@ export const allowIndexing =
 /** Pages publiques indexables (hors compte, imprimables, présentation slide deck). */
 export const SITEMAP_ROUTES: { path: string; changefreq: string; priority: number }[] = [
   { path: "/", changefreq: "weekly", priority: 1 },
-  { path: "/a-propos", changefreq: "monthly", priority: 0.85 },
   { path: "/services", changefreq: "monthly", priority: 0.9 },
   { path: "/offres", changefreq: "monthly", priority: 0.9 },
-  { path: "/carnet", changefreq: "monthly", priority: 0.85 },
-  { path: "/partenaires", changefreq: "monthly", priority: 0.75 },
+  { path: "/a-propos", changefreq: "monthly", priority: 0.85 },
   { path: "/contact", changefreq: "monthly", priority: 0.9 },
-  { path: "/legal", changefreq: "yearly", priority: 0.6 },
-  { path: "/contrat", changefreq: "yearly", priority: 0.55 },
-  { path: "/cgv", changefreq: "yearly", priority: 0.55 },
-  { path: "/conditions-annulation", changefreq: "yearly", priority: 0.55 },
+  { path: "/informations-legales", changefreq: "yearly", priority: 0.6 },
+  { path: "/contrat", changefreq: "yearly", priority: 0.5 },
   { path: "/consentement", changefreq: "yearly", priority: 0.5 },
-  { path: "/plan-du-site", changefreq: "monthly", priority: 0.4 },
 ];
 
 export const HOME_FAQ = [

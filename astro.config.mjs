@@ -15,6 +15,16 @@ export default defineConfig({
   output: "server",
   adapter: useVercel ? vercel() : node({ mode: "standalone" }),
   integrations: [tailwind()],
+  /** Anciennes pages fusionnées lors de la refonte 2027 : les liens existants restent valides. */
+  redirects: {
+    "/carnet": "/services#carnet",
+    "/partenaires": "/a-propos#partenaires",
+    "/legal": "/informations-legales",
+    "/cgv": "/informations-legales#cgv",
+    "/conditions-annulation": "/informations-legales#annulation",
+    "/plan-du-site": "/",
+    "/presentation": "/",
+  },
   security: {
     checkOrigin: true,
   },

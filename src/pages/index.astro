@@ -1,494 +1,361 @@
 ---
-import { COMMUNES_ZONE } from "@/lib/catalogue";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import HomeHero from "@/components/HomeHero.astro";
-import MaterialHighlight from "@/components/MaterialHighlight.astro";
-import FloralAccent from "@/components/FloralAccent.astro";
-import GoogleMapEmbed from "@/components/GoogleMapEmbed.astro";
-import HomePhotoGallery from "@/components/HomePhotoGallery.astro";
-import SnapCarouselNav from "@/components/SnapCarouselNav.astro";
+import { COMMUNES_ZONE } from "@/lib/catalogue";
 import { absoluteUrl, buildFaqPage, HOME_FAQ, resolveSiteUrl } from "@/lib/seo";
+import {
+  FORFAIT_MENSUEL,
+  PACK_DECOUVERTE,
+  TARIF_HORAIRE_BRUT_EUR as H,
+  TARIF_HORAIRE_NET_EUR as HN,
+  tarifNetApresCredit as net,
+} from "@/lib/tarif";
 
-const title = "Le Sourire de Jojo — Rayon de soleil à domicile";
+const title = "Le Sourire de Jojo — Dame de compagnie à domicile, Corbarieu et Montauban";
 const description =
-  "Accompagnement social et bienveillant (Céline Meunier Ben Neji) — lien, dignité, intergénérationnel : aînés, convalescents, enfants temporairement immobilisés, parents solos. Corbarieu, Montauban et alentours (Tarn-et-Garonne).";
+  "Accompagnement social et bienveillant à domicile par Céline Meunier Ben Neji : seniors autonomes, personnes temporairement immobilisées, parents solos. Corbarieu, Montauban et alentours (Tarn-et-Garonne).";
+const HM = FORFAIT_MENSUEL.brutEur / FORFAIT_MENSUEL.heures;
 
 const siteUrl = resolveSiteUrl(Astro.site?.href, Astro.url.origin);
 const homeUrl = absoluteUrl("/", siteUrl);
 ---
 
 <BaseLayout title={title} description={description} jsonLd={buildFaqPage(HOME_FAQ, homeUrl)}>
-  <HomeHero />
-
-  <MaterialHighlight />
-
-  <nav
-    class="border-b border-marine/10 bg-white/80 py-4 shadow-sm backdrop-blur md:bg-cream md:py-5 md:backdrop-blur-0"
-    aria-label="Sections de la page d’accueil"
-  >
-    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 md:flex-row md:items-center md:justify-center md:gap-4 md:px-6">
-      <span class="text-center text-[0.68rem] font-bold uppercase tracking-[0.22em] text-marine/55 md:sr-only">Sur cette page</span>
-      <ul class="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-2xl border border-marine/10 bg-cream/80 p-2 text-sm shadow-inner [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:flex-wrap md:justify-center md:gap-2.5 md:overflow-visible md:border-0 md:bg-transparent md:p-0 md:shadow-none">
-        <li>
-          <a
-            href="#materiel-apporte"
-            class="block snap-start whitespace-nowrap rounded-full border border-marine/10 bg-white px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:border-marine/30 hover:bg-white md:bg-cream md:py-2 md:font-medium"
-            >Matériel</a
-          >
-        </li>
-        <li>
-          <a
-            href="#detail-services"
-            class="block snap-start whitespace-nowrap rounded-full border border-marine/10 bg-white px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:border-marine/30 hover:bg-white md:bg-cream md:py-2 md:font-medium"
-            >Services</a
-          >
-        </li>
-        <li>
-          <a
-            href="#missions-publics"
-            class="block snap-start whitespace-nowrap rounded-full border border-marine/10 bg-white px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:border-marine/30 hover:bg-white md:bg-cream md:py-2 md:font-medium"
-            >Missions</a
-          >
-        </li>
-        <li>
-          <a
-            href="#moments-sourires"
-            class="block snap-start whitespace-nowrap rounded-full border border-marine/10 bg-white px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:border-marine/30 hover:bg-white md:bg-cream md:py-2 md:font-medium"
-            >Galerie</a
-          >
-        </li>
-        <li>
-          <a
-            href="#carnet-home-title"
-            class="block snap-start whitespace-nowrap rounded-full border border-marine/10 bg-white px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:border-marine/30 hover:bg-white md:bg-cream md:py-2 md:font-medium"
-            >Carnet</a
-          >
-        </li>
-        <li>
-          <a
-            href="#sap-home-title"
-            class="block snap-start whitespace-nowrap rounded-full border border-marine/10 bg-white px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:border-marine/30 hover:bg-white md:bg-cream md:py-2 md:font-medium"
-            >Tarifs</a
-          >
-        </li>
-        <li>
-          <a
-            href="#faq-title"
-            class="block snap-start whitespace-nowrap rounded-full border border-marine/10 bg-white px-4 py-2.5 font-semibold text-marine shadow-sm transition hover:border-marine/30 hover:bg-white md:bg-cream md:py-2 md:font-medium"
-            >FAQ</a
-          >
-        </li>
-      </ul>
-    </div>
-  </nav>
-
-  <!-- Ce que nous proposons (aperçu des axes) -->
-  <section class="mx-auto max-w-6xl scroll-mt-28 px-4 py-16 md:px-6 md:py-20" aria-labelledby="axes-title" id="detail-services">
-    <h2 id="axes-title" class="font-display text-3xl text-marine md:text-4xl">Ce que nous proposons</h2>
-    <p class="mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
-      Compagnie et lien social, sorties à thème, répit et vie pratique… le détail ci-dessous complète les
-      entrées du bandeau d’accueil. Matériel apporté sur place (déambulateur Georgette, jeux, perles). Voir aussi la
-      page <a class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine" href="/services">Nos services</a>.
-    </p>
-    <ul
-      id="snap-home-services"
-      class="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mt-12 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-3"
-      aria-label="Services en aperçu"
-    >
-      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm sm:min-w-0 min-w-[80%] snap-start">
-        <h3 class="font-display text-xl text-marine">Lecture &amp; discussion</h3>
-        <p class="mt-3 text-sm leading-relaxed text-marine/85">
-          Donner la parole aux histoires : livres, souvenirs, actualité lue à voix haute pour celles et ceux qui voient
-          mal ou se fatiguent vite.
-        </p>
-      </li>
-      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm sm:min-w-0 min-w-[80%] snap-start">
-        <h3 class="font-display text-xl text-marine">Sorties &amp; promenades</h3>
-        <p class="mt-3 text-sm leading-relaxed text-marine/85">
-          Respirer dehors à son rythme : quartier, marché, parc — avec les pauses et le matériel dont vous avez besoin.
-        </p>
-      </li>
-      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm sm:min-w-0 min-w-[80%] snap-start">
-        <h3 class="font-display text-xl text-marine">Jeux &amp; rires</h3>
-        <p class="mt-3 text-sm leading-relaxed text-marine/85">
-          Jeux calmes, énigmes, aide aux devoirs ludique : le plaisir sans pression de performance.
-        </p>
-      </li>
-      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm sm:min-w-0 min-w-[80%] snap-start">
-        <h3 class="font-display text-xl text-marine">Nature &amp; cueillette</h3>
-        <p class="mt-3 text-sm leading-relaxed text-marine/85">
-          Éveiller les sens : saisons, plantes, couleurs — en respectant les capacités et la sécurité de chacun.
-        </p>
-      </li>
-      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm sm:min-w-0 min-w-[80%] snap-start">
-        <h3 class="font-display text-xl text-marine">Photos &amp; souvenirs</h3>
-        <p class="mt-3 text-sm leading-relaxed text-marine/85">
-          Donner une suite aux images : albums, tri de photos, légendes et récits pour les proches et pour vous-même.
-        </p>
-      </li>
-      <li class="rounded-2xl border border-marine/15 bg-white/95 p-6 shadow-sm sm:min-w-0 min-w-[80%] snap-start">
-        <h3 class="font-display text-xl text-marine">Présence simple</h3>
-        <p class="mt-3 text-sm leading-relaxed text-marine/85">
-          Parfois il suffit d’être là : conversation ou silence partagé, veille bienveillante, compagnie sans « programme » — le lien
-          social avant tout.
-        </p>
-      </li>
-    </ul>
-    <SnapCarouselNav forId="snap-home-services" label="services proposés" />
-    <p class="mt-10">
-      <a
-        href="/services"
-        class="inline-flex items-center font-semibold text-aquarelle-bleu underline decoration-2 underline-offset-4 hover:text-marine"
-      >
-        Détails, exemples par âge et modalités →
-      </a>
-    </p>
-  </section>
-
-  <!-- Pour qui (allongé) -->
-  <section
-    class="scroll-mt-28 border-y border-marine/10 bg-sauge/15"
-    aria-labelledby="cibles-title"
-    id="missions-publics"
-  >
-    <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
-      <h2 id="cibles-title" class="font-display text-3xl text-marine md:text-4xl">Missions &amp; publics</h2>
-      <p class="mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
-        <strong class="text-marine">Accompagnement intergénérationnel</strong> — aînés, personnes immobilisées, parents solos — avec la
-        même exigence : <strong class="text-marine">écouter avant d’agir</strong>, respecter le silence comme la parole, et
-        construire la confiance pas à pas. Voici comment nous adaptons notre présence.
-      </p>
-      <div
-        id="snap-home-missions"
-        class="mt-14 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
-      >
-        <article
-          id="missions-aines"
-          class="scroll-mt-28 flex min-w-[86%] snap-start flex-col rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm sm:min-w-[70%] lg:min-w-0"
-        >
-          <h3 class="font-display text-2xl text-marine">Aînés</h3>
-          <p class="mt-4 leading-relaxed text-marine/85">
-            Rompre la solitude sans forcer la conversation : présence pacifique, activités possibles même quand le corps
-            ralentit.
+    <!-- ============ HERO ============ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero__grid">
+        <div class="hero__copy reveal">
+          <span class="eyebrow">Dame de compagnie moderne · Corbarieu &amp; alentours</span>
+          <h1 class="hero__title" id="hero-title">Présence, écoute <em>&amp;&nbsp;sourires</em>, chez vous.</h1>
+          <p class="lead">
+            Céline Meunier Ben Neji accompagne à domicile les seniors autonomes, les personnes temporairement immobilisées
+            et les parents solos. Lien social, sorties, répit : le matériel est apporté, sans soins médicaux.
           </p>
-          <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Lecture partagée, récit de vie, mémoire familiale à l’oral ou par écrit.</span>
-            </li>
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Sorties courtes et sécurisées pour garder le contact avec le quartier.</span>
-            </li>
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Photos et albums pour que les petits moments restent visibles pour les proches.</span>
-            </li>
+          <div class="btn-row">
+            <a class="btn btn--primary" href="/contact#formulaire">
+              Demander la visite offerte
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a class="btn btn--secondary" href="/offres">Tarifs &amp; aides</a>
+          </div>
+          <ul class="hero__trust">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Visite d’évaluation offerte</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Service à la personne déclaré</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg>Matériel apporté sur place</li>
           </ul>
-        </article>
-        <article
-          id="missions-immobilisation"
-          class="scroll-mt-28 flex min-w-[86%] snap-start flex-col rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm sm:min-w-[70%] lg:min-w-0"
-        >
-          <h3 class="font-display text-2xl text-marine">Enfants &amp; adolescents (convalescence ou immobilisation)</h3>
-          <p class="mt-4 leading-relaxed text-marine/85">
-            Après une maladie ou une période où le corps impose le repos, le quotidien peut
-            sembler gris : nous réinjectons du jeu, du sens et des objectifs atteignables, sans nier la fatigue.
-          </p>
-          <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Jeux coopératifs, créativité légère, devoirs aidés avec des pauses.</span>
-            </li>
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Marches progressives et projets « une étape à la fois ».</span>
-            </li>
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Carnet de sourires : tracer les progrès et les bonnes journées.</span>
-            </li>
-          </ul>
-        </article>
-        <article
-          id="missions-parents-solos"
-          class="scroll-mt-28 flex min-w-[86%] snap-start flex-col rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm sm:min-w-[70%] lg:min-w-0"
-        >
-          <h3 class="font-display text-2xl text-marine">Parents solos</h3>
-          <p class="mt-4 leading-relaxed text-marine/85">
-            Élever seul·e ses enfants, c’est tenir sur tous les fronts. Pour répondre à la fatigue, parfois extrême, nous
-            prenons le relais ponctuellement : <strong class="text-marine">garde d’enfants de plus de 3 ans</strong>, en
-            journée et hors week-end.
-          </p>
-          <ul class="mt-6 space-y-3 border-t border-marine/10 pt-6 text-sm leading-relaxed text-marine/85">
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Des moments de relais pour souffler, sans culpabilité.</span>
-            </li>
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Accompagnement lors de sorties culturelles ou au parc.</span>
-            </li>
-            <li class="flex gap-2">
-              <span class="text-rose-vieux" aria-hidden="true">✿</span>
-              <span>Accompagnement aux démarches administratives.</span>
-            </li>
-          </ul>
-        </article>
-      </div>
-      <SnapCarouselNav forId="snap-home-missions" label="missions et publics" />
-    </div>
-  </section>
-
-  <HomePhotoGallery />
-
-  <!-- Notre façon de travailler -->
-  <section class="relative mx-auto max-w-6xl scroll-mt-28 overflow-hidden px-4 py-16 md:px-6 md:py-20" aria-labelledby="methode-title">
-    <FloralAccent position="top" />
-    <h2 id="methode-title" class="relative font-display text-3xl text-marine md:text-4xl">Notre façon de travailler</h2>
-    <p class="relative mt-5 max-w-3xl text-lg leading-relaxed text-marine/85">
-      La qualité d’un accompagnement se joue dans les détails : ton de voix, ponctualité, discrétion. Voici ce que vous
-      pouvez attendre concrètement.
-    </p>
-    <ol
-      id="snap-home-methode"
-      class="relative mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 md:overflow-visible md:pb-0"
-    >
-      <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8 min-w-[86%] snap-start sm:min-w-[70%] md:min-w-0">
-        <span class="font-display text-4xl text-aquarelle-bleu/80">1</span>
-        <h3 class="mt-2 font-display text-xl text-marine">Écoute et cadrage</h3>
-        <p class="mt-3 text-marine/85 leading-relaxed">
-          Premier échange pour comprendre vos attentes, vos contraintes médicales déclarées, vos envies — sans promesse
-          irréaliste. Un <strong class="text-marine">audit gratuit</strong> est réalisé avec la famille pour cadrer les
-          besoins, les priorités et le type d’activités adapté à votre forme du moment.
-        </p>
-      </li>
-      <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8 min-w-[86%] snap-start sm:min-w-[70%] md:min-w-0">
-        <span class="font-display text-4xl text-aquarelle-bleu/80">2</span>
-        <h3 class="mt-2 font-display text-xl text-marine">Rythme respecté</h3>
-        <p class="mt-3 text-marine/85 leading-relaxed">
-          Pas de « coaching » culpabilisant : si la séance devient un moment de silence partagé ou une sieste
-          conversationnelle, c’est aussi du lien. Nous privilégions la présence à l’occupation forcée.
-        </p>
-      </li>
-      <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8 min-w-[86%] snap-start sm:min-w-[70%] md:min-w-0">
-        <span class="font-display text-4xl text-aquarelle-bleu/80">3</span>
-        <h3 class="mt-2 font-display text-xl text-marine">Carnet &amp; continuité</h3>
-        <p class="mt-3 text-marine/85 leading-relaxed">
-          Le carnet de sourires relie les séances : préférences, inside jokes, objectifs atteints — pour que la prochaine
-          personne aidante (famille, professionnel·le) comprenne vite ce qui compte pour vous. Il sera également
-          <strong class="text-marine">mis en ligne sur un intranet sécurisé</strong>, accessible via un{' '}
-          <strong class="text-marine">compte personnel</strong> dédié à chaque famille.
-        </p>
-      </li>
-      <li class="rounded-2xl border border-dashed border-marine/25 bg-ivoire/80 p-8 min-w-[86%] snap-start sm:min-w-[70%] md:min-w-0">
-        <span class="font-display text-4xl text-aquarelle-bleu/80">4</span>
-        <h3 class="mt-2 font-display text-xl text-marine">Confidentialité</h3>
-        <p class="mt-3 text-marine/85 leading-relaxed">
-          Ce qui se dit à la maison reste traité avec discrétion. Les données transmises via le site le sont dans le cadre
-          du RGPD — pas de prospection commerciale intrusive.
-        </p>
-      </li>
-    </ol>
-    <SnapCarouselNav forId="snap-home-methode" label="notre façon de travailler" />
-  </section>
-
-  <!-- Différence -->
-  <section class="border-y border-marine/10 bg-rose-vieux/15" aria-labelledby="difference-title">
-    <div class="relative mx-auto max-w-6xl overflow-hidden px-4 py-12 md:px-6 md:py-16">
-      <FloralAccent position="bottom" />
-      <h2 id="difference-title" class="relative font-display text-3xl text-marine md:text-4xl">Ce qui nous différencie</h2>
-      <ul class="relative mt-8 grid gap-4 text-sm leading-relaxed text-marine/85 md:grid-cols-3 md:text-base">
-        <li class="rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <strong class="text-marine">Dame de compagnie moderne</strong> — présence humaine, matériel apporté (déambulateur Georgette, jeux, perles…).
-        </li>
-        <li class="rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <strong class="text-marine">Lien social</strong> au centre — pas seulement « faire les courses ».
-        </li>
-        <li class="rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <strong class="text-marine">Mémoire et joie</strong> — photos, carnet, histoires qui restent.
-        </li>
-      </ul>
-      <p class="relative mt-8">
-        <a
-          href="/a-propos#mon-histoire"
-          class="font-semibold text-aquarelle-bleu underline decoration-2 underline-offset-4 hover:text-marine"
-        >
-          Lire mon histoire et la philosophie du projet →
-        </a>
-      </p>
-    </div>
-  </section>
-
-  <!-- Le carnet -->
-  <section class="mx-auto max-w-6xl scroll-mt-28 px-4 py-16 md:px-6 md:py-20" aria-labelledby="carnet-home-title">
-    <div class="rounded-3xl border border-marine/15 bg-gradient-to-br from-white to-sauge/20 p-8 md:p-12">
-      <h2 id="carnet-home-title" class="font-display text-3xl text-marine md:text-4xl">Le carnet de sourires</h2>
-      <p class="mt-6 max-w-3xl text-lg leading-relaxed text-marine/85">
-        Notre outil phare : un <strong class="text-marine">journal de liaison et de souvenirs</strong> entre les séances — préférences,
-        petits faits marquants, messages pour la famille — pour que personne ne se sente « hors boucle ».
-      </p>
-          <p class="mt-4 max-w-3xl leading-relaxed text-marine/85">
-            Pages écrites, photos collées, petits dessins ou citations : le carnet devient une mémoire partagée, tangible et
-            bienveillante — pas un dossier médical, mais une histoire à plusieurs voix. À terme, un accès en ligne sur
-            intranet avec compte personnel permettra aux proches de suivre les sourires du quotidien.
-          </p>
-      <p class="mt-10">
-        <a
-          href="/carnet"
-          class="inline-flex items-center rounded-xl bg-marine px-6 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
-        >
-          Voir la page dédiée au carnet
-        </a>
-      </p>
-    </div>
-  </section>
-
-  <!-- Zone d'intervention -->
-  <section class="border-t border-marine/10 bg-marine/[0.04] scroll-mt-28" aria-labelledby="zone-title">
-    <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
-      <h2 id="zone-title" class="font-display text-3xl text-marine md:text-4xl">Où intervenons-nous ?</h2>
-      <div class="mt-10 grid gap-10 lg:grid-cols-2">
-        <div class="space-y-4 leading-relaxed text-marine/85">
-          <p>
-            Nous intervenons principalement autour de <strong class="text-marine">Corbarieu</strong> et de
-            <strong class="text-marine">Montauban</strong>, ainsi que dans une partie du
-            <strong class="text-marine">Tarn-et-Garonne (82)</strong> selon les créneaux disponibles et les temps de
-            trajet raisonnables.
-          </p>
-          <p>
-            Communes principales : {COMMUNES_ZONE.join(", ")}. Dans cette zone, les déplacements sont compris dans le
-            tarif. Au-delà, ils sont facturés selon le barème kilométrique de l’administration.
-          </p>
-          <p>
-            Chaque demande est étudiée au cas par cas : distance, accessibilité du logement, durée souhaitée et fréquence.
-            En cas de zone plus éloignée, nous vous dirons honnêtement si un accompagnement durable reste cohérent pour
-            vous comme pour nous.
-          </p>
         </div>
-        <ul class="rounded-2xl border border-marine/15 bg-white/95 p-8 shadow-sm">
-          <li class="flex justify-between gap-4 border-b border-marine/10 py-3 text-marine/85">
-            <span>Point de départ</span>
-            <span class="font-medium text-marine">Corbarieu</span>
-          </li>
-          <li class="flex justify-between gap-4 border-b border-marine/10 py-3 text-marine/85">
-            <span>Ville voisine</span>
-            <span class="font-medium text-marine">Montauban</span>
-          </li>
-          <li class="flex justify-between gap-4 py-3 text-marine/85">
-            <span>Département</span>
-            <span class="font-medium text-marine">Tarn-et-Garonne</span>
-          </li>
-        </ul>
-      </div>
-      <div class="mt-12">
-        <GoogleMapEmbed title="Zone d’intervention — Corbarieu et alentours" query="Corbarieu, Tarn-et-Garonne, France" zoom={10} />
-      </div>
-    </div>
-  </section>
 
-  <!-- SAP teaser -->
-  <section class="mx-auto max-w-6xl scroll-mt-28 px-4 pb-16 md:px-6 md:pb-20" aria-labelledby="sap-home-title">
-    <div class="flex flex-col gap-8 rounded-3xl border border-marine/15 bg-white/95 p-8 shadow-sm md:flex-row md:items-center md:justify-between md:p-10">
-      <div>
-        <h2 id="sap-home-title" class="font-display text-2xl text-marine md:text-3xl">Financement &amp; aides</h2>
-        <p class="mt-4 max-w-2xl leading-relaxed text-marine/85">
-          Déclarée <strong class="text-marine">service à la personne</strong>, la micro-entreprise ouvre automatiquement le <strong
-            class="text-marine">crédit d’impôt de 50&nbsp;%</strong>
-          (ou l’Avance immédiate URSSAF : vous ne payez que la moitié). Les <strong class="text-marine">CESU préfinancés</strong> sont acceptés.
-          Grille tarifaire, détail des aides et simulateur sur la page Offres.
-        </p>
+        <div class="hero__media reveal">
+          <img class="hero__flower" src="/images/fleurs/3.webp" alt="" aria-hidden="true" />
+          <div class="hero__photo">
+            <img src="/images/personne-agee-1600.webp" srcset="/images/personne-agee-800.webp 800w, /images/personne-agee-1600.webp 1600w" sizes="(max-width: 900px) 100vw, 560px" alt="Céline et une dame âgée remplissent ensemble le carnet de sourires, en riant." width="1600" height="1981" fetchpriority="high" />
+          </div>
+          <div class="float-card float-card--status">
+            <span class="float-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 8h5"/></svg></span>
+            <span><strong class="small" style="display:block">Carnet de sourires</strong><span class="xs muted">Rempli à chaque visite</span></span>
+          </div>
+          <div class="float-card float-card--price">
+            <div class="price">
+              <span class="price__label">Tarif horaire</span>
+              <span class="price__main"><span class="price__amount">{H}&nbsp;€</span><span class="price__unit">TTC / heure</span></span>
+              <p class="price__note">Soit <strong>{HN} € / h</strong> après crédit d’impôt de 50&nbsp;%, sous conditions*.</p>
+            </div>
+          </div>
+        </div>
       </div>
-      <a
-        href="/offres#aides-financement"
-        class="inline-flex shrink-0 items-center justify-center rounded-xl border-2 border-marine px-6 py-3 font-semibold text-marine hover:bg-marine/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
-      >
-        Voir les aides &amp; le simulateur
-      </a>
-    </div>
-  </section>
+    </section>
 
-  <!-- FAQ courte -->
-  <section class="border-y border-marine/10 bg-sauge/10 scroll-mt-28" aria-labelledby="faq-title">
-    <div class="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
-      <h2 id="faq-title" class="font-display text-3xl text-marine md:text-4xl">Questions fréquentes</h2>
-      <div class="mt-10 space-y-3">
-        <details class="group rounded-2xl border border-marine/15 bg-white/90 p-5" open>
-          <summary class="cursor-pointer list-none font-display text-xl text-marine">
-            Est-ce du médical ou du paramédical ?
-          </summary>
-          <p class="mt-3 leading-relaxed text-marine/85">
-            Non : nous n’effectuons pas d’actes de soin ni d’actes réservés aux professions réglementées (réf. notamment art. L. 4311-1
-            du Code de la santé publique pour les soins infirmiers). En cas de besoin de nursing ou de suivi médical, nous orientons vers
-            les professionnels compétents.
-          </p>
-        </details>
-        <details class="group rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <summary class="cursor-pointer list-none font-display text-xl text-marine">
-            Les aidants familiaux peuvent-ils vous solliciter ?
-          </summary>
-          <p class="mt-3 leading-relaxed text-marine/85">
-            Oui. Un créneau régulier permet de souffler tout en sachant que la personne accompagnée a eu du lien et de la stimulation.
-            Nous pouvons nous coordonner sur les priorités de la semaine.
-          </p>
-        </details>
-        <details class="group rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <summary class="cursor-pointer list-none font-display text-xl text-marine">
-            Quelles aides pour financer l’accompagnement ?
-          </summary>
-          <p class="mt-3 leading-relaxed text-marine/85">
-            Le <strong class="text-marine">crédit d’impôt de 50&nbsp;%</strong> s’applique automatiquement aux prestations SAP éligibles
-            (Avance immédiate possible : vous ne payez que la moitié). Les <strong class="text-marine">CESU préfinancés</strong> (caisses de
-            retraite, mutuelles, employeurs) sont acceptés. L’APA et la PCH ne financent pas ces prestations, mais Céline peut
-            intervenir en complément des aides déjà en place. Détail sur la page{' '}
-            <a href="/offres#aides-financement" class="font-medium text-aquarelle-bleu underline decoration-marine/30 underline-offset-2 hover:text-marine">Offres &amp; forfaits</a>.
-          </p>
-        </details>
-        <details class="group rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <summary class="cursor-pointer list-none font-display text-xl text-marine">
-            Comment fixez-vous les durées et la fréquence ?
-          </summary>
-          <p class="mt-3 leading-relaxed text-marine/85">
-            Au premier contact, nous définissons une série de séances pilote puis nous ajustons selon les retours — fatigue, envies,
-            saisonnalité.
-          </p>
-        </details>
-        <details class="group rounded-2xl border border-marine/15 bg-white/90 p-5">
-          <summary class="cursor-pointer list-none font-display text-xl text-marine">
-            Que se passe-t-il si la journée est difficile ?
-          </summary>
-          <p class="mt-3 leading-relaxed text-marine/85">
-            Nous privilégions l’écoute et la réduction des stimuli : à la maison, il est toujours possible de raccourcir une activité ou
-            de simplement être présent·e sans agenda imposé.
-          </p>
-        </details>
+    <!-- ============ CHIFFRES ============ -->
+    <section class="section--tight" aria-label="L’essentiel en chiffres">
+      <div class="wrap">
+        <div class="kpis reveal">
+          <div class="kpi"><span class="kpi__value">1<small>h</small></span><span class="kpi__label">Durée minimale d’une visite</span></div>
+          <div class="kpi"><span class="kpi__value">45<small>min</small></span><span class="kpi__label">Visite d’évaluation offerte, à domicile</span></div>
+          <div class="kpi"><span class="kpi__value">8</span><span class="kpi__label">Communes desservies sans frais de trajet</span></div>
+          <div class="kpi"><span class="kpi__value">3</span><span class="kpi__label">Pôles d’activités, à composer librement</span></div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- CTA final -->
-  <section class="relative overflow-hidden bg-gradient-to-b from-rose-vieux/20 to-ivoire pb-20 pt-12 md:pb-28 md:pt-16" aria-labelledby="cta-final-title">
-    <FloralAccent position="bottom" />
-    <div class="relative mx-auto max-w-6xl px-4 text-center md:px-6">
-      <h2 id="cta-final-title" class="font-display text-3xl text-marine md:text-4xl">Parlons de votre situation</h2>
-      <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-marine/85">
-        Une question sur les créneaux, la zone ou le carnet ? Écrivez-nous : nous répondons avec soin, sans engagement
-        immédiat.
-      </p>
-      <div class="mt-10 flex flex-wrap justify-center gap-4">
-        <a
-          href="/contact"
-          class="inline-flex items-center justify-center rounded-xl bg-marine px-10 py-4 font-semibold text-ivoire shadow-lg hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
-        >
-          Formulaire de contact
-        </a>
-        <a
-          href="/services"
-          class="inline-flex items-center justify-center rounded-xl border-2 border-marine bg-white/90 px-10 py-4 font-semibold text-marine hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
-        >
-          Relire les services
-        </a>
+    <!-- ============ 01 PUBLICS ============ -->
+    <section class="section" style="padding-top: clamp(32px, 4vw, 56px)" aria-labelledby="publics-title">
+      <div class="wrap">
+        <div class="section-head section-head--row">
+          <div class="stack">
+            <span class="eyebrow"><span class="eyebrow__num">01</span>Pour qui</span>
+            <h2 class="h2" id="publics-title">Un accompagnement <em>pour chaque âge</em> de la vie</h2>
+          </div>
+          <p class="lead" style="max-width: 44ch">Avec la même exigence partout : écouter avant d’agir, respecter le silence comme la parole, construire la confiance pas à pas.</p>
+        </div>
+        <div class="grid grid-3">
+          <a class="card reveal" href="/services#compagnie">
+            <span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 21.5l8.8-8.8a5 5 0 0 0 0-7.1z"/></svg></span>
+            <h3 class="h3">Seniors autonomes</h3>
+            <p class="muted">Rompre la solitude sans forcer la conversation : lecture, récits de vie, jeux, sorties courtes pour garder le contact avec le quartier.</p>
+            <div class="card__foot"><span class="badge badge--rose">À partir de 1 h</span><span class="card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+          </a>
+          <a class="card reveal" href="/services#compagnie">
+            <span class="card__icon card__icon--bleu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v6M3 15h18M6 9V6"/><circle cx="8.5" cy="12" r="0.5"/></svg></span>
+            <h3 class="h3">Personnes temporairement immobilisées</h3>
+            <p class="muted">Enfants, adolescents ou adultes au repos forcé : du jeu, du sens et des objectifs atteignables, sans nier la fatigue.</p>
+            <div class="card__foot"><span class="badge badge--bleu">Convalescence</span><span class="card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+          </a>
+          <a class="card reveal" href="/services#repit">
+            <span class="card__icon card__icon--sauge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="6" r="2.6"/><path d="M4.5 21v-6.5a4.5 4.5 0 0 1 9 0V21"/><circle cx="17.5" cy="10" r="2"/><path d="M15 21v-4a2.5 2.5 0 0 1 5 0v4"/></svg></span>
+            <h3 class="h3">Parents solos</h3>
+            <p class="muted">Un relais ponctuel face à la fatigue : garde d’enfants de plus de 3 ans, en journée hors week-end, sorties et démarches.</p>
+            <div class="card__foot"><span class="badge">Enfants de + de 3 ans</span><span class="card__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+          </a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- ============ 02 SERVICES ============ -->
+    <section class="section section--white rule-y" aria-labelledby="services-title">
+      <div class="wrap">
+        <div class="section-head section-head--row">
+          <div class="stack">
+            <span class="eyebrow"><span class="eyebrow__num">02</span>Nos prestations</span>
+            <h2 class="h2" id="services-title">Trois pôles d’activités, <em>une seule présence</em></h2>
+          </div>
+          <a class="link" href="/services">Toutes les activités <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="grid grid-3">
+          <article class="pole reveal">
+            <div class="pole__img"><img src="/images/personne-agee-800.webp" alt="Moment de lecture et d’échange avec une personne âgée." loading="lazy" style="object-position: center 35%" /><span class="badge">À partir de 1 h</span></div>
+            <div class="pole__body">
+              <h3 class="h3">Compagnie &amp; lien social</h3>
+              <p class="muted small">Rompre l’isolement et garder l’esprit en éveil : un temps d’échange convivial, à la maison, sans jamais mettre en échec.</p>
+              <ul class="pole__list"><li>Lecture à voix haute</li><li>Récits de vie</li><li>Jeux de société</li><li>Atelier mémoire</li><li>Ateliers créatifs</li></ul>
+            </div>
+          </article>
+          <article class="pole reveal">
+            <div class="pole__img"><img src="/images/balade.webp" alt="Promenade en plein air, à son rythme." loading="lazy" /><span class="badge">À partir de 2 h</span></div>
+            <div class="pole__body">
+              <h3 class="h3">Mobilité &amp; vie sociale</h3>
+              <p class="muted small">Des sorties à thème qui commencent à la maison et se prolongent dehors : prendre l’air, voir du monde, garder ses repères.</p>
+              <ul class="pole__list"><li>Pages &amp; paysages</li><li>Papotes &amp; panier</li><li>Sortie rétro</li><li>Écoute &amp; escorte</li></ul>
+            </div>
+          </article>
+          <article class="pole reveal">
+            <div class="pole__img"><img src="/images/enfant.webp" alt="Enfant souriante lors d’une activité partagée à domicile." loading="lazy" /><span class="badge">À partir de 1 h</span></div>
+            <div class="pole__body">
+              <h3 class="h3">Répit &amp; vie pratique</h3>
+              <p class="muted small">Permettre au parent solo ou au proche aidant de souffler, et aider dans les petites tâches du quotidien qui pèsent.</p>
+              <ul class="pole__list"><li>Relais de l’aidant</li><li>Tri du courrier</li><li>Papiers du quotidien</li><li>Démarches sur tablette</li></ul>
+            </div>
+          </article>
+        </div>
+
+        <div class="materials reveal">
+          <div class="materials__intro">
+            <span class="badge badge--jaune"><span class="dot"></span>La dame de compagnie moderne</span>
+            <h3 class="h2" style="font-size: var(--fs-xl)">Je viens avec le matériel nécessaire</h3>
+            <p class="muted small">Rien à prévoir chez vous : tout est convenu à l’avance avec vous et la famille, selon les envies et les capacités du moment.</p>
+          </div>
+          <div class="materials__item"><span class="materials__num">A</span><strong class="h4">Déambulateur Georgette</strong><span class="small muted">Baptisé en hommage à mes grands-parents (95 et 96 ans).</span></div>
+          <div class="materials__item"><span class="materials__num">B</span><strong class="h4">Jeux de société</strong><span class="small muted">Cartes, énigmes, jeux calmes à partager.</span></div>
+          <div class="materials__item"><span class="materials__num">C</span><strong class="h4">Perles &amp; créativité</strong><span class="small muted">Bracelets, collages, activités manuelles légères.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 MÉTHODE ============ -->
+    <section class="section" aria-labelledby="methode-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow"><span class="eyebrow__num">03</span>Comment ça se passe</span>
+          <h2 class="h2" id="methode-title">Quatre étapes, <em>sans engagement</em> au départ</h2>
+          <p class="lead">La qualité d’un accompagnement se joue dans les détails : ton de voix, ponctualité, discrétion.</p>
+        </div>
+        <ol class="steps reveal">
+          <li class="step"><span class="step__num">1</span><span class="step__tag">Par téléphone ou formulaire</span><h3 class="h3">Premier échange</h3><p class="muted small">Vos attentes, vos contraintes, vos envies, sans promesse irréaliste.</p></li>
+          <li class="step"><span class="step__num">2</span><span class="step__tag">Offerte · environ 45 min</span><h3 class="h3">Visite d’évaluation</h3><p class="muted small">À domicile, avec la famille si vous le souhaitez, pour cadrer les besoins et le rythme.</p></li>
+          <li class="step"><span class="step__num">3</span><span class="step__tag">Devis &amp; contrat signé en ligne</span><h3 class="h3">Des visites à votre rythme</h3><p class="muted small">Pas de « coaching » culpabilisant : un silence partagé, c’est aussi du lien.</p></li>
+          <li class="step"><span class="step__num">4</span><span class="step__tag">Carnet &amp; espace familles</span><h3 class="h3">Suivi et ajustement</h3><p class="muted small">Le carnet relie les séances ; on ajuste selon la fatigue, les envies, la saison.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 04 CARNET ============ -->
+    <section class="section section--sauge rule-y" id="carnet" aria-labelledby="carnet-title" style="scroll-margin-top: 80px">
+      <div class="wrap split">
+        <div class="carnet-visual reveal">
+          <img class="carnet-visual__book" src="/images/carnet.webp" alt="Le carnet de sourires, couverture fleurie à l’aquarelle." loading="lazy" />
+          <div class="app-card" aria-hidden="true">
+            <div class="app-card__bar"><span>Espace familles · Mardi</span><span class="app-card__dots"><i></i><i></i><i></i></span></div>
+            <div class="app-card__body">
+              <div class="entry"><span class="entry__av">CM</span><div><div class="entry__meta">Céline · 14:30 – 16:30</div><div class="entry__text">Balade jusqu’au marché, puis lecture du journal. Beaucoup de souvenirs d’école aujourd’hui.</div><div class="mood"><span>☀ Bonne journée</span><span>Sortie</span></div></div></div>
+              <div class="entry"><span class="entry__av entry__av--s">SL</span><div><div class="entry__meta">Sophie (fille) · 18:02</div><div class="entry__text">Merci ! Elle m’en a parlé au téléphone 😊</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="stack reveal">
+          <span class="eyebrow"><span class="eyebrow__num">04</span>Notre outil phare</span>
+          <h2 class="h2" id="carnet-title">Le carnet de sourires, <em>sur papier et en ligne</em></h2>
+          <p class="lead">Un journal de liaison et de souvenirs entre les séances, pour que personne ne se sente « hors boucle ». Pas un dossier médical : une histoire à plusieurs voix.</p>
+          <ul class="feature-list" style="margin-top: 28px">
+            <li><span class="feature-list__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span><div><h3 class="h4">Rempli à chaque visite</h3><p class="small muted">Préférences, petits faits marquants, photos collées, objectifs atteints.</p></div></li>
+            <li><span class="feature-list__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><div><h3 class="h4">Espace familles sécurisé</h3><p class="small muted">Un compte personnel par famille pour suivre les visites à distance.</p></div></li>
+            <li><span class="feature-list__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg></span><div><h3 class="h4">Confidentialité</h3><p class="small muted">Ce qui se dit à la maison reste à la maison. Données traitées dans le cadre du RGPD.</p></div></li>
+          </ul>
+          <a class="link" href="/services#carnet" style="margin-top: 20px">Découvrir le carnet <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 05 TARIFS ============ -->
+    <section class="section" aria-labelledby="tarifs-title">
+      <div class="wrap">
+        <div class="section-head section-head--row">
+          <div class="stack">
+            <span class="eyebrow"><span class="eyebrow__num">05</span>Tarifs</span>
+            <h2 class="h2" id="tarifs-title">Des tarifs <em>clairs</em>, déplacements compris</h2>
+          </div>
+          <a class="link" href="/offres">Grille complète &amp; simulateur <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="plans plans--3">
+          <article class="plan reveal">
+            <div class="stack"><h3 class="h3">Pack découverte</h3><p class="muted small">Faire connaissance avant un engagement plus long.</p></div>
+            <div class="price"><span class="price__label">{PACK_DECOUVERTE.heures} heures</span><span class="price__main"><span class="price__amount">{PACK_DECOUVERTE.brutEur}&nbsp;€</span><span class="price__unit">TTC</span></span><p class="price__note">Soit <strong>{net(PACK_DECOUVERTE.brutEur)} €</strong> après crédit d’impôt, sous conditions*.</p></div>
+            <ul class="checklist"><li>À répartir selon vos disponibilités</li><li>Sans engagement sur la suite</li></ul>
+            <a class="btn btn--secondary" href="/contact?pack=decouverte#formulaire">Choisir ce pack</a>
+          </article>
+          <article class="plan plan--featured reveal">
+            <span class="plan__ribbon">Recommandé</span>
+            <div class="stack"><h3 class="h3">Forfait mensuel</h3><p class="muted small">Des créneaux réguliers pour ancrer le lien dans le temps.</p></div>
+            <div class="price"><span class="price__label">{FORFAIT_MENSUEL.heures} heures / mois</span><span class="price__main"><span class="price__amount">{FORFAIT_MENSUEL.brutEur}&nbsp;€</span><span class="price__unit">TTC / mois</span></span><p class="price__note">Soit <strong>{net(FORFAIT_MENSUEL.brutEur)} € / mois</strong> après crédit d’impôt, sous conditions*.</p></div>
+            <ul class="checklist"><li>{HM} € TTC de l’heure au lieu de {H} €</li><li>Planning prévisible, volume ajustable</li></ul>
+            <a class="btn btn--light" href="/contact?pack=mensuel#formulaire">Choisir ce forfait</a>
+          </article>
+          <article class="plan reveal">
+            <div class="stack"><h3 class="h3">Accompagnement ponctuel</h3><p class="muted small">À la demande, selon vos besoins du moment.</p></div>
+            <div class="price"><span class="price__label">À l’heure</span><span class="price__main"><span class="price__amount">{H}&nbsp;€</span><span class="price__unit">TTC / heure</span></span><p class="price__note">Soit <strong>{HN} € / h</strong> après crédit d’impôt, sous conditions*.</p></div>
+            <ul class="checklist"><li>Sortie, lecture, démarche, jeu</li><li>En complément des aidants</li></ul>
+            <a class="btn btn--secondary" href="/contact?pack=ponctuel#formulaire">Demander un créneau</a>
+          </article>
+        </div>
+        <p class="footnote" style="margin-top: 20px">* Crédit d’impôt de 50 % des sommes versées pour un service à la personne (art. 199 sexdecies du CGI), dans la limite des plafonds en vigueur, payé par la personne aidée et hors espèces. Possibilité d’Avance immédiate via l’URSSAF. La rédaction d’une biographie n’y ouvre pas droit.</p>
+      </div>
+    </section>
+
+    <!-- ============ 06 HISTOIRE ============ -->
+    <section class="section section--marine" id="histoire" aria-labelledby="histoire-title" style="scroll-margin-top: 80px">
+      <div class="wrap story">
+        <div class="story__media reveal">
+          <div class="story__photo"><img src="/images/carnet2.webp" alt="Carnet de sourires posé sur une table, entouré de fleurs." loading="lazy" /></div>
+          <div class="story__sign"><span class="xs" style="color: var(--ink-3); display:block">Fondatrice</span><span class="script">Céline</span></div>
+        </div>
+        <div class="stack reveal">
+          <span class="eyebrow"><span class="eyebrow__num">06</span>Mon histoire</span>
+          <h2 class="h2" id="histoire-title">Faire de nos boiteries <em>une danse</em></h2>
+          <p class="lead">Tout a commencé avec ma maman, et un livre tombé au bon moment : <cite>Faire de nos boiteries une danse</cite>, de Reza Moghaddassi. Une invitation à ralentir, à écouter, à croire que les petits gestes comptent autant que les grands discours.</p>
+          <p class="lead">Jojo, c’est le surnom qui rassemble le sourire, la légèreté et la dignité. Je propose à votre foyer la même douceur : à votre rythme, dans le respect de votre histoire.</p>
+          <figure class="quote" style="margin-top: 32px">
+            <blockquote>« Dans l’aise ou dans la gêne, dans la maladie ou la santé… Tiens-toi droit et souris. »</blockquote>
+            <figcaption>Lanza del Vasto</figcaption>
+          </figure>
+          <a class="btn btn--ghost-light" href="/a-propos" style="margin-top: 16px">Lire mon histoire</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 07 MOMENTS ============ -->
+    <section class="section section--white" aria-labelledby="moments-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow"><span class="eyebrow__num">07</span>Moments</span>
+          <h2 class="h2" id="moments-title">Des sourires <em>qui restent</em></h2>
+        </div>
+        <div class="gallery reveal">
+          <figure><img src="/images/galerie/photo-5.webp" alt="Femme souriante avec des lunettes roses, un moment de joie et de complicité." loading="lazy" style="transform: scale(1.55); object-position: center 45%" /><figcaption>Joie &amp; présence</figcaption></figure>
+          <figure><img src="/images/galerie/photo-4.webp" alt="Accompagnement en pleine nature, dans un jardin fleuri." loading="lazy" style="object-position: 70% center" /><figcaption>Nature &amp; douceur</figcaption></figure>
+          <figure><img src="/images/galerie/photo-3.webp" alt="Personne âgée en extérieur, accompagnée avec bienveillance." loading="lazy" style="transform: scale(1.3); transform-origin: center 20%" /><figcaption>Dehors, à son rythme</figcaption></figure>
+        </div>
+        <p class="footnote" style="margin-top: 16px">Photos publiées avec l’accord écrit des personnes.</p>
+      </div>
+    </section>
+
+    <!-- ============ 08 ZONE ============ -->
+    <section class="section rule-y" aria-labelledby="zone-title">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow"><span class="eyebrow__num">08</span>Zone d’intervention</span>
+          <h2 class="h2" id="zone-title">Au départ de <em>Corbarieu</em>, jusqu’à Montauban</h2>
+        </div>
+        <div class="zone reveal">
+          <div class="zone__info">
+            <p class="muted">Dans ces communes, les déplacements sont compris dans le tarif. Au-delà, ils sont facturés selon le barème kilométrique de l’administration : chaque demande est étudiée au cas par cas.</p>
+            <ul class="communes">{COMMUNES_ZONE.map((c, i) => <li class={i === 0 ? "is-main" : undefined}>{c}</li>)}</ul>
+            <dl class="dl">
+              <div><dt>Point de départ</dt><dd>Corbarieu</dd></div>
+              <div><dt>Ville voisine</dt><dd>Montauban</dd></div>
+              <div><dt>Département</dt><dd>Tarn-et-Garonne (82)</dd></div>
+              <div><dt>Frais de déplacement</dt><dd>Compris dans la zone</dd></div>
+            </dl>
+          </div>
+          <div class="zone__map">
+            <svg viewBox="0 0 600 460" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Carte schématique des communes desservies autour de Corbarieu">
+              <defs>
+                <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#8fa892" stroke-opacity="0.18"/></pattern>
+                <radialGradient id="zoneG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#8fa892" stop-opacity="0.35"/><stop offset="1" stop-color="#8fa892" stop-opacity="0.05"/></radialGradient>
+              </defs>
+              <rect width="600" height="460" fill="url(#grid)"/>
+              <path d="M620 40 C 520 70, 430 60, 360 110 S 250 150, 180 130 S 60 150, -20 210" fill="none" stroke="#457b9d" stroke-opacity="0.35" stroke-width="10" stroke-linecap="round"/>
+              <text x="470" y="58" font-family="Inter, sans-serif" font-size="11" fill="#457b9d" fill-opacity="0.8" font-style="italic">Le Tarn</text>
+              <circle cx="300" cy="260" r="200" fill="url(#zoneG)" stroke="#5d7a61" stroke-opacity="0.45" stroke-dasharray="4 6"/>
+              <g font-family="Inter, sans-serif" font-size="13" fill="#1d3557">
+                <g><circle cx="250" cy="90" r="7" fill="#fff" stroke="#1d3557" stroke-width="2"/><text x="262" y="95" font-weight="600">Montauban</text></g>
+                <g><circle cx="185" cy="215" r="5" fill="#1d3557"/><text x="120" y="204">Bressols</text></g>
+                <g><circle cx="520" cy="220" r="5" fill="#1d3557"/><text x="508" y="205" text-anchor="end">Saint-Nauphary</text></g>
+                <g><circle cx="282" cy="345" r="5" fill="#1d3557"/><text x="270" y="350" text-anchor="end">Labastide-St-Pierre</text></g>
+                <g><circle cx="430" cy="340" r="5" fill="#1d3557"/><text x="442" y="344">Reyniès</text></g>
+                <g><circle cx="470" cy="398" r="5" fill="#1d3557"/><text x="458" y="402" text-anchor="end">Orgueil</text></g>
+                <g><circle cx="135" cy="410" r="5" fill="#1d3557"/><text x="147" y="414">Campsas</text></g>
+              </g>
+              <g>
+                <circle cx="300" cy="275" r="22" fill="#c88d8d" fill-opacity="0.25"/>
+                <circle cx="300" cy="275" r="9" fill="#1d3557" stroke="#fff" stroke-width="3"/>
+                <rect x="320" y="257" width="98" height="30" rx="15" fill="#1d3557"/>
+                <text x="334" y="277" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#fff">Corbarieu</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 09 FAQ ============ -->
+    <section class="section" aria-labelledby="faq-title">
+      <div class="wrap split split--5-7" style="align-items: start">
+        <div class="section-head" style="position: sticky; top: 120px">
+          <span class="eyebrow"><span class="eyebrow__num">09</span>Questions fréquentes</span>
+          <h2 class="h2" id="faq-title">Vous vous <em>demandez</em> peut-être…</h2>
+          <p class="muted"><a class="link" href="/a-propos#faq">Toutes les questions</a> · <a class="link" href="/contact#formulaire">Écrivez-nous</a></p>
+        </div>
+        <div class="faq reveal">
+          {HOME_FAQ.map((item, i) => (
+            <details open={i === 0}><summary>{item.question}</summary><p>{item.answer}</p></details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="section" style="padding-top: 0">
+      <div class="wrap">
+        <div class="cta reveal">
+          <img class="cta__flower" src="/images/fleurs/3.webp" alt="" aria-hidden="true" />
+          <div class="stack" style="position: relative">
+            <span class="eyebrow" style="color: var(--jaune)">Parlons de votre situation</span>
+            <h2 class="h2">Une visite d’évaluation <em style="color: var(--jaune)">offerte</em>, chez vous.</h2>
+            <p class="lead" style="color: rgb(245 243 231 / 0.78)">Environ 45 minutes pour faire connaissance, comprendre vos besoins et vous proposer un rythme. Sans engagement.</p>
+          </div>
+          <div class="cta__contact">
+            <a class="btn btn--light" href="/contact#formulaire">Prendre rendez-vous</a>
+            <a class="cta__phone" href="tel:+33666309622">06 66 30 96 22</a>
+            <span class="xs" style="color: rgb(245 243 231 / 0.6)">Ou par le formulaire de contact</span>
+          </div>
+        </div>
+      </div>
+    </section>
 </BaseLayout>

@@ -1,54 +1,190 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { COMMUNES_ZONE } from "@/lib/catalogue";
+import { HOME_FAQ } from "@/lib/seo";
 
 const title = "À propos — Le Sourire de Jojo";
 const description =
-  "Mon histoire : Jojo, le livre de Reza Moghaddassi, le mantra de Lanza del Vasto — accompagnement social et dignité, Corbarieu, Montauban et alentours (Tarn-et-Garonne).";
+  "L’histoire de Céline Meunier Ben Neji, sa façon de travailler, ses partenaires de confiance, la zone d’intervention autour de Corbarieu et les questions fréquentes.";
+
+/** Questions en plus de celles de l'accueil. */
+const FAQ_EN_PLUS = [
+  {
+    question: "Intervenez-vous auprès des personnes dépendantes ?",
+    answer:
+      "Non : en simple déclaration de service à la personne, l’accompagnement s’adresse aux seniors autonomes, aux personnes temporairement immobilisées et aux parents solos. Pour une personne dépendante, nous orientons vers les structures agréées.",
+  },
+  {
+    question: "Comment se passe la signature du contrat ?",
+    answer:
+      "Après la visite d’évaluation, vous recevez un lien vers le contrat : vous le relisez, le signez au doigt, au stylet ou à la souris, puis vous l’imprimez ou l’enregistrez en PDF.",
+  },
+];
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "À propos" }]}
->
-  <article class="mx-auto max-w-3xl px-4 py-12 md:px-6 md:py-16">
-    <h1 class="font-display text-4xl text-marine md:text-5xl">À propos</h1>
-    <p class="mt-4 max-w-2xl text-marine/80">
-      <strong class="text-marine">Céline Meunier Ben Neji</strong> — accompagnement social, lien et bienveillance à domicile.
-    </p>
-
-    <section class="mt-12 scroll-mt-28" aria-labelledby="mon-histoire-title" id="mon-histoire">
-      <h2 id="mon-histoire-title" class="font-display text-3xl text-marine">Mon histoire</h2>
-      <div class="mt-6 space-y-4 text-marine/90 leading-relaxed">
-        <p>
-          Tout a commencé avec ma maman — et un livre tombé au bon moment, comme un signe : <cite class="not-italic font-medium text-marine"
-            >Faire de nos boiteries une danse</cite
-          >, de <strong class="text-marine">Reza Moghaddassi</strong>. Une invitation à ralentir, à écouter, à croire que les petits
-          gestes comptent autant que les grands discours — et que l’on peut habiller ses fragilités d’une forme de beauté.
-        </p>
-        <p>
-          <strong class="text-marine">Jojo</strong>, c’est le fil conducteur affectif de ce projet : le surnom qui rassemble le sourire,
-          la légèreté et la dignité. « Le Sourire de Jojo » porte ce souvenir : une présence attentive, un rire qui débloque une journée,
-          une main tendue sans jugement. En tant que <strong class="text-marine">dame de compagnie moderne</strong>, je propose à votre
-          foyer la même douceur — à votre rythme, dans le respect de votre histoire, avec le matériel nécessaire apporté sur place.
-        </p>
+<BaseLayout title={title} description={description} breadcrumb={[{ href: "/", label: "Accueil" }, { label: "À propos" }]}>
+    <section class="page-hero" aria-labelledby="page-title">
+      <img class="page-hero__flower" src="/images/fleurs/3.webp" alt="" aria-hidden="true" />
+      <div class="wrap">
+        <nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">À propos</span></nav>
+        <div class="split split--7-5" style="align-items: end">
+          <div class="stack">
+            <span class="eyebrow">À propos</span>
+            <h1 class="display" id="page-title">Céline, <em>et l’histoire</em> derrière le sourire</h1>
+          </div>
+          <p class="lead">Mon histoire, ma façon de travailler, les partenaires sur qui je m’appuie, la zone où j’interviens et les réponses à vos questions : tout est ici.</p>
+        </div>
       </div>
     </section>
 
-    <section class="mt-16 border-l-4 border-rose-vieux pl-6" aria-labelledby="philosophie">
-      <h2 id="philosophie" class="font-display text-3xl text-marine">Philosophie</h2>
-      <blockquote class="mt-6">
-        <p class="font-display text-2xl italic text-marine md:text-3xl">
-          « Tiens-toi droit et souris. »
-        </p>
-        <footer class="mt-4 text-sm text-marine/75">
-          — Lanza del Vasto <span class="sr-only">(citation conforme au droit de courte citation)</span>
-        </footer>
-      </blockquote>
-      <p class="mt-6 text-marine/90 leading-relaxed">
-        Une phrase simple pour rappeler la dignité du corps et du cœur : tenir sa tête haute face à l’épreuve, et
-        laisser transparaître la vie par un sourire — même fragile, même infime.
-      </p>
+    <nav class="subnav" aria-label="Sections de la page">
+      <div class="wrap">
+        <ul>
+          <li><a href="#histoire" class="is-active">Mon histoire</a></li>
+          <li><a href="#facon">Ma façon de travailler</a></li>
+          <li><a href="#partenaires">Partenaires</a></li>
+          <li><a href="#zone">Zone d’intervention</a></li>
+          <li><a href="#faq">Questions fréquentes</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="section" id="histoire" aria-labelledby="histoire-title" style="scroll-margin-top: 150px">
+      <div class="wrap story">
+        <div class="story__media reveal">
+          <div class="story__photo" style="background: var(--white); display: grid; place-items: center; border: 1px solid var(--line)"><img src="/images/logo.webp" alt="Logo du Sourire de Jojo : un regard bienveillant et une couronne de fleurs aquarelle." style="width: 82%; height: auto; object-fit: contain" /></div>
+          <div class="story__sign"><span class="xs" style="color: var(--ink-3); display:block">Céline Meunier Ben Neji</span><span class="script">Céline</span></div>
+        </div>
+        <div class="stack reveal">
+          <span class="eyebrow"><span class="eyebrow__num">01</span>Mon histoire</span>
+          <h2 class="h2" id="histoire-title">Faire de nos boiteries <em>une danse</em></h2>
+          <p class="lead">Tout a commencé avec ma maman, et un livre tombé au bon moment, comme un signe : <cite>Faire de nos boiteries une danse</cite>, de Reza Moghaddassi. Une invitation à ralentir, à écouter, à croire que les petits gestes comptent autant que les grands discours, et que l’on peut habiller ses fragilités d’une forme de beauté.</p>
+          <p class="lead">Jojo, c’est le fil conducteur affectif de ce projet : le surnom qui rassemble le sourire, la légèreté et la dignité. « Le Sourire de Jojo » porte ce souvenir : une présence attentive, un rire qui débloque une journée, une main tendue sans jugement.</p>
+          <figure class="quote" style="margin-top: 24px">
+            <blockquote>« Tiens-toi droit et souris. »</blockquote>
+            <figcaption>Lanza del Vasto · Une phrase simple pour rappeler la dignité du corps et du cœur.</figcaption>
+          </figure>
+        </div>
+      </div>
     </section>
-  </article>
+
+    <section class="section section--white rule-y" id="facon" aria-labelledby="facon-title" style="scroll-margin-top: 150px">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow"><span class="eyebrow__num">02</span>Ma façon de travailler</span>
+          <h2 class="h2" id="facon-title">La qualité se joue <em>dans les détails</em></h2>
+          <p class="lead">Ton de voix, ponctualité, discrétion : voici ce que vous pouvez attendre concrètement.</p>
+        </div>
+        <div class="grid grid-4">
+          <article class="card reveal"><span class="card__icon card__icon--bleu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span><h3 class="h3">Écoute et cadrage</h3><p class="small muted">Un premier échange puis une visite d’évaluation offerte, avec la famille, pour cadrer besoins et priorités.</p></article>
+          <article class="card reveal"><span class="card__icon card__icon--sauge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><h3 class="h3">Rythme respecté</h3><p class="small muted">Pas de « coaching » culpabilisant : la présence avant l’occupation forcée.</p></article>
+          <article class="card reveal"><span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 8h5"/></svg></span><h3 class="h3">Carnet &amp; continuité</h3><p class="small muted">Le carnet de sourires relie les séances, sur papier et dans l’espace familles.</p></article>
+          <article class="card reveal"><span class="card__icon card__icon--jaune"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg></span><h3 class="h3">Confidentialité</h3><p class="small muted">Ce qui se dit à la maison reste traité avec discrétion, dans le cadre du RGPD.</p></article>
+        </div>
+        <div class="kpis kpis--3 reveal" style="margin-top: 24px">
+          <div class="kpi"><span class="h4">Dame de compagnie moderne</span><span class="kpi__label">Présence humaine, matériel apporté : déambulateur Georgette, jeux, perles.</span></div>
+          <div class="kpi"><span class="h4">Le lien social au centre</span><span class="kpi__label">Pas seulement « faire les courses ».</span></div>
+          <div class="kpi"><span class="h4">Mémoire et joie</span><span class="kpi__label">Photos, carnet, histoires qui restent.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="partenaires" aria-labelledby="partenaires-title" style="scroll-margin-top: 150px">
+      <div class="wrap">
+        <div class="section-head section-head--row">
+          <div class="stack">
+            <span class="eyebrow"><span class="eyebrow__num">03</span>Partenaires de confiance</span>
+            <h2 class="h2" id="partenaires-title">Un réseau local <em>pour orienter</em></h2>
+          </div>
+          <p class="muted small" style="max-width: 44ch">Des professionnels du territoire pour compléter et sécuriser l’accompagnement, sans jamais remplacer les soins médicaux ou paramédicaux.</p>
+        </div>
+        <div class="grid grid-3">
+          <article class="card reveal"><span class="badge badge--rose">Santé &amp; soins</span><p class="muted small">Cabinets d’infirmier·es, kinésithérapeutes, podologues, pharmacies.</p><div class="card__foot"><span class="xs muted">Logos à venir</span></div></article>
+          <article class="card reveal"><span class="badge badge--bleu">Institutions &amp; accompagnement</span><p class="muted small">Mairies, psychologues, structures locales.</p><div class="card__foot"><span class="xs muted">Logos à venir</span></div></article>
+          <article class="card card--muted reveal"><span class="badge badge--outline">Réseau en construction</span><p class="muted small">Partenariats en cours de développement : revenez bientôt.</p><div class="card__foot"><a class="link small" href="/contact?objet=partenariat#formulaire">Devenir partenaire →</a></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--white rule-y" id="zone" aria-labelledby="zone-title" style="scroll-margin-top: 150px">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow"><span class="eyebrow__num">04</span>Zone d’intervention</span>
+          <h2 class="h2" id="zone-title">Au départ de <em>Corbarieu</em>, jusqu’à Montauban</h2>
+        </div>
+        <div class="zone reveal">
+          <div class="zone__info">
+            <p class="muted">Dans ces communes, les déplacements sont compris dans le tarif. Au-delà, ils sont facturés selon le barème kilométrique de l’administration : chaque demande est étudiée au cas par cas.</p>
+            <ul class="communes">{COMMUNES_ZONE.map((c, i) => <li class={i === 0 ? "is-main" : undefined}>{c}</li>)}</ul>
+            <dl class="dl">
+              <div><dt>Point de départ</dt><dd>Corbarieu</dd></div>
+              <div><dt>Ville voisine</dt><dd>Montauban</dd></div>
+              <div><dt>Département</dt><dd>Tarn-et-Garonne (82)</dd></div>
+              <div><dt>Frais de déplacement</dt><dd>Compris dans la zone</dd></div>
+            </dl>
+          </div>
+          <div class="zone__map">
+            <svg viewBox="0 0 600 460" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Carte schématique des communes desservies autour de Corbarieu">
+              <defs>
+                <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#8fa892" stroke-opacity="0.18"/></pattern>
+                <radialGradient id="zoneG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#8fa892" stop-opacity="0.35"/><stop offset="1" stop-color="#8fa892" stop-opacity="0.05"/></radialGradient>
+              </defs>
+              <rect width="600" height="460" fill="url(#grid)"/>
+              <path d="M620 40 C 520 70, 430 60, 360 110 S 250 150, 180 130 S 60 150, -20 210" fill="none" stroke="#457b9d" stroke-opacity="0.35" stroke-width="10" stroke-linecap="round"/>
+              <text x="470" y="58" font-family="Inter, sans-serif" font-size="11" fill="#457b9d" fill-opacity="0.8" font-style="italic">Le Tarn</text>
+              <circle cx="300" cy="260" r="200" fill="url(#zoneG)" stroke="#5d7a61" stroke-opacity="0.45" stroke-dasharray="4 6"/>
+              <g font-family="Inter, sans-serif" font-size="13" fill="#1d3557">
+                <g><circle cx="250" cy="90" r="7" fill="#fff" stroke="#1d3557" stroke-width="2"/><text x="262" y="95" font-weight="600">Montauban</text></g>
+                <g><circle cx="185" cy="215" r="5" fill="#1d3557"/><text x="120" y="204">Bressols</text></g>
+                <g><circle cx="520" cy="220" r="5" fill="#1d3557"/><text x="508" y="205" text-anchor="end">Saint-Nauphary</text></g>
+                <g><circle cx="282" cy="345" r="5" fill="#1d3557"/><text x="270" y="350" text-anchor="end">Labastide-St-Pierre</text></g>
+                <g><circle cx="430" cy="340" r="5" fill="#1d3557"/><text x="442" y="344">Reyniès</text></g>
+                <g><circle cx="470" cy="398" r="5" fill="#1d3557"/><text x="458" y="402" text-anchor="end">Orgueil</text></g>
+                <g><circle cx="135" cy="410" r="5" fill="#1d3557"/><text x="147" y="414">Campsas</text></g>
+              </g>
+              <g>
+                <circle cx="300" cy="275" r="22" fill="#c88d8d" fill-opacity="0.25"/>
+                <circle cx="300" cy="275" r="9" fill="#1d3557" stroke="#fff" stroke-width="3"/>
+                <rect x="320" y="257" width="98" height="30" rx="15" fill="#1d3557"/>
+                <text x="334" y="277" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#fff">Corbarieu</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq" aria-labelledby="faq-title" style="scroll-margin-top: 150px">
+      <div class="wrap split split--5-7" style="align-items: start">
+        <div class="section-head" style="position: sticky; top: 160px">
+          <span class="eyebrow"><span class="eyebrow__num">05</span>Questions fréquentes</span>
+          <h2 class="h2" id="faq-title">Toutes vos <em>questions</em></h2>
+          <p class="muted">Une autre question ? <a class="link" href="/contact#formulaire">Écrivez-nous</a></p>
+        </div>
+        <div class="faq reveal">
+          {[...HOME_FAQ, ...FAQ_EN_PLUS].map((item, i) => (
+            <details open={i === 0}><summary>{item.question}</summary><p>{item.answer}</p></details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="section" style="padding-top: 0">
+      <div class="wrap">
+        <div class="cta reveal">
+          <img class="cta__flower" src="/images/fleurs/3.webp" alt="" aria-hidden="true" />
+          <div class="stack" style="position: relative">
+            <span class="eyebrow" style="color: var(--jaune)">Parlons de votre situation</span>
+            <h2 class="h2">Une visite d’évaluation <em style="color: var(--jaune)">offerte</em>, chez vous.</h2>
+            <p class="lead" style="color: rgb(245 243 231 / 0.78)">Environ 45 minutes pour faire connaissance, comprendre vos besoins et vous proposer un rythme. Sans engagement.</p>
+          </div>
+          <div class="cta__contact">
+            <a class="btn btn--light" href="/contact#formulaire">Prendre rendez-vous</a>
+            <a class="cta__phone" href="tel:+33666309622">06 66 30 96 22</a>
+            <span class="xs" style="color: rgb(245 243 231 / 0.6)">Ou par le formulaire de contact</span>
+          </div>
+        </div>
+      </div>
+    </section>
 </BaseLayout>

@@ -1,10 +1,9 @@
 ---
 import "../styles/fonts";
 import "../styles/global.css";
+import "../styles/site.css";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
-import BrandBackdrop from "@/components/BrandBackdrop.astro";
-import CursorTracker from "@/components/CursorTracker.astro";
 import { APPLE_TOUCH_ICON_SRC, FAVICON_SRC } from "@/lib/brand";
 import {
   allowIndexing,
@@ -43,7 +42,6 @@ const {
   noindex = false,
   canonicalPath,
 } = Astro.props;
-const cspNonce = Astro.locals.cspNonce;
 
 const siteUrl = resolveSiteUrl(Astro.site?.href, Astro.url.origin);
 const pathname = canonicalPath ?? Astro.url.pathname;
@@ -65,7 +63,7 @@ const structured = mergeJsonLd(schemas);
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang="fr" class="no-js">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -94,158 +92,15 @@ const structured = mergeJsonLd(schemas);
       <script type="application/ld+json" set:html={JSON.stringify(structured)} />
     )}
   </head>
-  <body class="min-h-screen flex flex-col">
-    <BrandBackdrop />
-    <CursorTracker />
+  <body class="site">
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
     <SiteHeader />
-    {
-      breadcrumb && breadcrumb.length > 0 && (
-        <nav aria-label="Fil d'Ariane" class="relative z-10 mx-auto w-full max-w-6xl px-4 py-3 text-sm text-marine/80 md:px-6">
-          <ol class="flex flex-wrap items-center gap-2">
-            {breadcrumb.map((item, i) => (
-              <li class="flex items-center gap-2">
-                {i > 0 && <span class="text-marine/40">/</span>}
-                {item.href ? (
-                  <a href={item.href} class="underline decoration-marine/30 underline-offset-2 hover:text-marine">
-                    {item.label}
-                  </a>
-                ) : (
-                  <span class="font-medium text-marine">{item.label}</span>
-                )}
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )
-    }
-    <main id="contenu-principal" class="relative z-10 flex-1">
+    <main id="contenu">
       <slot />
     </main>
     <SiteFooter />
-    <script is:inline nonce={cspNonce}>
-      (function () {
-        function initScrollReveals() {
-          var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          var main = document.querySelector("main");
-          if (!main) return;
-
-          var seen = new WeakSet();
-          var targets = [];
-
-          function add(el) {
-            if (!(el instanceof HTMLElement)) return;
-            if (seen.has(el)) return;
-            seen.add(el);
-            targets.push(el);
-            el.classList.add("reveal-on-scroll");
-            var delay = el.getAttribute("data-reveal-delay");
-            if (delay && !reduce) el.style.setProperty("--reveal-delay", delay + (delay.endsWith("ms") ? "" : "ms"));
-          }
-
-          if (reduce) {
-            Array.from(main.children).forEach(function (el) {
-              if (!(el instanceof HTMLElement)) return;
-              if (el.hasAttribute("data-reveal-skip")) return;
-              el.classList.add("reveal-on-scroll", "is-inview");
-            });
-            Array.from(main.querySelectorAll("[data-reveal]")).forEach(function (el) {
-              if (!(el instanceof HTMLElement)) return;
-              el.classList.add("reveal-on-scroll", "is-inview");
-            });
-            document.querySelectorAll("footer [data-reveal]").forEach(function (el) {
-              if (!(el instanceof HTMLElement)) return;
-              el.classList.add("reveal-on-scroll", "is-inview");
-            });
-            return;
-          }
-
-          Array.from(main.children).forEach(function (el) {
-            if (!(el instanceof HTMLElement)) return;
-            if (el.hasAttribute("data-reveal-skip")) return;
-            add(el);
-          });
-
-          main.querySelectorAll("[data-reveal]").forEach(add);
-          document.querySelectorAll("footer [data-reveal]").forEach(add);
-
-          var io = new IntersectionObserver(
-            function (entries) {
-              for (var i = 0; i < entries.length; i++) {
-                var en = entries[i];
-                var t = en.target;
-                if (!(t instanceof HTMLElement)) continue;
-                if (en.isIntersecting) t.classList.add("is-inview");
-                else t.classList.remove("is-inview");
-              }
-            },
-            { threshold: 0, rootMargin: "0px" },
-          );
-
-          function markVisibleIfInViewport(el) {
-            var r = el.getBoundingClientRect();
-            var vh = window.innerHeight || document.documentElement.clientHeight;
-            if (r.bottom > 0 && r.top < vh) el.classList.add("is-inview");
-          }
-
-          for (var j = 0; j < targets.length; j++) {
-            io.observe(targets[j]);
-            markVisibleIfInViewport(targets[j]);
-          }
-        }
-
-        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initScrollReveals);
-        else initScrollReveals();
-      })();
-    </script>
-    <script is:inline nonce={cspNonce}>
-      (function () {
-        /**
-         * offsetLeft est relatif à offsetParent (souvent un ancêtre positionné), pas au
-         * conteneur overflow — on aligne donc chaque enfant via getBoundingClientRect().
-         */
-        function snapCarouselStep(viewport, direction) {
-          var kids = viewport.children;
-          if (!kids.length) return;
-
-          var vRect = viewport.getBoundingClientRect();
-          var vCenter = vRect.left + vRect.width / 2;
-          var activeIdx = 0;
-          var minDist = Infinity;
-          var i;
-
-          for (i = 0; i < kids.length; i++) {
-            var r = kids[i].getBoundingClientRect();
-            var c = r.left + r.width / 2;
-            var d = Math.abs(c - vCenter);
-            if (d < minDist) {
-              minDist = d;
-              activeIdx = i;
-            }
-          }
-
-          var nextIdx = activeIdx + (direction > 0 ? 1 : -1);
-          if (nextIdx < 0) nextIdx = 0;
-          if (nextIdx >= kids.length) nextIdx = kids.length - 1;
-          if (nextIdx === activeIdx) return;
-
-          var target = kids[nextIdx];
-          var left = viewport.scrollLeft + (target.getBoundingClientRect().left - vRect.left);
-          viewport.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
-        }
-
-        function handleSnapControl(e) {
-          var prev = e.target && e.target.closest && e.target.closest("[data-snap-prev]");
-          var next = e.target && e.target.closest && e.target.closest("[data-snap-next]");
-          if (!prev && !next) return;
-          var id = prev ? prev.getAttribute("data-snap-prev") : next.getAttribute("data-snap-next");
-          var viewport = id ? document.getElementById(id) : null;
-          if (!viewport || !viewport.children || !viewport.children.length) return;
-          e.preventDefault();
-          snapCarouselStep(viewport, prev ? -1 : 1);
-        }
-
-        document.addEventListener("click", handleSnapControl, false);
-      })();
+    <script>
+      import "@/scripts/site";
     </script>
   </body>
 </html>

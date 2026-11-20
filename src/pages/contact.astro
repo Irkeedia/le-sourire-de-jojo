@@ -1,12 +1,12 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContactForm from "@/components/ContactForm.astro";
-import GoogleMapEmbed from "@/components/GoogleMapEmbed.astro";
+import { COMMUNES_ZONE } from "@/lib/catalogue";
 import { PACK_IDS, PACK_LABELS, type PackId } from "@/lib/packs";
 
-const title = "Contact & informations légales — Le Sourire de Jojo";
+const title = "Contact — Le Sourire de Jojo";
 const description =
-  "Contact, mentions légales, RGPD, cadre de prestation et consentement — Corbarieu, Montauban et alentours (Tarn-et-Garonne). Tarifs sur la page Offres.";
+  "Demandez votre visite d’évaluation offerte à domicile : Corbarieu, Montauban et alentours (Tarn-et-Garonne). Réponse personnalisée, sans engagement.";
 
 const packParam = Astro.url.searchParams.get("pack") ?? "";
 const objetParam = Astro.url.searchParams.get("objet") ?? "";
@@ -18,270 +18,48 @@ const defaultSubject = safePack
     : "";
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Contact & légal" }]}
->
-  <div class="mx-auto max-w-6xl px-4 py-12 md:px-6 md:py-16" data-reveal-skip>
-    <h1 class="font-display text-4xl text-marine md:text-5xl">Contact & informations légales</h1>
-
-    <p class="mt-6 max-w-3xl text-marine/85">
-      <strong class="text-marine">Financement, crédit d’impôt et aides (Avance immédiate, CESU)</strong> — simulation du coût net et détail sur la page
-      <a
-        href="/offres#aides-financement"
-        class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine"
-        >Offres &amp; forfaits</a
-      >. Les informations légales, la confidentialité et le cadre de la prestation sont détaillées plus bas sur cette page ; le{' '}
-      <a href="#formulaire" class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine"
-        >formulaire de contact</a
-      > intègre des attestations juridiques (capacité, urgence, RGPD) et constitue votre <strong class="text-marine">consentement numérique</strong> lié à la demande, complété au besoin par le{' '}
-      <a href="/consentement" class="font-medium text-aquarelle-bleu underline decoration-marine/40 underline-offset-2 hover:text-marine"
-        >document de consentement imprimable (PDF)</a
-      >.
-    </p>
-
-    <section class="mt-12 scroll-mt-28" id="carte" aria-labelledby="map-title">
-      <h2 id="map-title" class="font-display text-3xl text-marine">Nous trouver sur la carte</h2>
-      <p class="mt-4 max-w-3xl text-marine/85">
-        Repère géographique de la zone d’intervention (Corbarieu, Montauban et alentours, Tarn-et-Garonne). Vous pouvez ouvrir
-        l’itinéraire directement dans Google Maps.
-      </p>
-      <div class="mt-8 max-w-4xl">
-        <GoogleMapEmbed title="Le Sourire de Jojo — Corbarieu et alentours" query="Corbarieu, Tarn-et-Garonne, France" zoom={10} />
+<BaseLayout title={title} description={description} breadcrumb={[{ href: "/", label: "Accueil" }, { label: "Contact" }]}>
+  <section class="page-hero" aria-labelledby="page-title">
+    <img class="page-hero__flower" src="/images/fleurs/3.webp" alt="" aria-hidden="true" />
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Fil d’Ariane"><a href="/">Accueil</a><span aria-hidden="true">/</span><span aria-current="page">Contact</span></nav>
+      <div class="split split--7-5" style="align-items: end">
+        <div class="stack">
+          <span class="eyebrow">Contact</span>
+          <h1 class="display" id="page-title">Parlons de <em>votre situation</em></h1>
+        </div>
+        <p class="lead">Une question sur les créneaux, la zone, une formule ou le carnet ? Nous répondons avec soin, sans engagement. La première visite d’évaluation est offerte.</p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="mt-12 scroll-mt-28" id="formulaire" aria-labelledby="form-title">
-      <h2 id="form-title" class="font-display text-3xl text-marine">Nous écrire</h2>
-      <p class="mt-4 max-w-3xl text-marine/85">
-        Une question sur les créneaux, la zone, une formule, un partenariat ou le carnet de sourires ? Écrivez-nous — réponse
-        personnalisée dès que possible.
-      </p>
-      <div class="mt-8 max-w-2xl">
+  <section class="section">
+    <div class="wrap split split--7-5" style="align-items: start">
+      <div class="contact-form-slot" id="formulaire" style="scroll-margin-top: 100px">
         <ContactForm initialPack={safePack} defaultSubject={defaultSubject} />
       </div>
-    </section>
 
-    <section class="mt-20 scroll-mt-24 border-t border-marine/15 pt-16" id="mentions" aria-labelledby="mentions-title">
-      <h2 id="mentions-title" class="font-display text-3xl text-marine">Mentions légales, RGPD &amp; cadre de la prestation</h2>
-      <p class="mt-4 max-w-3xl text-sm leading-relaxed text-marine/70">
-        Les paragraphes ci-dessous encadrent de façon transparente l’usage du site et le service d’accompagnement. Ils peuvent être
-        complétés ou adaptés avec votre conseiller juridique ou comptable selon votre statut exact (entreprise individuelle,
-        société, association, etc.).
-      </p>
-
-      <div class="mt-10 max-w-3xl space-y-12 leading-relaxed text-marine/90">
-        <section id="editeur" class="scroll-mt-28">
-          <h3 class="font-display text-xl text-marine">Édition du site &amp; directrice de publication</h3>
-          <p class="mt-4">
-            <strong>Éditeur du site :</strong> activité <strong>Le Sourire de Jojo</strong>, représentée par <strong
-              >Céline Meunier Ben Neji</strong
-            >, en qualité de <strong>dirigeante</strong> et <strong>directrice de la publication</strong>.
-          </p>
-          <p class="mt-4">
-            <strong>Identité d’entreprise :</strong> statut juridique, numéro SIREN/SIRET, numéro de TVA intracommunautaire le cas
-            échéant, et adresse du siège social ou du principal établissement : <strong>à compléter sur vos documents contractuels et
-              factures</strong> ; vous pouvez les reproduire ici lorsque vous souhaitez les rendre publics intégralement.
-          </p>
-          <p class="mt-4">
-            <strong>Contact :</strong> via le <a href="#formulaire" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
-              >formulaire</a
-            > du présent site et, le cas échéant, aux coordonnées figurant sur vos devis, conventions ou correspondances professionnelles.
-          </p>
-        </section>
-
-        <section id="realisation-site" class="scroll-mt-28">
-          <h3 class="font-display text-xl text-marine">Réalisation technique</h3>
-          <p class="mt-4">
-            Conception, développement et mise en ligne du site : <strong>Irkeedia Labs</strong>.
-          </p>
-        </section>
-
-        <section id="hebergement" class="scroll-mt-28">
-          <h3 class="font-display text-xl text-marine">Hébergement</h3>
-          <p class="mt-4">
-            Le site est déployé sur l’infrastructure <strong>Vercel</strong> (hébergeur technique). Mentions utiles au titre de la
-            réglementation applicable :
-          </p>
-          <ul class="mt-4 list-inside list-disc space-y-2 pl-1">
-            <li>
-              <strong>Vercel Inc.</strong>, 340 S Lemon Ave #4133, Walnut, CA 91789, États-Unis —{' '}
-              <a
-                href="https://vercel.com"
-                class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
-                rel="noopener noreferrer"
-                target="_blank"
-                >vercel.com</a
-              >
-            </li>
-            <li>
-              Les données techniques de connexion et de journalisation peuvent être traitées par l’hébergeur dans les conditions de
-              sa politique de confidentialité et, en cas de transfert hors de l’Espace économique européen, avec les garanties
-              prévues par la réglementation (clauses contractuelles types, mesures supplémentaires le cas échéant).
-            </li>
+      <aside class="stack" aria-label="Coordonnées">
+        <div class="card">
+          <span class="eyebrow">Par téléphone</span>
+          <a class="h2" href="tel:+33666309622" style="text-decoration: none; font-size: var(--fs-xl)">06 66 30 96 22</a>
+          <p class="small muted">Céline Meunier Ben Neji</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Zone d’intervention</span>
+          <ul class="communes">{COMMUNES_ZONE.map((c, i) => <li class={i === 0 ? "is-main" : undefined}>{c}</li>)}</ul>
+          <p class="xs muted">Déplacements compris dans ces communes. Au-delà : barème kilométrique de l’administration, étude au cas par cas.</p>
+        </div>
+        <div class="card card--muted">
+          <span class="eyebrow">Bon à savoir</span>
+          <ul class="checklist small">
+            <li>Visite d’évaluation offerte (environ 45 min)</li>
+            <li>Crédit d’impôt de 50 %, sous conditions</li>
+            <li>Aucune prospection commerciale</li>
           </ul>
-        </section>
-
-        <section id="rgpd" class="scroll-mt-28">
-          <h3 class="font-display text-xl text-marine">Données personnelles &amp; respect de la vie privée (RGPD)</h3>
-          <p class="mt-4">
-            <strong>Responsable du traitement :</strong> <strong>Céline Meunier Ben Neji</strong>, agissant pour les besoins de
-            l’activité Le Sourire de Jojo concernant les traitements liés au site et à la relation clients.
-          </p>
-          <p class="mt-4">
-            <strong>Données concernées :</strong> notamment nom, prénom, adresse électronique, numéro de téléphone lorsque fourni,
-            contenu des messages, ainsi que les informations d’organisation et de suivi nécessaires à l’accompagnement lorsqu’un
-            contrat existe (créneaux, préférences, éléments du « carnet de sourires » ou équivalent lorsque vous utilisez cet outil).
-          </p>
-          <p class="mt-4">
-            <strong>Finalités :</strong> répondre aux demandes entrantes ; préparer et exécuter la prestation ; assurer la gestion
-            administrative et comptable ; respecter les obligations légales et réglementaires ; défendre un droit en justice en cas de
-            litige dans la limite des prescriptions applicables.
-          </p>
-          <p class="mt-4">
-            <strong>Bases juridiques :</strong> notamment l’exécution de mesures précontractuelles ou du contrat ; le respect
-            d’obligations légales (comptabilité, fiscalité, archivage lorsque requis) ; l’intérêt légitime pour la sécurité du site et
-            la lutte contre les abus ; le <strong>consentement</strong> lorsqu’il est requis pour des traitements non indispensables
-            au cœur du service (par exemple certaines communications facultatives), recueilli de façon distincte et documentée le cas
-            échéant.
-          </p>
-          <p class="mt-4">
-            <strong>Durées :</strong> conservation pendant la relation active de l’accompagnement ou du dossier commercial ; au-delà,
-            durées légales de prescription ou d’archivage applicables aux obligations comptables et fiscales, puis suppression ou
-            anonymisation lorsque possible.
-          </p>
-          <p class="mt-4">
-            <strong>Destinataires :</strong> données strictement nécessaires au sein de l’activité ; sous-traitants techniques (par
-            exemple hébergement sur Vercel, fournisseur de messagerie pour la réception des messages du formulaire, prestataire de
-            base de données si vous en utilisez une) dans le cadre de contrats conformes à l’article 28 du RGPD lorsque la loi
-            l’impose.
-          </p>
-          <p class="mt-4">
-            <strong>Droits des personnes :</strong> vous disposez des droits d’accès, de rectification, d’effacement, de limitation du
-            traitement, d’opposition pour motifs légitimes, de portabilité des données lorsque les conditions sont réunies, et du droit
-            de définir des directives relatives au sort de vos données après le décès. Ces droits s’exercent en priorité auprès du
-            responsable du traitement aux coordonnées professionnelles communiquées sur vos échanges ; vous pouvez aussi introduire une
-            réclamation auprès de l’autorité de contrôle compétente en France, la{' '}
-            <a
-              href="https://www.cnil.fr"
-              class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
-              rel="noopener noreferrer"
-              target="_blank"
-              >CNIL</a
-            >.
-          </p>
-          <p class="mt-4 text-sm text-marine/75">
-            Les informations concernant la santé sont des données sensibles au sens du RGPD lorsqu’elles sont collectées de façon
-            systématique ou structurée ; dans le cadre d’un accompagnement social non médical, seules les informations strictement
-            nécessaires et proportionnées doivent être échangées, et la coordination médicale reste du ressort des professionnels de
-            santé et de la famille lorsque la situation l’exige.
-          </p>
-        </section>
-
-        <section id="cookies" class="scroll-mt-28">
-          <h3 class="font-display text-xl text-marine">Cookies &amp; traceurs</h3>
-          <p class="mt-4">
-            Ce site <strong>n’utilise aucun cookie publicitaire ni outil de mesure d’audience</strong>. C’est pourquoi aucun
-            bandeau de consentement ne vous est présenté.
-          </p>
-          <p class="mt-4">
-            <strong>Cookie strictement nécessaire :</strong> uniquement si vous vous connectez à l’espace famille, un cookie de
-            session (<code>sdcj_session</code>) vous garde connecté, au plus 30 jours. Il est exempté de consentement car
-            indispensable au service que vous demandez.
-          </p>
-          <p class="mt-4">
-            <strong>Carte Google Maps :</strong> elle n’est pas chargée à l’ouverture des pages. Elle ne s’affiche que si vous
-            cliquez sur « Afficher la carte » ; Google peut alors déposer ses propres cookies, selon sa politique de
-            confidentialité. Sans ce clic, aucune donnée n’est transmise à Google. Les polices d’écriture sont, elles aussi,
-            hébergées directement par le site.
-          </p>
-        </section>
-
-        <section id="references-legales" class="scroll-mt-28">
-          <h3 class="font-display text-xl text-marine">Références juridiques utiles (non exhaustives)</h3>
-          <p class="mt-4">
-            Les références ci-dessous encadrent la délimitation entre accompagnement social et activités réglementées, la
-            responsabilité civile, la non-assistance et la capacité juridique. Elles complètent les{' '}
-            <a href="/cgv" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine">conditions générales</a>{' '}
-            et le document de <a href="/consentement" class="font-medium text-aquarelle-bleu underline underline-offset-2 hover:text-marine"
-              >consentement</a
-            >.
-          </p>
-          <ul class="mt-4 list-inside list-disc space-y-3 pl-1 text-marine/90">
-            <li>
-              <strong>Article L. 4311-1 du Code de la santé publique</strong> et textes liés : réservent certaines activités de soins aux
-              professions de santé diplômées ; l’accompagnement social décrit sur ce site ne constitue pas un exercice illégal de la
-              profession d’infirmier lorsqu’il respecte cette frontière.
-            </li>
-            <li>
-              <strong>Article 1240 du Code civil</strong> (responsabilité civile délictuelle) : la responsabilité de la Prestataire ne
-              peut être engagée qu’en présence d’une <strong>faute</strong> lui étant imputable et dans les limites du lien causal,
-              sans préjuger des pathologies préexistantes ou des circonstances étrangères à cette faute.
-            </li>
-            <li>
-              <strong>Article 223-6 du Code pénal</strong> (non-assistance à personne en danger) : en cas de péril imminent, la
-              priorité est l’alerte des secours compétents ; le protocole du site et du formulaire impose l’acceptation de cette règle
-              avant envoi d’un message.
-            </li>
-            <li>
-              <strong>Articles 1145 et suivants du Code civil</strong> : capacité juridique à contracter ; le formulaire exige une
-              confirmation explicite de pleine capacité ou de mandat légal valide pour le signataire.
-            </li>
-          </ul>
-        </section>
-
-        <section id="cadre-prestation" class="scroll-mt-28">
-          <h3 class="font-display text-xl text-marine">Nature juridique de l’accompagnement &amp; urgence médicale</h3>
-          <p class="mt-4">
-            L’activité « Le Sourire de Jojo » relève d’un <strong>accompagnement à domicile</strong> de type social, relationnel et
-            ludique dans le cadre des services à la personne lorsque la réglementation applicable le permet. Elle ne constitue pas une
-            activité de soins infirmiers, de diagnostic médical, de surveillance clinique ni de rééducation paramédicale.
-          </p>
-          <p class="mt-4">
-            En cas de <strong>urgence vitale</strong>, de malaise grave ou d’aggravation brutale de l’état de santé au cours d’une
-            séance, la <strong>priorité absolue</strong> est d’<strong>alerter les services de secours</strong> (<strong>15</strong>,{' '}
-            <strong>18</strong>, <strong>112</strong>, <strong>114</strong> selon les situations) — conformément aux obligations liées à
-            la non-assistance à personne en danger — <strong>avant</strong> tout contact avec la famille ou les proches lorsque la vie
-            ou l’intégrité physique est en jeu. Ensuite seulement, informer les personnes désignées ou les professionnels de santé
-            référents lorsque les circonstances le permettent sans retard incompatible avec l’urgence. L’intervenante peut interrompre
-            la prestation si la sécurité des personnes ou le dépassement manifeste du périmètre d’intervention l’impose.
-          </p>
-          <p class="mt-4">
-            Les échanges d’informations sur la santé sont limités au strict nécessaire au bon déroulement d’un accompagnement non
-            médical ; ils ne se substituent pas aux obligations de confidentialité et de compétence propres aux professions réglementées
-            de santé lorsque celles-ci sont en cause.
-          </p>
-        </section>
-
-        <section id="document-consentement-lien" class="scroll-mt-28 rounded-2xl border border-marine/15 bg-sauge/15 p-6 md:p-8">
-          <h3 class="font-display text-xl text-marine">Formulaire de consentement (PDF)</h3>
-          <p class="mt-4">
-            Un document type — consentement sur la nature de la prestation, les urgences sanitaires et le traitement des données — est
-            disponible pour être complété, imprimé ou enregistré au format PDF depuis votre navigateur :
-          </p>
-          <p class="mt-6">
-            <a
-              href="/consentement"
-              class="inline-flex items-center justify-center rounded-xl bg-marine px-5 py-3 font-semibold text-ivoire shadow hover:bg-marine/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marine"
-              >Ouvrir le formulaire de consentement</a
-            >
-          </p>
-        </section>
-      </div>
-    </section>
-
-    <section class="mt-12 rounded-2xl bg-sauge/20 p-6" aria-labelledby="gmb-title">
-      <h2 id="gmb-title" class="font-display text-2xl text-marine">Fiche Google Business Profile</h2>
-      <p class="mt-2 text-marine/85">
-        Pour renforcer le référencement local, reliez une fiche « Google Business Profile » et remplacez ce lien par
-        l’URL officielle de votre établissement :
-        <a
-          href="https://www.google.com/intl/fr_fr/business/"
-          class="font-medium text-aquarelle-bleu underline decoration-2 underline-offset-2 hover:text-marine"
-          >Google Business Profile</a
-        >.
-      </p>
-    </section>
-  </div>
+          <a class="link small" href="/informations-legales">Mentions légales, CGV, annulation →</a>
+        </div>
+      </aside>
+    </div>
+  </section>
 </BaseLayout>
