@@ -2,8 +2,10 @@
 import "../styles/fonts";
 import "../styles/global.css";
 import "../styles/site.css";
+import "../styles/chat.css";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
+import ChatBot from "@/components/ChatBot.astro";
 import { APPLE_TOUCH_ICON_SRC, FAVICON_SRC } from "@/lib/brand";
 import {
   allowIndexing,
@@ -99,6 +101,7 @@ const structured = mergeJsonLd(schemas);
       <slot />
     </main>
     <SiteFooter />
+    <ChatBot />
     <script>
       import "@/scripts/site";
     </script>

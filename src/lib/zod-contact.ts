@@ -11,7 +11,7 @@ import {
 export const contactSchema = z
   .object({
     name: z.string().trim().min(2, "Le nom est requis.").max(120),
-    email: z.string().trim().email("Adresse e-mail invalide.").max(254),
+    email: z.string().trim().email("Adresse e-mail invalide.").max(254).optional().or(z.literal("")),
     phone: z
       .string()
       .trim()
@@ -19,7 +19,7 @@ export const contactSchema = z
       .optional()
       .or(z.literal("")),
     subject: z.string().trim().min(2, "Le sujet est requis.").max(200),
-    message: z.string().trim().min(10, "Message trop court.").max(8000),
+    message: z.string().trim().min(3, "Dites-nous en quelques mots ce dont vous avez besoin.").max(8000),
     pack: z.union([z.literal(""), z.enum(PACK_IDS)]).optional(),
     website: z.string().optional(),
     audience: z.union([z.literal(""), z.enum(AUDIENCE_IDS)]).optional(),
@@ -47,6 +47,16 @@ export const contactSchema = z
     deglutition_risk_alert: z.string().trim().max(2000).optional().or(z.literal("")),
   })
   .superRefine((data, ctx) => {
+    if (!data.email?.trim() && !data.phone?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Indiquez un téléphone ou un e-mail pour qu’on puisse vous répondre.",
+        path: ["phone"],
+      });
+    }
+    if (data.phone?.trim() && data.phone.replace(/\D/g, "").length < 9) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Numéro de téléphone incomplet.", path: ["phone"] });
+    }
     const m = data.medical_cert_date?.trim();
     if (!m || m === "") return;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(m)) {

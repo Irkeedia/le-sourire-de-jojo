@@ -30,7 +30,7 @@ export async function sendContactNotification(payload: MailPayload): Promise<voi
 
   await transporter.sendMail({
     from: `"${payload.fromName}" <${user}>`,
-    replyTo: payload.fromEmail,
+    replyTo: payload.fromEmail || undefined,
     to: payload.to,
     subject: payload.subject,
     text: payload.text,

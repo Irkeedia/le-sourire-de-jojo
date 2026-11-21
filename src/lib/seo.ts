@@ -54,6 +54,20 @@ export const HOME_FAQ = [
   },
 ] as const;
 
+/** Questions de la page À propos, en plus de HOME_FAQ (aussi connues de l'assistant Jojo). */
+export const MORE_FAQ = [
+  {
+    question: "Intervenez-vous auprès des personnes dépendantes ?",
+    answer:
+      "Non : en simple déclaration de service à la personne, l’accompagnement s’adresse aux seniors autonomes, aux personnes temporairement immobilisées et aux parents solos. Pour une personne dépendante, nous orientons vers les structures agréées.",
+  },
+  {
+    question: "Comment se passe la signature du contrat ?",
+    answer:
+      "Après la visite d’évaluation, vous recevez un lien vers le contrat : vous le relisez, le signez au doigt, au stylet ou à la souris, puis vous l’imprimez ou l’enregistrez en PDF.",
+  },
+] as const;
+
 export function resolveSiteUrl(siteHref: string | undefined, origin: string): string {
   const raw = siteHref ?? import.meta.env.PUBLIC_SITE_URL ?? origin;
   return raw.endsWith("/") ? raw.slice(0, -1) : raw;

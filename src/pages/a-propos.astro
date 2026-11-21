@@ -1,25 +1,14 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { COMMUNES_ZONE } from "@/lib/catalogue";
-import { HOME_FAQ } from "@/lib/seo";
+import { HOME_FAQ, MORE_FAQ } from "@/lib/seo";
 
 const title = "À propos — Le Sourire de Jojo";
 const description =
   "L’histoire de Céline Meunier Ben Neji, sa façon de travailler, ses partenaires de confiance, la zone d’intervention autour de Corbarieu et les questions fréquentes.";
 
 /** Questions en plus de celles de l'accueil. */
-const FAQ_EN_PLUS = [
-  {
-    question: "Intervenez-vous auprès des personnes dépendantes ?",
-    answer:
-      "Non : en simple déclaration de service à la personne, l’accompagnement s’adresse aux seniors autonomes, aux personnes temporairement immobilisées et aux parents solos. Pour une personne dépendante, nous orientons vers les structures agréées.",
-  },
-  {
-    question: "Comment se passe la signature du contrat ?",
-    answer:
-      "Après la visite d’évaluation, vous recevez un lien vers le contrat : vous le relisez, le signez au doigt, au stylet ou à la souris, puis vous l’imprimez ou l’enregistrez en PDF.",
-  },
-];
+
 ---
 
 <BaseLayout title={title} description={description} breadcrumb={[{ href: "/", label: "Accueil" }, { label: "À propos" }]}>
@@ -162,7 +151,7 @@ const FAQ_EN_PLUS = [
           <p class="muted">Une autre question ? <a class="link" href="/contact#formulaire">Écrivez-nous</a></p>
         </div>
         <div class="faq reveal">
-          {[...HOME_FAQ, ...FAQ_EN_PLUS].map((item, i) => (
+          {[...HOME_FAQ, ...MORE_FAQ].map((item, i) => (
             <details open={i === 0}><summary>{item.question}</summary><p>{item.answer}</p></details>
           ))}
         </div>

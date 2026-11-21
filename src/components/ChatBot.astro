@@ -1,0 +1,54 @@
+---
+/**
+ * Jojo, l'assistant du site (sans IA) : bouton flottant + fenêtre de discussion.
+ * Le moteur (src/scripts/chat.ts) n'est chargé qu'au premier toucher du bouton.
+ */
+---
+
+<div class="jojo" data-jojo>
+  <div class="jojo__teaser" data-jojo-teaser hidden>
+    <button type="button" class="jojo__teaser-body" data-jojo-open>
+      <strong>Une question ?</strong>
+      <span data-jojo-teaser-text>Je connais le site par cœur.</span>
+    </button>
+    <button type="button" class="jojo__teaser-close" data-jojo-teaser-close aria-label="Masquer ce message">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+  </div>
+
+  <button type="button" class="jojo__launcher" data-jojo-open aria-haspopup="dialog" aria-controls="jojo-panel" aria-expanded="false" aria-label="Ouvrir l’assistant Jojo">
+    <img src="/images/mascotte/visage.webp" alt="" width="64" height="64" />
+    <span class="jojo__badge" data-jojo-badge hidden>1</span>
+  </button>
+
+  <section class="jojo__panel" id="jojo-panel" role="dialog" aria-modal="true" aria-labelledby="jojo-title" hidden data-jojo-panel>
+    <div class="jojo__scrim" data-jojo-close></div>
+    <div class="jojo__sheet" data-jojo-sheet>
+      <header class="jojo__head">
+        <span class="jojo__avatar"><img src="/images/mascotte/visage.webp" alt="" width="44" height="44" data-jojo-avatar /></span>
+        <div class="jojo__id">
+          <h2 id="jojo-title">Jojo</h2>
+          <p>L’assistant du Sourire de Jojo · répond tout de suite</p>
+        </div>
+        <button type="button" class="jojo__icon" data-jojo-restart aria-label="Recommencer la conversation" title="Recommencer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+        </button>
+        <button type="button" class="jojo__icon" data-jojo-close aria-label="Fermer l’assistant">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </header>
+
+      <div class="jojo__msgs" data-jojo-msgs role="log" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
+
+      <div class="jojo__chips" data-jojo-chips></div>
+
+      <form class="jojo__composer" data-jojo-form autocomplete="on">
+        <label class="sr-only" for="jojo-input" data-jojo-label>Votre message</label>
+        <input id="jojo-input" class="jojo__input" data-jojo-input type="text" placeholder="Écrivez votre question…" enterkeyhint="send" autocomplete="off" maxlength="600" />
+        <button type="submit" class="jojo__send" aria-label="Envoyer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+        </button>
+      </form>
+    </div>
+  </section>
+</div>

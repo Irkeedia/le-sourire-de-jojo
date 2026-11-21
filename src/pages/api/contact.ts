@@ -92,12 +92,12 @@ export const POST: APIRoute = async ({ request }) => {
     try {
       await sendContactNotification({
         fromName: mongoPayload.name,
-        fromEmail: mongoPayload.email,
+        fromEmail: mongoPayload.email || "",
         to: notifyTo,
         subject: `[Le Sourire de Jojo] ${mongoPayload.subject}`,
         text: [
           `Nom : ${mongoPayload.name}`,
-          `E-mail : ${mongoPayload.email}`,
+          `E-mail : ${mongoPayload.email || "non renseigné"}`,
           mongoPayload.phone ? `Téléphone : ${mongoPayload.phone}` : null,
           "",
           `Capacité juridique (art. 1145 et s. C. civ.) : confirmée`,

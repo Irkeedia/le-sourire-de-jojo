@@ -105,3 +105,65 @@ if (tocLinks.length && "IntersectionObserver" in window) {
   );
   tocLinks.forEach((a) => { const t = document.querySelector(a.getAttribute("href") || ""); if (t) io2.observe(t); });
 }
+
+// Jojo, l'assistant : le moteur n'est chargé qu'au premier contact avec le bouton
+const jojo = document.querySelector<HTMLElement>("[data-jojo]");
+if (jojo) {
+  type ChatModule = typeof import("./chat");
+  let mod: Promise<ChatModule> | null = null;
+  const loadChat = () => (mod ??= import("./chat"));
+  const teaser = jojo.querySelector<HTMLElement>("[data-jojo-teaser]")!;
+  const teaserText = jojo.querySelector<HTMLElement>("[data-jojo-teaser-text]")!;
+  const badge = jojo.querySelector<HTMLElement>("[data-jojo-badge]")!;
+  const store = {
+    get: (k: string) => { try { return sessionStorage.getItem(k); } catch { return null; } },
+    set: (k: string, v: string) => { try { sessionStorage.setItem(k, v); } catch {} },
+    del: (k: string) => { try { sessionStorage.removeItem(k); } catch {} },
+  };
+
+  jojo.querySelectorAll("[data-jojo-open]").forEach((b) => {
+    b.addEventListener("pointerenter", () => void loadChat(), { once: true });
+    b.addEventListener("touchstart", () => void loadChat(), { once: true, passive: true });
+    b.addEventListener("click", () => {
+      store.set("jojo-teaser-off", "1");
+      void loadChat().then((m) => m.open());
+    });
+  });
+  jojo.querySelector("[data-jojo-teaser-close]")?.addEventListener("click", () => {
+    teaser.hidden = true;
+    store.set("jojo-teaser-off", "1");
+  });
+
+  // Arrivée sur une page où Jojo a emmené la personne : on montre la section
+  const spot = store.get("jojo-spot");
+  const arrived = store.get("jojo-arrived");
+  store.del("jojo-spot");
+  store.del("jojo-arrived");
+  if (spot) {
+    window.addEventListener("load", () => {
+      void loadChat().then((m) => window.setTimeout(() => m.spotlight(spot), 150));
+    });
+  }
+  if (arrived) {
+    teaserText.textContent = "Nous y voilà ! Une autre question ?";
+    badge.hidden = false;
+    window.setTimeout(() => (teaser.hidden = false), 1400);
+    window.setTimeout(() => (teaser.hidden = true), 9000);
+  } else if (!store.get("jojo-teaser-off")) {
+    // Petit bonjour après quelques secondes, une seule fois par visite
+    window.setTimeout(() => {
+      if (store.get("jojo-teaser-off") || document.documentElement.classList.contains("jojo-open")) return;
+      teaser.hidden = false;
+      store.set("jojo-teaser-off", "1");
+      window.setTimeout(() => (teaser.hidden = true), 10000);
+    }, 6000);
+  }
+
+  // Un lien « Demander à Jojo » ailleurs sur le site ouvre directement le parcours
+  document.querySelectorAll<HTMLElement>("[data-jojo-start]").forEach((b) =>
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      void loadChat().then((m) => m.openWith(b.dataset.jojoStart || ""));
+    })
+  );
+}
