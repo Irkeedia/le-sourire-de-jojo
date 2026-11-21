@@ -1,5 +1,8 @@
 // Comportements d'interface du site public : menu mobile, apparitions,
 // sous-navigation, simulateur indicatif. Chargé comme fichier (compatible CSP).
+// Animations au défilement (apparitions, frise des étapes, compteurs, profondeur)
+import "./motion";
+
 document.documentElement.classList.remove("no-js");
 
 // Menu mobile : panneau plein écran, fermeture par la croix, le fond, Échap ou un lien
@@ -33,25 +36,6 @@ if (menuBtn && mobileNav && header) {
     }
   });
   window.matchMedia("(min-width: 1081px)").addEventListener("change", (m) => m.matches && setOpen(false));
-}
-
-// Apparition douce au défilement
-const reveals = document.querySelectorAll<HTMLElement>(".reveal");
-if ("IntersectionObserver" in window) {
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add("is-visible");
-          io.unobserve(e.target);
-        }
-      });
-    },
-    { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
-  );
-  reveals.forEach((el) => io.observe(el));
-} else {
-  reveals.forEach((el) => el.classList.add("is-visible"));
 }
 
 // Sous-navigation : section active

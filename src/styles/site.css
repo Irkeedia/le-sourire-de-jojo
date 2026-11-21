@@ -417,6 +417,42 @@ a.card:hover .card__arrow { background: var(--marine); border-color: var(--marin
   .step__num { grid-row: span 3; }
 }
 
+/* Frise animée au défilement : le trait avance et remplit chaque numéro (réversible).
+   --a : début du trait, --len : longueur, --x : position transversale, --p : avancée 0→1 */
+.step__num { z-index: 1; }
+.steps[data-scrub]::before, .steps[data-scrub]::after { content: ""; position: absolute; pointer-events: none; border-radius: 2px; }
+.steps[data-scrub][data-axis="y"]::before,
+.steps[data-scrub][data-axis="y"]::after { top: var(--a); left: calc(var(--x) - 1px); right: auto; bottom: auto; width: 2px; height: var(--len); }
+.steps[data-scrub][data-axis="x"]::before,
+.steps[data-scrub][data-axis="x"]::after { left: var(--a); top: calc(var(--x) - 1px); right: auto; bottom: auto; height: 2px; width: var(--len); }
+.steps[data-scrub]::before { background: var(--line); }
+.steps[data-scrub]::after { background: linear-gradient(var(--grad-dir, 180deg), var(--marine), var(--bleu)); will-change: transform; }
+.steps[data-scrub][data-axis="y"]::after { transform-origin: top; transform: scaleY(var(--p, 0)); }
+.steps[data-scrub][data-axis="x"]::after { --grad-dir: 90deg; transform-origin: left; transform: scaleX(var(--p, 0)); }
+
+.steps[data-scrub] .step .step__num,
+.steps[data-scrub] .step:first-child .step__num {
+  background: var(--white); color: var(--ink-3); border-color: var(--line-strong);
+  transition: background-color 0.45s var(--ease), color 0.45s var(--ease), border-color 0.45s var(--ease), box-shadow 0.45s var(--ease);
+}
+.steps[data-scrub] .step.is-reached .step__num {
+  background: var(--marine); color: var(--white); border-color: var(--marine);
+  box-shadow: 0 0 0 6px rgb(29 53 87 / 0.08), 0 8px 20px rgb(29 53 87 / 0.18);
+  animation: step-pop 0.55s var(--ease);
+}
+.step__num::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 2px solid var(--marine); opacity: 0; pointer-events: none; }
+.steps[data-scrub] .step.is-reached .step__num::after { animation: step-ring 0.8s var(--ease); }
+@keyframes step-pop { 0% { transform: scale(0.86); } 55% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@keyframes step-ring { 0% { opacity: 0.55; transform: scale(1); } 100% { opacity: 0; transform: scale(1.75); } }
+
+.steps[data-scrub] .step > :not(.step__num) {
+  opacity: 0.3; translate: 0 12px;
+  transition: opacity 0.5s var(--ease), translate 0.6s var(--ease);
+}
+.steps[data-scrub] .step > .h3 { transition-delay: 50ms; }
+.steps[data-scrub] .step > p { transition-delay: 100ms; }
+.steps[data-scrub] .step.is-reached > :not(.step__num) { opacity: 1; translate: none; }
+
 /* ---------- 12. Carnet + espace familles ---------- */
 .carnet-visual { position: relative; }
 .carnet-visual__book { width: 78%; border-radius: var(--r-lg); box-shadow: var(--shadow-3); transform: rotate(-3deg); }
@@ -612,9 +648,65 @@ a.card:hover .card__arrow { background: var(--marine); border-color: var(--marin
 @media (max-width: 520px) { .footer__top { grid-template-columns: 1fr; } .footer__brand { grid-column: auto; } }
 
 /* ---------- 21. Apparition au défilement ---------- */
-.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }
-.reveal.is-visible { opacity: 1; transform: none; }
-.no-js .reveal { opacity: 1; transform: none; }
+/* Les apparitions utilisent translate/scale (propriétés séparées) pour ne pas
+   gêner les effets de survol en transform des cartes. --d = décalage en cascade. */
+.reveal {
+  opacity: 0; translate: 0 28px;
+  transition:
+    opacity 0.8s var(--ease) var(--d, 0ms), translate 0.9s var(--ease) var(--d, 0ms), scale 0.9s var(--ease) var(--d, 0ms),
+    transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.25s, background-color 0.25s;
+}
+.reveal[data-reveal="zoom"] { translate: 0 24px; scale: 0.94; }
+.reveal.is-visible { opacity: 1; translate: none; scale: none; }
+.no-js .reveal { opacity: 1; translate: none; scale: none; }
+
+/* Vague : les enfants d'un bloc apparaissent l'un après l'autre */
+[data-stagger] > * {
+  opacity: 0; translate: 0 16px;
+  transition: opacity 0.6s var(--ease), translate 0.7s var(--ease);
+  transition-delay: calc(var(--d, 0ms) + 140ms + var(--i, 0) * 70ms);
+}
+.is-visible[data-stagger] > *, .is-visible [data-stagger] > * { opacity: 1; translate: none; }
+
+/* Trait de l'eyebrow qui se dessine, mot en italique qui se surligne */
+html:not(.no-js) .reveal .eyebrow__num::after { transform: scaleX(0); transform-origin: left; transition: transform 0.8s var(--ease) calc(var(--d, 0ms) + 250ms); }
+html:not(.no-js) .reveal.is-visible .eyebrow__num::after { transform: none; }
+.reveal :is(.h2, .display, .hero__title) em {
+  background: linear-gradient(rgb(233 196 106 / 0.38), rgb(233 196 106 / 0.38)) no-repeat 0 88% / 0% 0.26em;
+  transition: background-size 1.1s var(--ease) calc(var(--d, 0ms) + 380ms);
+}
+.reveal.is-visible :is(.h2, .display, .hero__title) em { background-size: 100% 0.26em; }
+
+/* Profondeur douce (photos, fleurs) */
+.parallax { translate: 0 var(--py, 0); rotate: var(--rot, 0deg); will-change: translate; }
+.parallax-host > .parallax { scale: 1.1; }
+
+/* En-tête : ombre une fois la page défilée, barre de lecture */
+.header { transition: box-shadow 0.3s var(--ease), background-color 0.3s; }
+.header.is-scrolled { box-shadow: 0 8px 28px rgb(29 53 87 / 0.08); }
+.read-bar {
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none;
+  background: linear-gradient(90deg, var(--jaune), var(--rose), var(--bleu));
+  transform-origin: left; transform: scaleX(0); will-change: transform;
+}
+html.menu-open .read-bar { opacity: 0; }
+
+/* Carte de la zone : les communes apparaissent une à une, Corbarieu pulse */
+html:not(.no-js) .zone.reveal .zone__map svg > g > g {
+  opacity: 0; transform: translateY(10px) scale(0.6); transform-box: fill-box; transform-origin: center;
+  transition: opacity 0.5s var(--ease), transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.zone__map svg > g > g:nth-child(1) { transition-delay: 300ms; }
+.zone__map svg > g > g:nth-child(2) { transition-delay: 390ms; }
+.zone__map svg > g > g:nth-child(3) { transition-delay: 480ms; }
+.zone__map svg > g > g:nth-child(4) { transition-delay: 570ms; }
+.zone__map svg > g > g:nth-child(5) { transition-delay: 660ms; }
+.zone__map svg > g > g:nth-child(6) { transition-delay: 750ms; }
+.zone__map svg > g > g:nth-child(7) { transition-delay: 840ms; }
+html:not(.no-js) .zone.reveal.is-visible .zone__map svg > g > g { opacity: 1; transform: none; }
+.zone__map svg > g:last-child > circle:first-child { transform-box: fill-box; transform-origin: center; }
+.zone.is-visible .zone__map svg > g:last-child > circle:first-child { animation: halo 2.4s ease-out 0.9s 3; }
+@keyframes halo { 0% { transform: scale(0.7); opacity: 1; } 100% { transform: scale(2.4); opacity: 0; } }
 
 /* ---------- 22. Charte (page guide) ---------- */
 .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
