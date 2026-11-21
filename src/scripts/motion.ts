@@ -81,6 +81,41 @@ const runCounters = (box: Element, play: boolean) => {
   });
 };
 
+/* ---------- 2b. Prix en compteur mécanique ----------
+   Le vrai texte reste en place (transparent) pour la mise en page et les lecteurs
+   d'écran ; un compteur décoratif le recouvre et ses chiffres « roulent » jusqu'à
+   leur valeur quand le bloc apparaît. Le montant final est toujours le vrai. */
+if (!reduced) {
+  document.querySelectorAll<HTMLElement>(".price__amount").forEach((amount) => {
+    const text = (amount.textContent || "").replace(/\u00a0/g, " ").trim();
+    if (!/^\d+\s?€$/.test(text)) return;
+    const odo = document.createElement("span");
+    odo.className = "odo";
+    odo.setAttribute("aria-hidden", "true");
+    let k = 0;
+    for (const ch of text) {
+      if (/\d/.test(ch)) {
+        const col = document.createElement("span");
+        col.className = "odo__col";
+        const strip = document.createElement("span");
+        strip.className = "odo__strip";
+        strip.textContent = "01234567890123456789".split("").join("\n");
+        strip.style.setProperty("--n", String(10 + Number(ch)));
+        strip.style.setProperty("--k", String(k++));
+        col.appendChild(strip);
+        odo.appendChild(col);
+      } else {
+        const sym = document.createElement("span");
+        sym.textContent = ch === " " ? "\u00a0" : ch;
+        odo.appendChild(sym);
+      }
+    }
+    amount.classList.add("has-odo");
+    amount.appendChild(odo);
+    if (!amount.closest(".reveal")) amount.classList.add("is-visible");
+  });
+}
+
 /* ---------- 3. Apparitions réversibles ---------- */
 const reveals = document.querySelectorAll<HTMLElement>(".reveal");
 if (!hasIO || reduced) {
@@ -185,7 +220,7 @@ document.querySelectorAll<HTMLElement>(".steps").forEach((list) => {
 // 4b. Profondeur douce : photos et fleurs décoratives
 if (!reduced) {
   document
-    .querySelectorAll<HTMLElement>(".hero__photo img, .story__media img, .hero__flower, .page-hero__flower, .cta__flower, .carnet-visual__book")
+    .querySelectorAll<HTMLElement>(".hero__photo img, .story__media img, .hero__flower, .page-hero__flower, .cta__flower")
     .forEach((el) => {
       const isFlower = el.className.includes("flower");
       const isPhoto = el.closest(".hero__photo, .story__media") !== null && !isFlower;
@@ -267,3 +302,144 @@ window.addEventListener("resize", () => {
 });
 window.addEventListener("load", measureAll);
 document.fonts?.ready.then(measureAll);
+
+/* ---------- 5. Carte de la zone : trajets, points qui circulent, pulsations ---------- */
+const SVGNS = "http://www.w3.org/2000/svg";
+const svgEl = <K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number>) => {
+  const el = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
+  return el;
+};
+const norm = (t: string) => t.toLowerCase().normalize("NFD").replace(/[^a-z]/g, "").slice(0, 7);
+
+document.querySelectorAll<HTMLElement>(".zone").forEach((zone, zi) => {
+  const svg = zone.querySelector<SVGSVGElement>(".zone__map svg");
+  if (!svg) return;
+  const pinGroup = svg.querySelector(":scope > g");
+  const home = svg.querySelector<SVGGElement>(":scope > g:last-child");
+  const homeDot = home?.querySelectorAll("circle")[1];
+  if (!pinGroup || !home || !homeDot) return;
+  const hx = Number(homeDot.getAttribute("cx"));
+  const hy = Number(homeDot.getAttribute("cy"));
+  const pins = Array.from(pinGroup.querySelectorAll<SVGGElement>(":scope > g"));
+
+  const layer = svgEl("g", { class: "map-fx", "aria-hidden": "true" });
+  pinGroup.parentNode!.insertBefore(layer, pinGroup);
+
+  // Le Tarn qui s'écoule
+  const river = svg.querySelector<SVGPathElement>(":scope > path");
+  if (river && !reduced) {
+    const flow = svgEl("path", { d: river.getAttribute("d") || "", class: "map-river", fill: "none" });
+    flow.appendChild(svgEl("animate", { attributeName: "stroke-dashoffset", from: 0, to: -48, dur: "2.4s", repeatCount: "indefinite" }));
+    layer.appendChild(flow);
+  }
+
+  // Ondes autour de Corbarieu
+  if (!reduced) {
+    [0, 1.3].forEach((begin) => {
+      const ring = svgEl("circle", { cx: hx, cy: hy, r: 9, class: "map-ripple" });
+      ring.appendChild(svgEl("animate", { attributeName: "r", values: "9;46", dur: "2.6s", begin: `${begin}s`, repeatCount: "indefinite" }));
+      ring.appendChild(svgEl("animate", { attributeName: "opacity", values: "0.45;0", dur: "2.6s", begin: `${begin}s`, repeatCount: "indefinite" }));
+      layer.appendChild(ring);
+    });
+  }
+
+  type Stop = { name: string; route: SVGPathElement; pin: SVGGElement };
+  const stops: Stop[] = [];
+  pins.forEach((pin, i) => {
+    const c = pin.querySelector("circle");
+    if (!c) return;
+    const x = Number(c.getAttribute("cx"));
+    const y = Number(c.getAttribute("cy"));
+    // Trajet légèrement courbé depuis Corbarieu
+    const mx = (hx + x) / 2;
+    const my = (hy + y) / 2;
+    const dx = x - hx;
+    const dy = y - hy;
+    const cx = mx - dy * 0.18;
+    const cy = my + dx * 0.18;
+    const id = `route-${zi}-${i}`;
+    const route = svgEl("path", { id, d: `M${hx} ${hy} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x} ${y}`, class: "map-route", pathLength: 1, fill: "none" });
+    route.style.setProperty("--i", String(i));
+    layer.appendChild(route);
+
+    if (!reduced) {
+      // Petit point qui fait l'aller vers la commune
+      const dur = 2.6 + (i % 3) * 0.5;
+      const dot = svgEl("circle", { r: 3, class: "map-traveler" });
+      const motion = svgEl("animateMotion", { dur: `${dur}s`, begin: `${0.6 + i * 0.35}s`, repeatCount: "indefinite", keyPoints: "0;1", keyTimes: "0;1", calcMode: "spline", keySplines: "0.45 0 0.25 1" });
+      motion.appendChild(svgEl("mpath", { href: `#${id}` }));
+      dot.appendChild(motion);
+      dot.appendChild(svgEl("animate", { attributeName: "opacity", values: "0;1;1;0", keyTimes: "0;0.12;0.8;1", dur: `${dur}s`, begin: `${0.6 + i * 0.35}s`, repeatCount: "indefinite" }));
+      dot.setAttribute("opacity", "0");
+      layer.appendChild(dot);
+
+      // Pulsation de chaque commune
+      const halo = svgEl("circle", { cx: x, cy: y, r: 5, class: "map-halo" });
+      halo.appendChild(svgEl("animate", { attributeName: "r", values: "5;15", dur: "2.4s", begin: `${i * 0.34}s`, repeatCount: "indefinite" }));
+      halo.appendChild(svgEl("animate", { attributeName: "opacity", values: "0.5;0", dur: "2.4s", begin: `${i * 0.34}s`, repeatCount: "indefinite" }));
+      pin.insertBefore(halo, pin.firstChild);
+    }
+    pin.classList.add("map-pin");
+    stops.push({ name: norm(pin.textContent || ""), route, pin });
+  });
+
+  // Interactivité : toucher une commune (sur la carte ou dans la liste) la met en avant
+  const chips = Array.from(zone.querySelectorAll<HTMLElement>(".communes li"));
+  let auto = 0;
+  let userTouched = false;
+  const setActive = (name: string | null) => {
+    stops.forEach((s) => {
+      const on = s.name === name;
+      s.route.classList.toggle("is-active", on);
+      s.pin.classList.toggle("is-active", on);
+    });
+    chips.forEach((c) => c.classList.toggle("is-active", !!name && norm(c.textContent || "") === name && !c.classList.contains("is-main")));
+  };
+  const userPick = (name: string | null) => {
+    userTouched = true;
+    window.clearInterval(auto);
+    setActive(name);
+  };
+  stops.forEach((s) => {
+    s.pin.addEventListener("pointerenter", () => userPick(s.name));
+    s.pin.addEventListener("click", () => userPick(s.name));
+  });
+  chips.forEach((c) => {
+    if (c.classList.contains("is-main")) return;
+    const name = norm(c.textContent || "");
+    c.addEventListener("pointerenter", () => userPick(name));
+    c.addEventListener("click", () => userPick(name));
+  });
+  zone.querySelector(".zone__map")?.addEventListener("pointerleave", () => userTouched && setActive(null));
+
+  // Visite guidée automatique tant que la carte est à l'écran et qu'on n'y a pas touché
+  let step = 0;
+  const startTour = () => {
+    if (reduced || userTouched || auto) return;
+    auto = window.setInterval(() => {
+      setActive(stops[step % stops.length].name);
+      step++;
+    }, 1700);
+  };
+  const stopTour = () => {
+    window.clearInterval(auto);
+    auto = 0;
+  };
+
+  // Les animations SVG ne tournent que lorsque la carte est visible (batterie)
+  if (hasIO) {
+    new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          svg.unpauseAnimations?.();
+          startTour();
+        } else {
+          svg.pauseAnimations?.();
+          stopTour();
+        }
+      },
+      { threshold: 0.15 }
+    ).observe(svg);
+  }
+});

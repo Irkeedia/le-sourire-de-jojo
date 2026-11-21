@@ -708,6 +708,57 @@ html:not(.no-js) .zone.reveal.is-visible .zone__map svg > g > g { opacity: 1; tr
 .zone.is-visible .zone__map svg > g:last-child > circle:first-child { animation: halo 2.4s ease-out 0.9s 3; }
 @keyframes halo { 0% { transform: scale(0.7); opacity: 1; } 100% { transform: scale(2.4); opacity: 0; } }
 
+/* Carte animée : le Tarn s'écoule, trajets depuis Corbarieu, points qui circulent, pulsations */
+.map-river { stroke: rgb(255 255 255 / 0.75); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 6 18; }
+.map-ripple { fill: none; stroke: var(--rose); stroke-width: 2; opacity: 0; }
+.map-route {
+  stroke: var(--marine); stroke-opacity: 0.25; stroke-width: 1.5; stroke-linecap: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.3s var(--ease) calc(350ms + var(--i, 0) * 110ms), stroke-opacity 0.35s, stroke-width 0.35s, stroke 0.35s;
+}
+.zone.is-visible .map-route { stroke-dashoffset: 0; }
+.map-route.is-active { stroke: var(--bleu); stroke-opacity: 1; stroke-width: 2.5; transition-delay: 0s; }
+.map-traveler { fill: var(--bleu); stroke: var(--white); stroke-width: 1.5; }
+.map-halo { fill: none; stroke: var(--marine); stroke-width: 1.5; opacity: 0; }
+.map-pin { cursor: pointer; }
+.map-pin > circle:not(.map-halo) { transform-box: fill-box; transform-origin: center; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), fill 0.3s; }
+.map-pin.is-active > circle:not(.map-halo) { transform: scale(1.7); fill: var(--bleu); }
+.map-pin text { transition: fill 0.3s; }
+.map-pin.is-active text { fill: var(--bleu); font-weight: 700; }
+.communes li { transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.35s var(--ease), opacity 0.6s var(--ease), translate 0.7s var(--ease); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.communes li.is-active { background: var(--bleu); color: var(--white); border-color: var(--bleu); transform: translateY(-2px); }
+
+/* Prix en compteur mécanique : le vrai texte garde la place, le compteur le recouvre */
+.price__amount.has-odo { position: relative; -webkit-text-fill-color: transparent; }
+.odo { position: absolute; inset: 0; display: flex; white-space: pre; pointer-events: none; -webkit-text-fill-color: currentColor; }
+.odo__col { display: block; height: 1em; overflow: hidden; }
+.odo__strip {
+  display: block; white-space: pre; transform: translateY(0); will-change: transform;
+  transition: transform 1.6s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d, 0ms) + 250ms + var(--k, 0) * 120ms);
+}
+.is-visible .odo__strip { transform: translateY(calc(var(--n) * -1em)); }
+
+/* Reflet de lumière qui traverse les titres quand ils apparaissent */
+.reveal :is(.h2, .display, .hero__title) { position: relative; }
+.reveal :is(.h2, .display, .hero__title)::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: linear-gradient(105deg, transparent 20%, rgb(255 255 255 / 0.95) 50%, transparent 80%) no-repeat;
+  background-size: 40% 100%; background-position: -100% 0; mix-blend-mode: overlay;
+}
+.reveal.is-visible :is(.h2, .display, .hero__title)::after { animation: sheen 1.7s var(--ease) calc(var(--d, 0ms) + 500ms) both; }
+@keyframes sheen { 0% { background-position: -100% 0; opacity: 1; } 100% { background-position: 170% 0; opacity: 1; } }
+
+/* Effet de flottaison sur les cartes posées sur les images */
+@keyframes floaty { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+.app-card, .story__sign, .float-card { animation: floaty 6s ease-in-out infinite; }
+.float-card--status { animation-delay: -3s; animation-duration: 7s; }
+.story__sign { animation-delay: -1.5s; }
+.carnet-visual__book { animation: floaty 8s ease-in-out -4s infinite; }
+.reveal:not(.is-visible) :is(.app-card, .story__sign, .float-card, .carnet-visual__book) { animation-play-state: paused; }
+
+/* Titre collant à côté de la FAQ : seulement quand il est à côté (ordinateur), jamais par-dessus le texte */
+@media (min-width: 901px) { .section-head--sticky { position: sticky; top: var(--sticky-top, 120px); } }
+
 /* ---------- 22. Charte (page guide) ---------- */
 .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
 .swatch { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; background: var(--white); }
