@@ -19,7 +19,7 @@ export const POLES: Pole[] = [
     id: "compagnie",
     titre: "Compagnie & lien social",
     accroche:
-      "Rompre l’isolement et stimuler les capacités cognitives : un temps d’échange convivial, à la maison, qui garde l’esprit en éveil sans jamais mettre en échec.",
+      "Rompre l’isolement et garder l’esprit en éveil : un temps d’échange convivial, à la maison, sans jamais mettre en échec.",
     dureeMin: "À partir de 1 h",
     image: "/images/personne-agee-1600.webp",
     imageAlt: "Moment de lecture et d’échange avec une personne âgée, dans un cadre chaleureux.",
@@ -40,7 +40,7 @@ export const POLES: Pole[] = [
     id: "mobilite",
     titre: "Mobilité & vie sociale",
     accroche:
-      "Des sorties à thème qui commencent à la maison et se prolongent dehors : prendre l’air, stimuler les capacités motrices, voir du monde, garder ses repères.",
+      "Des sorties à thème qui commencent à la maison et se prolongent dehors : prendre l’air, voir du monde, garder ses repères.",
     dureeMin: "À partir de 2 h",
     image: "/images/balade.webp",
     imageAlt: "Promenade en plein air, à son rythme, pour profiter du quartier.",
