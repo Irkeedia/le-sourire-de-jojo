@@ -142,7 +142,7 @@ html.jojo-open .jojo__launcher { transform: scale(0.6); opacity: 0; pointer-even
 .jojo-price { display: grid; gap: 1px; padding: 10px 12px; border-radius: 14px; background: var(--cream); border: 1px solid var(--line); }
 .jojo-price__label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
 .jojo-price__main { display: flex; align-items: baseline; gap: 6px; }
-.jojo-price__ttc { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 500; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); }
+.jojo-price__ttc { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 500; line-height: 1.1; letter-spacing: 0; color: var(--ink); }
 .jojo-price__unit { font-size: 0.8rem; font-weight: 600; color: var(--ink-2); }
 .jojo-price__net { font-size: 0.74rem; color: var(--ink-3); }
 .jojo-note { margin-top: 8px !important; font-size: 0.74rem; color: var(--ink-3); line-height: 1.4; }
