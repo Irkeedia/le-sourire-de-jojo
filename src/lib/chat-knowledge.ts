@@ -250,9 +250,27 @@ export const INTENTS: Intent[] = [
     },
   },
   {
+    id: "role",
+    chip: "Le rôle de Céline",
+    keys: ["!prevention", "!fragile", "fragilite", "fragilise", "l autonomie", "!preservation", "!role", "observer", "observation", "reperer", "reperage", "!coordinatrice", "structurante", "!stimulation", "stimuler", "!cognitif", "cognitive", "cognitives", "motricite", "motrice", "motrices", "multi competences", "competences", "substitue"],
+    answer: {
+      text: [
+        "Auprès des personnes fragiles, Céline est une présence structurante, au service de la prévention du quotidien et de la préservation de l’autonomie. Son rôle tient en trois mots :",
+      ],
+      list: [
+        "Observer : l’humeur, l’envie de faire, les habitudes, le cadre de vie",
+        "Repérer : ce qui change (fatigue inhabituelle, isolement, obstacle dans la maison)",
+        "Transmettre : à la famille via le carnet de sourires, et vers les professionnels compétents si c’est utile, avec votre accord",
+      ],
+      note: "Coordinatrice de proximité, elle ne se substitue pas aux familles : elle favorise les échanges et respecte l’histoire familiale. Ses activités multi-compétences stimulent les capacités cognitives et motrices.",
+      actions: [{ label: "Sa façon de travailler", href: "/a-propos#facon" }],
+      next: ["activites", "carnet", "rdv"],
+    },
+  },
+  {
     id: "dependance",
     chip: "Personnes dépendantes",
-    keys: ["!dependant", "!dependante", "!dependance", "!alzheimer", "!parkinson", "grabataire", "alite", "gir", "ehpad"],
+    keys: ["!dependant", "!dependante", "!dependance", "!alzheimer", "!parkinson", "grabataire", "alite", "gir", "ehpad", "!perte d autonomie", "!perte de l autonomie"],
     answer: { text: [faq("Intervenez-vous")], next: ["public", "medical"] },
   },
   {
@@ -408,7 +426,7 @@ export const INTENTS: Intent[] = [
     answer: {
       text: ["Céline Meunier Ben Neji a fondé Le Sourire de Jojo à Corbarieu. Tout a commencé avec sa maman, et un livre tombé au bon moment : Faire de nos boiteries une danse.", "Jojo, c’est le surnom qui rassemble le sourire, la légèreté et la dignité."],
       actions: [{ label: "Lire son histoire", href: "/a-propos#histoire" }],
-      next: ["activites", "rdv"],
+      next: ["role", "activites", "rdv"],
     },
   },
   {
@@ -473,7 +491,7 @@ export const PAGE_HINTS: Record<string, { text: string; next: string[] }> = {
   "/": { text: "Je connais le site par cœur. Je peux vous renseigner, calculer un prix ou demander une visite pour vous.", next: ["rdv", "tarifs", "activites", "zone", "credit", "espace"] },
   "/services": { text: "Vous regardez les activités : je peux vous détailler un pôle ou vous dire ce qui est compris.", next: ["compagnie", "sorties", "repit", "rdv"] },
   "/offres": { text: "Une question de prix ? Dites-moi un nombre d’heures, par exemple « 3 h par semaine », et je calcule.", next: ["forfaits", "credit", "cesu", "rdv"] },
-  "/a-propos": { text: "Envie d’en savoir plus sur Céline ou sur la zone ? Demandez-moi.", next: ["celine", "zone", "public", "rdv"] },
+  "/a-propos": { text: "Envie d’en savoir plus sur Céline ou sur la zone ? Demandez-moi.", next: ["celine", "role", "zone", "rdv"] },
   "/contact": { text: "Je peux remplir la demande avec vous, ici, en quelques questions.", next: ["rdv", "contact", "zone"] },
   "/informations-legales": { text: "Je peux vous résumer un point : annulation, contrat, paiement…", next: ["annulation", "contrat", "paiement", "legal"] },
 };

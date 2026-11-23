@@ -1,0 +1,48 @@
+---
+/**
+ * « Mon rôle : observer, repérer, transmettre » : les mots de Céline sur sa place
+ * auprès des personnes âgées (liste envoyée en novembre 2026).
+ * - `compact` (accueil) : lien vers la page À propos à la place de la citation.
+ */
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<div class="role reveal">
+  <div class="role__intro">
+    <span class="badge badge--bleu"><span class="dot"></span>Auprès des personnes fragiles</span>
+    <h3 class="h2 role__title">Mon rôle : observer, repérer, <em>transmettre</em></h3>
+    <p class="muted small">
+      Une présence structurante, au service de la prévention du quotidien et de la préservation de l’autonomie.
+      Je suis une coordinatrice de proximité entre la personne, sa famille et les professionnels qui l’entourent.
+    </p>
+    {compact && <a class="link small" href="/a-propos#facon">Ma façon de travailler <span aria-hidden="true">→</span></a>}
+  </div>
+
+  <ol class="role__steps" data-stagger>
+    <li class="role__step">
+      <span class="role__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>
+      <strong class="h4">Observer</strong>
+      <span class="small muted">À chaque visite, je prends le temps de voir comment va la personne : son humeur, son envie de faire, ses habitudes, son cadre de vie.</span>
+    </li>
+    <li class="role__step">
+      <span class="role__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5M11 8v3M11 14h.01"/></svg></span>
+      <strong class="h4">Repérer</strong>
+      <span class="small muted">Je remarque ce qui change : une fatigue inhabituelle, un isolement qui s’installe, un obstacle qui gêne dans la maison.</span>
+    </li>
+    <li class="role__step">
+      <span class="role__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h12M12 6l6 6-6 6"/><path d="M20 5v14"/></svg></span>
+      <strong class="h4">Transmettre</strong>
+      <span class="small muted">Je partage ces observations avec la famille, dans le carnet de sourires, et je fais le relais vers les professionnels compétents quand c’est utile, avec votre accord.</span>
+    </li>
+  </ol>
+
+  {!compact && (
+    <figure class="quote role__quote">
+      <blockquote>« Je ne me substitue pas aux familles : je favorise les échanges et je respecte l’histoire familiale. »</blockquote>
+      <figcaption>Céline · Un relais, jamais un remplacement.</figcaption>
+    </figure>
+  )}
+</div>

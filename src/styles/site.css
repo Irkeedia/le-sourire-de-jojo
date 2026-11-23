@@ -938,3 +938,23 @@ body.site::after { display: none !important; }
 .cform-done[hidden] { display: none; }
 .articles .legal-prose p, .articles .legal-prose ul { padding: 0 !important; margin: 0 !important; }
 .articles .legal-prose > * { margin-top: 0 !important; }
+
+/* ---------- Mon rôle : observer, repérer, transmettre ---------- */
+.role { margin-top: clamp(40px, 5vw, 64px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr); gap: clamp(24px, 4vw, 48px); align-items: start; padding: clamp(24px, 4vw, 44px); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--white); }
+.section--white .role { background: var(--cream); }
+.role__intro { display: grid; gap: 14px; justify-items: start; }
+.role__title { font-size: var(--fs-xl); margin: 0; }
+.role__steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.role__step { position: relative; display: grid; gap: 8px; align-content: start; padding: 20px; border-radius: var(--r-md); background: var(--cream); border: 1px solid var(--line); }
+.section--white .role__step { background: var(--white); }
+.role__step + .role__step::before { content: ""; position: absolute; left: -13px; top: 40px; width: 10px; height: 10px; border-top: 2px solid var(--line-strong); border-right: 2px solid var(--line-strong); transform: rotate(45deg); }
+.role__icon { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgb(69 123 157 / 0.1); color: var(--bleu); }
+.role__icon svg { width: 22px; height: 22px; }
+.role__quote { grid-column: 1 / -1; }
+@media (max-width: 960px) { .role { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .role__steps { grid-template-columns: 1fr; gap: 14px; }
+  .role__step { grid-template-columns: 40px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; padding: 16px; }
+  .role__icon { width: 40px; height: 40px; grid-row: span 2; }
+  .role__step + .role__step::before { left: 32px; top: -11px; transform: rotate(135deg); }
+}
