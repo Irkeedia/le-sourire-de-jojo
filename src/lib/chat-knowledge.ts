@@ -442,9 +442,9 @@ export const INTENTS: Intent[] = [
   {
     id: "legal",
     chip: "Informations légales",
-    keys: ["!cgv", "!mentions legales", "conditions generales", "legal", "siret", "nova", "mediateur", "assurance", "rgpd", "donnees", "confidentialite", "confidentiel", "vie privee"],
+    keys: ["!cgv", "!mentions legales", "conditions generales", "legal", "siret", "nova", "!mediateur", "!mediation", "!litige", "reclamation", "plainte", "assurance", "rgpd", "donnees", "confidentialite", "confidentiel", "vie privee"],
     answer: {
-      text: ["Mentions légales, conditions générales, annulation, consentement et contrat sont réunis sur une seule page. Ce qui se dit à la maison reste à la maison : les données sont traitées dans le cadre du RGPD."],
+      text: ["Mentions légales, conditions générales, annulation, consentement et contrat sont réunis sur une seule page. Ce qui se dit à la maison reste à la maison : les données sont traitées dans le cadre du RGPD.", "En cas de litige, vous pouvez faire appel gratuitement au médiateur de la consommation : NotreAccord Consommation (mediation-consommation.notreaccord.com)."],
       actions: [{ label: "Informations légales", href: "/informations-legales" }],
     },
   },

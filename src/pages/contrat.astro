@@ -1,5 +1,6 @@
 ---
 import LegalPrintChrome from "@/components/LegalPrintChrome.astro";
+import MediationNotice from "@/components/legal/MediationNotice.astro";
 import SignaturePad from "@/components/SignaturePad.astro";
 import WordExportButton from "@/components/WordExportButton.astro";
 
@@ -351,12 +352,13 @@ const generatedAt = new Intl.DateTimeFormat("fr-FR", {
     </section>
 
     <section class="consent-section">
-      <h2 class="consent-art-title"><span class="consent-art-num">Article 11</span> — Droit applicable et règlement des litiges</h2>
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 11</span> — Droit applicable, règlement des litiges et médiation</h2>
       <p>
         Le présent contrat est soumis au droit français. Les parties privilégient une résolution amiable et écrite de tout différend. À
         défaut d’accord amiable, les juridictions compétentes seront déterminées selon les règles applicables et, le cas échéant, les
         stipulations des CGV ou du contrat signé.
       </p>
+      <MediationNotice />
     </section>
 
     <section class="consent-section">

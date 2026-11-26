@@ -1,5 +1,6 @@
 ---
 import LegalPrintChrome from "@/components/LegalPrintChrome.astro";
+import MediationNotice from "@/components/legal/MediationNotice.astro";
 
 const title = "Annulation & résiliation (PDF) — Le Sourire de Jojo";
 const description = "Conditions d’annulation et de résiliation — version PDF / impression.";
@@ -96,6 +97,11 @@ const description = "Conditions d’annulation et de résiliation — version PD
         Conformément au droit français, la survenance d’un cas de force majeure peut suspendre ou mettre fin aux obligations sans
         pénalités injustifiées, dans la limite des textes applicables.
       </p>
+    </section>
+
+    <section class="consent-section">
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 7</span> — Médiation de la consommation</h2>
+      <MediationNotice />
     </section>
 
     <footer class="consent-doc-footer">

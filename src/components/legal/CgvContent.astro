@@ -1,4 +1,5 @@
 ---
+import MediationNotice from "@/components/legal/MediationNotice.astro";
 /** Conditions générales de vente (texte repris de l’ancienne page /cgv). */
 ---
 
@@ -118,12 +119,13 @@
     </div>
   </details>
   <details>
-    <summary><span class="n">10</span>Litiges et droit applicable</summary>
+    <summary><span class="n">10</span>Litiges, médiation et droit applicable</summary>
     <div class="legal-prose">
       <p>
         Les présentes CGV sont soumises au <strong>droit français</strong>. À défaut de résolution amiable, compétence attribuée aux
         tribunaux du ressort du siège social de la Prestataire ou, le cas échéant, aux juridictions prévues par le contrat signé.
       </p>
+      <MediationNotice />
     </div>
   </details>
   <details>

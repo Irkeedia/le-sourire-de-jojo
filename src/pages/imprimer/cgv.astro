@@ -1,5 +1,6 @@
 ---
 import LegalPrintChrome from "@/components/LegalPrintChrome.astro";
+import MediationNotice from "@/components/legal/MediationNotice.astro";
 
 const title = "CGV (document imprimable) — Le Sourire de Jojo";
 const description = "Conditions générales de vente — version PDF / impression.";
@@ -109,11 +110,12 @@ const description = "Conditions générales de vente — version PDF / impressio
     </section>
 
     <section class="consent-section">
-      <h2 class="consent-art-title"><span class="consent-art-num">Article 9</span> — Droit applicable et litiges</h2>
+      <h2 class="consent-art-title"><span class="consent-art-num">Article 9</span> — Droit applicable, litiges et médiation</h2>
       <p>
         <strong>Droit français</strong>. Recherche d’une solution amiable préalable. À défaut, tribunaux compétents selon les règles de
         compétence en vigueur.
       </p>
+      <MediationNotice />
     </section>
 
     <section class="consent-section">
