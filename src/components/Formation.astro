@@ -1,0 +1,17 @@
+---
+/**
+ * Attestation de formation de Céline (DC Formation, 27 novembre 2026), envoyée par Céline pour le site.
+ * Carte cliquable : aperçu du document + lien vers le PDF original.
+ */
+const PDF = "/documents/attestation-formation-celine-ben-neji.pdf";
+---
+
+<a class="cred reveal" href={PDF} target="_blank" rel="noopener" aria-label="Voir l’attestation de formation de Céline (PDF, nouvel onglet)">
+  <span class="cred__doc"><img src="/images/attestation-formation.webp" alt="" width="900" height="1274" loading="lazy" /></span>
+  <span class="cred__body">
+    <span class="badge badge--jaune"><span class="dot"></span>Formation validée</span>
+    <strong class="cred__title">Maintien du lien social et prévention des risques chez le senior fragile</strong>
+    <span class="cred__meta">Attestation de réussite « Dame / homme de compagnie » · DC Formation · novembre 2026</span>
+    <span class="cred__cta">Voir l’attestation (PDF) <span aria-hidden="true">→</span></span>
+  </span>
+</a>

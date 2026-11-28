@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import MonRole from "@/components/MonRole.astro";
+import Formation from "@/components/Formation.astro";
 import { COMMUNES_ZONE } from "@/lib/catalogue";
 import { absoluteUrl, buildFaqPage, HOME_FAQ, resolveSiteUrl } from "@/lib/seo";
 import {
@@ -256,6 +257,7 @@ const homeUrl = absoluteUrl("/", siteUrl);
             <blockquote>« Dans l’aise ou dans la gêne, dans la maladie ou la santé… Tiens-toi droit et souris. »</blockquote>
             <figcaption>Lanza del Vasto</figcaption>
           </figure>
+          <Formation />
           <a class="btn btn--ghost-light" href="/a-propos" style="margin-top: 16px">Lire mon histoire</a>
         </div>
       </div>

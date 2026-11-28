@@ -119,7 +119,7 @@ export const INTENTS: Intent[] = [
   {
     id: "credit",
     chip: "Crédit d’impôt",
-    keys: ["!impot", "!credit", "fiscal", "deduction", "deduire", "reduction", "!avance immediate", "urssaf", "rembourse", "remboursement", "moitie", "50", "aide financiere", "aides", "financer", "financement"],
+    keys: ["!impot", "!credit", "fiscal", "!attestation fiscale", "deduction", "deduire", "reduction", "!avance immediate", "urssaf", "rembourse", "remboursement", "moitie", "50", "aide financiere", "aides", "financer", "financement"],
     answer: {
       text: [
         "La moitié des sommes versées vous est remboursée par l’État, que vous soyez imposable ou non (crédit d’impôt de 50 %, dans la limite des plafonds).",
@@ -426,6 +426,18 @@ export const INTENTS: Intent[] = [
     answer: {
       text: ["Céline Meunier Ben Neji a fondé Le Sourire de Jojo à Corbarieu. Tout a commencé avec sa maman, et un livre tombé au bon moment : Faire de nos boiteries une danse.", "Jojo, c’est le surnom qui rassemble le sourire, la légèreté et la dignité."],
       actions: [{ label: "Lire son histoire", href: "/a-propos#histoire" }],
+      next: ["role", "formation", "rdv"],
+    },
+  },
+  {
+    id: "formation",
+    chip: "Sa formation",
+    keys: ["!formation", "!formee", "!diplome", "diplomee", "attestation", "!attestation de formation", "!certificat de formation", "qualification", "qualifiee"],
+    answer: {
+      text: [
+        "Céline est formée : elle a obtenu l’attestation de réussite « Dame / homme de compagnie » de DC Formation, pour la formation « Maintien du lien social et prévention des risques chez le senior fragile » (novembre 2026).",
+      ],
+      actions: [{ label: "Voir l’attestation", href: "/documents/attestation-formation-celine-ben-neji.pdf" }, { label: "Son histoire", href: "/a-propos#histoire" }],
       next: ["role", "activites", "rdv"],
     },
   },
